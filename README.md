@@ -53,10 +53,46 @@ It depends :
  - If string, it is as many characters, symbols, and digits as you want.
  - If boolean, it is `true` or `false`. Every type of lower and upper case is accepted.
 **SPECIAL VALUES :**
-It can also be special values : in case of a all types (except `bool`) you can meet the `input` method.
-It asks the user to type something in the console.
-Syntax : `input(<text>)`
-<text> is the text that will be asked to the user.
+ - It can also be special values : in case of a all types (except `bool`) you can meet the `input` method.
+   It asks the user to type something in the console.
+   Syntax : `input(<text>)`
+   <text> is the text that will be asked to the user.
+ - You can also do mathematical equations to affect variables
+   They can also contain ***ONE*** variable.
+   Syntax : `math <equation>`
+   As always, a variable is gotten by the syntax `{<type> <name>}`
+
+**EXAMPLE 1 :**
+We want to create a variable "pseudo" containing "TheAssassin".
+*Input :*
+`str pseudo = TheAssassin`
+*To use it :*
+`{str pseudo}`
+
+**EXAMPLE 2 :**
+We want to ask the user for his pseudo :
+*Input :*
+`str pseudo = input(What is your pseudo ? )`
+
+**EXAMPLE 3 :**
+We want to calculate `3*(6^2)` and store it into a variable "operation".
+*Input :*
+`int operation = math 3*(6^2)`
+
+**EXAMPLE 4 :**
+We have a variable (type int) "age" containing the value `18`. We want to multiply it by 2 *(don't ask why xD)*
+And then store it into "double"
+*Input :*
+`int double = 2*{int age}`
+
+**EXAMPLE 5 :**
+We ask the user for his age and we multiply it by 5.
+*Input :*
+`int age = input(What is your age ? )
+int new_age = 2*{int age}
+print(Your new age is now {int age} xD !)`
+*Output (for this example, age equals 18) :*
+`Your new age is now 90 xD !`
 
 #### pause ####
 You can pause for a certain amount of time using `pause` method.
@@ -64,6 +100,9 @@ Syntax : pause(<seconds>)
 <seconds>
 Can be an integer value, a float value, or a variable (`int` or `float` only).
 If you use a variable, the syntax is `pause({<variable_type> <variable_name>}).
+
+## Changelog for 0.7
+- Added the support for mathematical equations in variable creation
 
 ## Changelog for 0.6
 - Added the `code.acpl` file containing a code sample.
