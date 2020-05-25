@@ -44,7 +44,7 @@ It exists 4 variable types :
  - Boolean : Stores a binary value (true or false). Syntax : `bool` or `boolean`
 
 <var_name>
-The variable name.
+The variable name. Note that two variables with different types can have the same name.
 
 <value>
 It depends :
@@ -53,10 +53,21 @@ It depends :
  - If string, it is as many characters, symbols, and digits as you want.
  - If boolean, it is `true` or `false`. Every type of lower and upper case is accepted.
 **SPECIAL VALUES :**
-It can also be special values : in case of a string, you can meet the `input` method.
+It can also be special values : in case of a all types (except `bool`) you can meet the `input` method.
 It asks the user to type something in the console.
 Syntax : `input(<text>)`
 <text> is the text that will be asked to the user.
+
+#### pause ####
+You can pause for a certain amount of time using `pause` method.
+Syntax : pause(<seconds>)
+<seconds>
+Can be an integer value, a float value, or a variable (`int` or `float` only).
+If you use a variable, the syntax is `pause({<variable_type> <variable_name>}).
+
+## Changelog for 0.5
+- Added inputs for all types
+- Added pauses
 
 ## Changelog for 0.4
 
