@@ -1,6 +1,7 @@
 import inspect
 import string
 import re
+from time import sleep
 
 def lineno():
     return inspect.currentframe().f_back.f_lineno
@@ -39,7 +40,7 @@ class StatementError(Exception):
             return "StatementError error has been raised."
 
 # Debug mode enabled ?
-debug_const = False
+debug_const = True
 
 # Files opening
 code_file = open("code.acpl", "r", encoding="utf-8")
@@ -116,27 +117,55 @@ for line in code_lines:
         else:
             raise StatementError("Statements missing.")
     elif line.startswith("int"):
-        instruction = line.split(" ")
-        if len(instruction) != 4:
-            raise StatementError("Arguments Missing")
-        try:
-            instruction[3] = int(instruction[3])
-        except ValueError:
-            raise StatementError("Variable not int !")
+        if "input(" in line:
+            instruction = line.split(" ")
+            for i in range(4, len(instruction)):
+                instruction[3] += " " + instruction[i]
+            if "(" in line and ")" in instruction[3]:
+                instruction[3] = instruction[3].replace("(", "")
+                instruction[3] = instruction[3].replace(")", "")
+                instruction[3] = instruction[3].replace("input", "")
+                instruction[3] = instruction[3].replace("\\n", "\n")
+                instruction[3] = instruction[3].replace("\\t", "\t")
+                instruction[3] = int(input(instruction[3]))
+            else:
+                raise StatementError
+        else:
+            instruction = line.split(" ")
+            if len(instruction) != 4:
+                raise StatementError("Arguments Missing")
+            try:
+                instruction[3] = int(instruction[3])
+            except ValueError:
+                raise StatementError("Variable not int !")
         if isinstance(instruction[1], str) and isinstance(instruction[3], int) and instruction[2] == "=":
             ints[instruction[1]] = instruction[3]
         else:
             raise StatementError
     elif line.startswith("float"):
-        instruction = line.split(" ")
-        if len(instruction) != 4:
-            raise StatementError("Arguments Missing")
-        try:
-            if "," in instruction[3]:
-                instruction[3] = instruction[3].replace(",", ".")
-            instruction[3] = float(instruction[3])
-        except ValueError:
-            raise StatementError("Variable not float !")
+        if "input(" in line:
+            instruction = line.split(" ")
+            for i in range(4, len(instruction)):
+                instruction[3] += " " + instruction[i]
+            if "(" in line and ")" in instruction[3]:
+                instruction[3] = instruction[3].replace("(", "")
+                instruction[3] = instruction[3].replace(")", "")
+                instruction[3] = instruction[3].replace("input", "")
+                instruction[3] = instruction[3].replace("\\n", "\n")
+                instruction[3] = instruction[3].replace("\\t", "\t")
+                instruction[3] = float(input(instruction[3]))
+            else:
+                raise StatementError
+        else:
+            instruction = line.split(" ")
+            if len(instruction) != 4:
+                raise StatementError("Arguments Missing")
+            try:
+                if "," in instruction[3]:
+                    instruction[3] = instruction[3].replace(",", ".")
+                instruction[3] = float(instruction[3])
+            except ValueError:
+                raise StatementError("Variable not float !")
         if isinstance(instruction[1], str) and isinstance(instruction[3], float) and instruction[2] == "=":
             floats[instruction[1]] = instruction[3]
         else:
@@ -183,8 +212,40 @@ for line in code_lines:
             bools[instruction[1]] = bool(instruction[3])
         else:
             raise StatementError
+    elif line.startswith("pause"):
+        line = line.replace("pause", "")
+        if "(" in line and ")" in line:
+            line = line.replace("(", "")
+            line = line.replace(")", "")
+            line = line.replace(";", "")
+            if "{" in line and "}" in line:
+                variables = line[line.find("{") + 1:line.find("}")]
+                debug("other", lineno(), "Variable found in pause.")
+                variables = variables.split(" ")
+                if variables[0] == "int":
+                    variable = ints.get(variables[1])
+                elif variables[0] == "float":
+                    variable = floats.get(variables[1])
+                elif variables[0] == "str" or variables[0] == "string":
+                    raise StatementError("Cannot get string for pause")
+                elif variables[0] == "bool" or variables[0] == "boolean":
+                    raise StatementError("Cannot get boolean for pause")
+                line = variable
+            try:
+                time = int(line)
+            except ValueError:
+                try:
+                    time = float(line)
+                except ValueError:
+                    raise StatementError
+            sleep(time)
+        else:
+            raise StatementError("Statements missing.")
 
-debug("other", lineno(), ints, floats, strings, bools)
+debug("other", lineno(), ints)
+debug("other", lineno(), floats)
+debug("other", lineno(), strings)
+debug("other", lineno(), bools)
 
 code_file.close()
 debug_file.close()
