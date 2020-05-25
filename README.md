@@ -57,7 +57,7 @@ It depends :
    It asks the user to type something in the console.
    Syntax : `input(<text>)`
    <text> is the text that will be asked to the user.
- - You can also do mathematical equations to affect variables
+ - You can also do mathematical equations to affect variables. Those equations **CAN NOT** contain any space.
    They can also contain ***ONE*** variable.
    Syntax : `math <equation>`
    As always, a variable is gotten by the syntax `{<type> <name>}`
