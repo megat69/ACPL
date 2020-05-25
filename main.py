@@ -26,6 +26,7 @@ def debug(entry_type, line, message, *args):
         if entry == "<<<":
             debug_file.write("\n")
 
+
 class StatementError(Exception):
     def __init__(self, *args):
         if args:
@@ -40,7 +41,7 @@ class StatementError(Exception):
             return "StatementError error has been raised."
 
 # Debug mode enabled ?
-debug_const = True
+debug_const = False
 
 # Files opening
 code_file = open("code.acpl", "r", encoding="utf-8")
@@ -115,7 +116,7 @@ for line in code_lines:
                 line = line.replace("{" + variables[0] + " " + variables[1] + "}", str(variable))
             print(line)
         else:
-            raise StatementError("Statements missing.")
+            raise StatementError("Statements missing.") #
     elif line.startswith("int"):
         if "input(" in line:
             instruction = line.split(" ")
@@ -130,6 +131,27 @@ for line in code_lines:
                 instruction[3] = int(input(instruction[3]))
             else:
                 raise StatementError
+        elif "math" in line:
+            instruction = line.split(" ")
+            if "{" in instruction[4] and "}" in instruction[4]:
+                for i in range(4, len(instruction)):
+                    instruction[4] += instruction[i]
+                variables = line[line.find("{") + 1:line.find("}")]
+                debug("other", lineno(), "Variable found in math.")
+                variables = variables.split(" ")
+                if variables[0] == "int":
+                    variable = ints.get(variables[1])
+                elif variables[0] == "float":
+                    variable = floats.get(variables[1])
+                else:
+                    raise StatementError
+                final_instruction = re.sub("({).*?(\})", "\g<1>\g<2>", instruction[4])
+                final_instruction = final_instruction.replace("{}", str(variable))
+                instruction[4] = final_instruction
+                debug("other", lineno(), "final_instruction : ", final_instruction)
+                instruction[4] = instruction[4].replace("^", "**")
+            result = eval(str(instruction[4]))
+            instruction[3] = result
         else:
             instruction = line.split(" ")
             if len(instruction) != 4:
@@ -156,6 +178,26 @@ for line in code_lines:
                 instruction[3] = float(input(instruction[3]))
             else:
                 raise StatementError
+        elif "math" in line:
+            instruction = line.split(" ")
+            for i in range(4, len(instruction)):
+                instruction[4] += instruction[i]
+            if "{" in instruction[4] and "}" in instruction[4]:
+                variables = line[line.find("{") + 1:line.find("}")]
+                debug("other", lineno(), "Variable found in math.")
+                variables = variables.split(" ")
+                if variables[0] == "int":
+                    variable = ints.get(variables[1])
+                elif variables[0] == "float":
+                    variable = floats.get(variables[1])
+                else:
+                    raise StatementError
+                final_instruction = re.sub("({).*?(\})", "\g<1>\g<2>", instruction[4])
+                final_instruction = final_instruction.replace("{}", str(variable))
+                instruction[4] = final_instruction
+                debug("other", lineno(), "final_instruction : ", final_instruction)
+            result = eval(instruction[4])
+            instruction[3] = result
         else:
             instruction = line.split(" ")
             if len(instruction) != 4:
