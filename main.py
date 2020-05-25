@@ -2,6 +2,7 @@ import inspect
 import string
 import re
 from time import sleep
+from random import randrange
 
 def lineno():
     return inspect.currentframe().f_back.f_lineno
@@ -26,6 +27,7 @@ def debug(entry_type, line, message, *args):
         if entry == "<<<":
             debug_file.write("\n")
 
+
 class StatementError(Exception):
     def __init__(self, *args):
         if args:
@@ -40,7 +42,7 @@ class StatementError(Exception):
             return "StatementError error has been raised."
 
 # Debug mode enabled ?
-debug_const = False
+debug_const = True
 
 # Files opening
 code_file = open("code.acpl", "r", encoding="utf-8")
@@ -130,6 +132,9 @@ for line in code_lines:
                 instruction[3] = int(input(instruction[3]))
             else:
                 raise StatementError
+            if "--round" in line:
+                instruction[3] = instruction[3].replace("-round(", "")
+                instruction[3] = round(float(instruction[3]))
         elif "math" in line:
             instruction = line.split(" ")
             if "{" in instruction[4] and "}" in instruction[4]:
@@ -151,9 +156,29 @@ for line in code_lines:
                 instruction[4] = instruction[4].replace("^", "**")
             result = eval(str(instruction[4]))
             instruction[3] = result
+            if "--round" in line:
+                instruction[3] = instruction[3].replace("-round(", "")
+                instruction[3] = round(float(instruction[3]))
+        elif "random(" in line:
+            instruction = line.split(" ")
+            if len(instruction) > 4:
+                instruction[3] += instruction[4]
+            debug("other", lineno(), instruction[3])
+            instruction[3] = instruction[3].replace("random(", "")
+            instruction[3] = instruction[3].replace(")", "")
+            instruction[3] = instruction[3].replace(" ", "")
+            if "," in instruction[3]:
+                randomness = instruction[3].split(",")
+            else:
+                randomness = [0, instruction[3]]
+            debug("other", lineno(), randomness)
+            instruction[3] = randrange(int(randomness[0]), int(randomness[1]))
         else:
             instruction = line.split(" ")
-            if len(instruction) != 4:
+            if "--round" in line:
+                instruction[3] = instruction[3].replace("--round(", "")
+                instruction[3] = round(float(instruction[3]))
+            if len(instruction) <= 4:
                 raise StatementError("Arguments Missing")
             try:
                 instruction[3] = int(instruction[3])
@@ -197,6 +222,20 @@ for line in code_lines:
                 debug("other", lineno(), "final_instruction : ", final_instruction)
             result = eval(instruction[4])
             instruction[3] = result
+        elif "random(" in line:
+            instruction = line.split(" ")
+            if len(instruction) > 4:
+                instruction[3] += instruction[4]
+            debug("other", lineno(), instruction[3])
+            instruction[3] = instruction[3].replace("random(", "")
+            instruction[3] = instruction[3].replace(")", "")
+            instruction[3] = instruction[3].replace(" ", "")
+            if "," in instruction[3]:
+                randomness = instruction[3].split(",")
+            else:
+                randomness = [0, instruction[3]]
+            debug("other", lineno(), randomness)
+            instruction[3] = randrange(int(randomness[0]), int(randomness[1]))
         else:
             instruction = line.split(" ")
             if len(instruction) != 4:
