@@ -44,7 +44,7 @@ It exists 4 variable types :
  - Boolean : Stores a binary value (true or false). Syntax : `bool` or `boolean`
 
 <var_name>
-The variable name. Note that two variables with different types can have the same name.
+The variable name. Note that two variables with different types can have the same name, even if not recommended.
 
 <value>
 It depends :
@@ -64,6 +64,9 @@ Syntax : pause(<seconds>)
 <seconds>
 Can be an integer value, a float value, or a variable (`int` or `float` only).
 If you use a variable, the syntax is `pause({<variable_type> <variable_name>}).
+
+## Changelog for 0.6
+- Added the `code.acpl` file containing a code sample.
 
 ## Changelog for 0.5
 - Added inputs for all types
