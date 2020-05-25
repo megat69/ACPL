@@ -26,7 +26,6 @@ def debug(entry_type, line, message, *args):
         if entry == "<<<":
             debug_file.write("\n")
 
-
 class StatementError(Exception):
     def __init__(self, *args):
         if args:
