@@ -61,6 +61,15 @@ It depends :
    They can also contain ***ONE*** variable.
    Syntax : `math <equation>`
    As always, a variable is gotten by the syntax `{<type> <name>}`
+ - You can also define them as random.
+   Therefore, type `random(<first_number>, [second_number])`.
+   If both numbers are given, the result will be a random number between them.
+   Else, it will be a random number between 0 and <first_number>.
+   *Variables are not usable inside at the moment.*
+**MODIFIERS :**
+ - Actually, only one exists : `--round`.
+   It is only available for int types and it rounds the result.
+   Syntax : `int <var_name> = <value> --round`
 
 **EXAMPLE 1 :**
 We want to create a variable "pseudo" containing "TheAssassin".
@@ -94,12 +103,21 @@ print(Your new age is now {int age} xD !)`
 *Output (for this example, age equals 18) :*
 `Your new age is now 90 xD !`
 
+**EXAMPLE 6 :**
+You want a random number between 1 and 50 for the Lotto.
+*Input :*
+`int Lotto = random(1, 50)`
+
 #### pause ####
 You can pause for a certain amount of time using `pause` method.
 Syntax : pause(<seconds>)
 <seconds>
 Can be an integer value, a float value, or a variable (`int` or `float` only).
 If you use a variable, the syntax is `pause({<variable_type> <variable_name>}).
+
+## Changelog for 0.8
+- Added the support for randomness in variable creation
+- Added the support for round in int creation
 
 ## Changelog for 0.7
 - Added the support for mathematical equations in variable creation
