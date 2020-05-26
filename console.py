@@ -50,7 +50,7 @@ while running:
 
     elif user_input.startswith("run"):
         user_input = user_input.replace("run ", "")
-        replace_line('startup.ini', 0, 'filename: '+user_input+"\n")
+        replace_line('startup.ini', 1, 'filename: '+user_input+"\n")
         if not user_input.endswith(".acpl"):
             user_input += ".acpl"
         os.system("python main.py")
