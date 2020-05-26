@@ -41,12 +41,28 @@ class StatementError(Exception):
         else:
             return "StatementError error has been raised."
 
-# Debug mode enabled ?
-debug_const = True
-
 # Files opening
-code_file = open("code.acpl", "r", encoding="utf-8")
+filename_file = open("startup.ini", "r", encoding="utf-8")
+filename = filename_file.readlines()
+for lines in filename:
+    if lines.startswith("filename: "):
+        lines = lines.replace("filename: ", "")
+        if lines.endswith("\n"):
+            lines = lines.replace("\n", "")
+        if not lines.endswith(".acpl"):
+            lines += ".acpl"
+        final_filename = lines
+
+    if lines.startswith("debug-state: "):
+        lines = lines.replace("debug-state: ", "")
+        if lines.lower() == "true" or lines == "1":
+            debug_const = True
+        else:
+            debug_const = False
+
+
 debug_file = open("debug.log", "w", encoding="utf-8")
+code_file = open(final_filename, "r", encoding="utf-8")
 
 # Code lines getting
 code_lines = code_file.readlines()
@@ -178,8 +194,6 @@ for line in code_lines:
             if "--round" in line:
                 instruction[3] = instruction[3].replace("--round(", "")
                 instruction[3] = round(float(instruction[3]))
-            if len(instruction) <= 4:
-                raise StatementError("Arguments Missing")
             try:
                 instruction[3] = int(instruction[3])
             except ValueError:
@@ -329,3 +343,4 @@ debug("other", lineno(), bools)
 
 code_file.close()
 debug_file.close()
+filename_file.close()
