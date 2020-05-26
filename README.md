@@ -2,13 +2,17 @@
 My own programming language (compiled in Python).
 
 ### DOCUMENTATION ###
-Actually, this program can only print, input, and create variables.
+Actually, this program can only print, input, create variables, and pause.
 
 Things to know :
 This program works line per line, which means that it is **ONE INSTRUCTION PER LINE**.
 You can also use a comma (`;`) to mark the end of the line, but it is not required.
 The code has to be in the same folder than the `main.py` file, and inside a file named `code.acpl`.
+This can be modified through the `startup.ini` file or the console.
 This language also does not use quotes (`"`).
+
+Before everything, open the console (file `console.py`). Type `help` inside if required.
+Help for the console is not provided in the documentation.
 
 #### comments #####
 You can comment line per line with `#` or `//`.
@@ -114,6 +118,13 @@ Syntax : pause(<seconds>)
 <seconds>
 Can be an integer value, a float value, or a variable (`int` or `float` only).
 If you use a variable, the syntax is `pause({<variable_type> <variable_name>}).
+
+## Changelog for 1.0
+### **1.0 is here !**
+- Added a console
+- You can now run files named differently than "code.acpl" through the console
+- Added a "startup.ini" files containing requirements for both console and compiler
+- Added console commands (Watch more in the documentation)
 
 ## Changelog for 0.8
 - Added the support for randomness in variable creation
