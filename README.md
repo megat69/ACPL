@@ -22,6 +22,7 @@ There is no way to do multiline comments at the moment.
 
 #### print ####
 You can use the print method to send something in the console.
+
 **EXAMPLE 1 :**
 *Input :*
 `print(Hello)`
@@ -30,6 +31,7 @@ You can use the print method to send something in the console.
 
 You can also inject ***ONE*** variable inside it by typing `{<var_type> <var_name>}`.
 In practise, if we have a string variable named "pseudo" containing the value "TheAssassin", we can get this :
+
 **EXAMPLE 2 :**
 *Input :*
 `print(Hello, {str pseudo} !)`
