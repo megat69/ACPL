@@ -1,7 +1,22 @@
 import os
 from time import sleep
+import sys
+
+class CriticError(Exception):
+    def __init__(self, *args):
+        if args:
+            self.message = args[0]
+        else:
+            self.message = None
+
+    def __str__(self):
+        if self.message:
+            return "CriticError : {0}".format(self.message)
+        else:
+            return "CriticError error has been raised."
 
 running = True
+ini_file = "startup.acpl-ini"
 
 def replace_line(file_name, line_num, text):
     line_num -= 1
@@ -11,7 +26,11 @@ def replace_line(file_name, line_num, text):
     out.writelines(lines)
     out.close()
 
-startup_file = open("startup.ini", "r+", encoding="utf-8")
+try:
+    startup_file = open(ini_file, "r+", encoding="utf-8")
+except FileNotFoundError:
+    print("Unable to load startup.acpl-ini !")
+    sys.exit()
 startup = startup_file.readlines()
 
 
@@ -38,7 +57,12 @@ for lines in startup:
         lines = lines.replace("debug-state: ", "")
         debug_state = lines
 
-print("ACPL Console - last stable release " + final_version + " - " + current_version + "- CC-BY-SA\n")
+    if lines.startswith("console-reloaded: True"):
+        lines = lines.replace("console-reloaded: ", "")
+        print("Console correctly reloaded.\n")
+        replace_line(ini_file, 5, "console-reloaded: False")
+
+print("ACPL Console - last stable release " + final_version + " - " + current_version + "- CC-BY-SA")
 
 while running:
     output = None
@@ -50,7 +74,7 @@ while running:
 
     elif user_input.startswith("run"):
         user_input = user_input.replace("run ", "")
-        replace_line('startup.ini', 1, 'filename: '+user_input+"\n")
+        replace_line('startup.acpl-ini', 1, 'filename: '+user_input+"\n")
         if not user_input.endswith(".acpl"):
             user_input += ".acpl"
         os.system("python main.py")
@@ -81,7 +105,7 @@ while running:
         user_input = user_input.replace("modify-ini ", "")
         user_input = user_input.split(" ")
         if user_input[0] == "debug-state":
-            replace_line("startup.ini", 4, "debug-state: "+user_input[1])
+            replace_line(ini_file, 4, "debug-state: "+user_input[1])
             output = "Option debug-state modified correctly in startup.ini with value " + user_input[1] + "."
         elif user_input[0] == "help":
             if user_input[1] == "debug-state":
@@ -104,6 +128,13 @@ while running:
         for line in about.readlines():
             print(line, end="")
         about.close()
+
+    elif user_input.lower() == "restart" or user_input.lower() == "reload":
+        print("Reloading console...")
+        replace_line(ini_file, 5, "console-reloaded: True")
+        sleep(2)
+        os.system("python console.py")
+        break
 
     else:
         output = "Command unknown."

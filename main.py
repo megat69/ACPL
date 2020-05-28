@@ -3,6 +3,7 @@ import string
 import re
 from time import sleep
 from random import randrange
+import sys
 
 def lineno():
     return inspect.currentframe().f_back.f_lineno
@@ -42,7 +43,11 @@ class StatementError(Exception):
             return "StatementError error has been raised."
 
 # Files opening
-filename_file = open("startup.ini", "r", encoding="utf-8")
+try:
+    filename_file = open("startup.acpl-ini", "r+", encoding="utf-8")
+except FileNotFoundError:
+    print("Unable to load startup.acpl-ini !")
+    sys.exit()
 filename = filename_file.readlines()
 for lines in filename:
     if lines.startswith("filename: "):
@@ -52,6 +57,13 @@ for lines in filename:
         if not lines.endswith(".acpl"):
             lines += ".acpl"
         final_filename = lines
+
+    if lines.startswith("debug-state: "):
+        lines = lines.replace("debug-state: ", "")
+        if lines.lower() == "true" or lines == "1":
+            debug_const = True
+        else:
+            debug_const = False
 
     if lines.startswith("debug-state: "):
         lines = lines.replace("debug-state: ", "")
@@ -118,7 +130,7 @@ for line in code_lines:
             line = line.replace("(", "")
             line = line.replace(")", "")
             line = line.replace(";", "")
-            if "{" in line and "}" in line:
+            while "{" in line and "}" in line:
                 variables = line[line.find("{") + 1:line.find("}")]
                 debug("other", lineno(), "Variable found in print.")
                 variables = variables.split(" ")
@@ -133,7 +145,7 @@ for line in code_lines:
                 line = line.replace("{" + variables[0] + " " + variables[1] + "}", str(variable))
             print(line)
         else:
-            raise StatementError("Statements missing.") #
+            raise StatementError("Statements missing.")
     elif line.startswith("int"):
         if "input(" in line:
             instruction = line.split(" ")
