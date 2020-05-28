@@ -20,7 +20,7 @@ contexts:
           scope: entity.name.tag
         - match: '\)*'
           scope: entity.name.tag
-        - match: '=*\?*\.*\{*\}*\!*\:*\;*\\*\/*\+*\**\-*'
+        - match: '=*\?*\.*\{*\}*\!*\:*\;*\\*\/*\+*\**\-*\,*'
           scope: entity.name.tag
         - match: '$'
           pop: true
