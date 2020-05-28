@@ -12,6 +12,7 @@ This can be modified through the `startup.ini` file or the console.
 This language also does not use quotes (`"`).
 
 Plugin for [Sublime Text 3](https://www.sublimetext.com/3) (Syntax highlighting) disponible in the [wiki](https://github.com/megat69/ACPL/wiki/Sublime-Text---Color-Highlighting).
+Plugin for ini file also disponible in the [wiki](https://github.com/megat69/ACPL/wiki/Sublime-Text---Color-Highlighting).
 
 Before everything, open the console (file `console.py`). Type `help` inside if required.
 Help for the console is not provided in the documentation.
