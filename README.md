@@ -30,7 +30,7 @@ You can use the print method to send something in the console.
 *Output :*
 `Hello`
 
-You can also inject ***ONE*** variable inside it by typing `{<var_type> <var_name>}`.
+You can also inject variables inside it by typing `{<var_type> <var_name>}`.
 In practise, if we have a string variable named "pseudo" containing the value "TheAssassin", we can get this :
 
 **EXAMPLE 2 :**
@@ -123,6 +123,12 @@ Syntax : pause(<seconds>)
 <seconds>
 Can be an integer value, a float value, or a variable (`int` or `float` only).
 If you use a variable, the syntax is `pause({<variable_type> <variable_name>}).
+
+## Changelog for 1.2
+- Added syntax highlighting for sublime text (`.acpl` and `.acpl-ini` files)
+- Added multiple variable support in print
+- Added a `reload` command for the console
+- Upgraded `startup.acpl-ini`
 
 ## Changelog for 1.0
 ### **1.0 is here !**
