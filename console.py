@@ -39,11 +39,11 @@ def replace_line(file_name, line_num, text):
 class Text():
     def __init__(self, texts):
         self.texts = texts
-        self.console = self.texts.get("console")
-        self.console_modify_ini = self.console.get("modify-ini")
-        self.console_help = self.console.get("help")
-        self.critic_errors = self.texts.get("critic-errors")
-        self.statement_errors = self.texts.get("statement-errors")
+        self.console = self.texts["console"]
+        self.console_modify_ini = self.console["modify-ini"]
+        self.console_help = self.console["help"]
+        self.critic_errors = self.texts["critic-errors"]
+        self.statement_errors = self.texts["statement-errors"]
 
 
 try:
@@ -89,23 +89,23 @@ for lines in startup:
                 json_file.close()
                 texts = Text(texts)
         except NameError:
-            raise CriticError(texts.critic_errors.get("NameError_LanguageFile"))
+            raise CriticError(texts.critic_errors["NameError_LanguageFile"])
 
     if lines.startswith("console-reloaded: True"):
         lines = lines.replace("console-reloaded: ", "")
-        print(f"{bcolors.OKGREEN}{texts.console.get('console-correctly-reloaded')}\n{bcolors.ENDC}")
+        print(f"{bcolors.OKGREEN}{texts.console['console-correctly-reloaded']}\n{bcolors.ENDC}")
         replace_line(ini_file, 5, "console-reloaded: False\n")
 
 
 
-print(bcolors.BOLD+texts.console.get('bootup-message').format(final_version, current_version)+bcolors.ENDC)
+print(bcolors.BOLD+texts.console['bootup-message'].format(final_version, current_version)+bcolors.ENDC)
 
 while running:
     output = None
     user_input = input("\n>>> ")
 
     if user_input.lower() == "end":
-        print(f"{bcolors.OKBLUE}{texts.console.get('process-ended')}{bcolors.ENDC}")
+        print(f"{bcolors.OKBLUE}{texts.console['process-ended']}{bcolors.ENDC}")
         break
 
     elif user_input.startswith("run"):
@@ -113,12 +113,12 @@ while running:
         replace_line('startup.acpl-ini', 0, 'filename: '+user_input+"\n")
         if not user_input.endswith(".acpl"):
             user_input += ".acpl"
-        print(f"{bcolors.OKBLUE}{texts.console.get('launch-code-file').format(user_input)}{bcolors.ENDC}")
+        print(f"{bcolors.OKBLUE}{texts.console['launch-code-file'].format(user_input)}{bcolors.ENDC}")
         sleep(1.7)
         os.system("python main.py")
 
     elif user_input.startswith("version"):
-        output = f"{texts.console.get('last-stable-release')} : {final_version}\n{texts.console.get('current-dev-build')} : " + current_version
+        output = f"{texts.console['last-stable-release']} : {final_version}\n{texts.console['current-dev-build']} : " + current_version
 
     elif user_input.startswith("eval"):
         output = "Feature not working at the moment."
@@ -144,27 +144,27 @@ while running:
         user_input = user_input.split(" ")
         if user_input[0] == "debug-state":
             replace_line(ini_file, 3, "debug-state: "+user_input[1]+"\n")
-            output = texts.console_modify_ini.get("debug-state-modified").format(user_input[1])
+            output = texts.console_modify_ini["debug-state-modified"].format(user_input[1])
         elif user_input[0] == "lang":
             replace_line(ini_file, 4, "lang: "+user_input[1]+"\n")
-            output = texts.console_modify_ini.get("lang-modified").format(user_input[1])
+            output = texts.console_modify_ini["lang-modified"].format(user_input[1])
         elif user_input[0] == "help":
             if user_input[1] == "debug-state":
-                print(texts.console_modify_ini.get('debug-state-help').format(str(debug_state)))
+                print(texts.console_modify_ini['debug-state-help'].format(str(debug_state)))
             elif user_input[1] == "lang":
-                print(texts.console_modify_ini.get('lang-help').format(str(language)))
+                print(texts.console_modify_ini['lang-help'].format(str(language)))
             else:
-                print(texts.console_modify_ini.get("else-help"))
+                print(texts.console_modify_ini["else-help"])
         else:
-            output = texts.console_modify_ini.get("unable-to-modify-option")
+            output = texts.console_modify_ini["unable-to-modify-option"]
 
     elif user_input.lower() == "help":
-        print(texts.console_help.get("available-commands") + " :")
-        print(f"\t- 'end' : {texts.console_help.get('end')}\n"
-              f"\t- 'run' : {texts.console_help.get('run')}\n"
-              f"\t- 'about' : {texts.console_help.get('about')}\n"
-              f"\t- 'version' : {texts.console_help.get('version')}\n"
-              f"\t- 'modify-ini' : {texts.console_help.get('modify-ini')}\n")
+        print(texts.console_help["available-commands"] + " :")
+        print(f"\t- 'end' : {texts.console_help['end']}\n"
+              f"\t- 'run' : {texts.console_help['run']}\n"
+              f"\t- 'about' : {texts.console_help['about']}\n"
+              f"\t- 'version' : {texts.console_help['version']}\n"
+              f"\t- 'modify-ini' : {texts.console_help['modify-ini']}\n")
 
     elif user_input.lower() == "about":
         about = open(f"about_{language}.txt", "r", encoding="iso8859_15")
@@ -173,17 +173,17 @@ while running:
         about.close()
 
     elif user_input.lower() == "restart" or user_input.lower() == "reload":
-        print(texts.console.get("reloading"))
+        print(texts.console["reloading"])
         replace_line(ini_file, 5, "console-reloaded: True\n")
         sleep(2)
         os.system("python console.py")
         break
 
     else:
-        output = texts.console.get("unknown-command")
+        output = texts.console["unknown-command"]
 
     if output != None:
-        print(f"{bcolors.WARNING}{texts.console.get('output').upper()} :{bcolors.ENDC}\n{output}")
+        print(f"{bcolors.WARNING}{texts.console['output'].upper()} :{bcolors.ENDC}\n{output}")
 
 
 startup_file.close()

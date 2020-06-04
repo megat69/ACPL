@@ -127,6 +127,10 @@ Syntax : pause(<seconds>)
 <seconds>
 Can be an integer value, a float value, or a variable (`int` or `float` only).
 If you use a variable, the syntax is `pause({<variable_type> <variable_name>}).
+ 
+## Changelog for 1.3
+- Added custom error messages ;)
+- Added multilingual support (french and english). *Console and errors only are supported at the moment.*
 
 ## Changelog for 1.2
 - Added syntax highlighting for sublime text (`.acpl` and `.acpl-ini` files)
