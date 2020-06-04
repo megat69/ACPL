@@ -1,5 +1,0 @@
-print(Hiii !)
-float TimeToWait = input(How much time do you want to wait ? (In seconds)\n)
-str Reminder = input(And for what purpose ? Give me your reminder.\n)
-pause({float TimeToWait})
-print(You asked me to remind you this thing : {str Reminder})
