@@ -187,4 +187,3 @@ while running:
 
 
 startup_file.close()
-
