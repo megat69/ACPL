@@ -1,0 +1,20 @@
+ACPL est un petit langage de programmation créé par un jeune étudiant français : TheAssassin.
+
+Le but du langage est d'être simple, mais en vérité, il s'agit juste d'un projet pour tester mes capacités et apprendre, donc n'en attendeez pas trop ;) !
+
+Partie technique :
+La syntaxe du langage vient de partout, avec des parties ressemblant au Python, au JavaScript, au Cet bien plus.
+Il est transpilé en python pour être interprété.
+
+POURS et CONTRES :
+Pours :
+- Simple
+- Sympa à utiliser
+- Ça me fait plaisir que vous fassiez quelque chose avec xD !
+
+Contres :
+- Trop peu de fonctionnalités
+- Temps d'exécution beaucoup trop long
+- Communauté
+
+Et merci d'avoir lu :) !

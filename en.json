@@ -1,0 +1,36 @@
+{
+  "console": {
+    "bootup-message": "ACPL Console - last stable release {} - {} - CC-BY-SA",
+    "process-ended": "Process ended.",
+    "launch-code-file": "Launching {}...",
+    "last-stable-release": "Last stable release",
+    "current-dev-build": "Current dev build",
+    "modify-ini": {
+      "debug-state-modified": "Option debug-state modified correctly in startup.acpl-ini with value {}.",
+      "lang-modified": "Option lang modified correctly in startup.acpl-ini with value {}.",
+      "debug-state-help": "HELP : the \"debug-state\" statement asks if you want to enable or disable devlopper debug.\nType : boolean.\nDefault : False.\nActual : {}.",
+      "lang-help": "HELP : the \"lang\" statement is used to know in which language the system is displayed.\nType : string.\nPossible options : \"en\" or \"fr\".\nDefault : en.\nActual : {}.",
+      "else-help": "Available values :\n\t- \"debug-state\"\n\t- \"lang\"\n\nType \"modify-ini help <statement>\" for better help.",
+      "unable-to-modify-option": "Unable to modify this option."
+    },
+    "help": {
+      "available-commands": "Available commands",
+      "end": "Ends the console process.",
+      "run": "runs a specific file. Syntax : 'run <file>'.",
+      "about": "Gives a special message from the author concerning the language ;)",
+      "version": "Gives the last stable version and the actual dev build.",
+      "modify-ini": "Modifies a specific statement in the ini file. Better help with 'modify-ini help all'."
+    },
+    "output": "Output",
+    "reloading": "Reloading console...",
+    "unknown-command": "Unknown command.",
+    "unable-load-startup": "Unable to load startup.acpl-ini !",
+    "console-correctly-reloaded": "Console correctly reloaded."
+  },
+  "critic-errors": {
+    "NameError_LanguageFile": "Unable to load the language file !"
+  },
+  "statement-errors": {
+
+  }
+}

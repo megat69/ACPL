@@ -8,8 +8,6 @@ But still, if you want to use it, please credit me xD !
 ### DOCUMENTATION ###
 Actually, this program can only print, input, create variables, and pause.
 
-Link to the [Wiki](https://github.com/megat69/ACPL/wiki) with all the docs.
-
 Things to know :
 This program works line per line, which means that it is **ONE INSTRUCTION PER LINE**.
 You can also use a comma (`;`) to mark the end of the line, but it is not required.

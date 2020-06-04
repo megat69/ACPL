@@ -28,7 +28,6 @@ def debug(entry_type, line, message, *args):
         if entry == "<<<":
             debug_file.write("\n")
 
-
 class StatementError(Exception):
     def __init__(self, *args):
         if args:
@@ -41,6 +40,25 @@ class StatementError(Exception):
             return "StatementError : {0}".format(self.message)
         else:
             return "StatementError error has been raised."
+
+class bcolors:
+    HEADER = '\033[95m'
+    OKBLUE = '\033[94m'
+    OKGREEN = '\033[92m'
+    WARNING = '\033[93m'
+    FAIL = '\033[91m'
+    ENDC = '\033[0m'
+    BOLD = '\033[1m'
+    UNDERLINE = '\033[4m'
+
+def error(line_number, error_type, message=None, *args):
+    if args:
+        for arg in args:
+            message += arg
+    if message != None:
+        print(f"{bcolors.FAIL}{error_type} on line {line_number} : {message}{bcolors.ENDC}")
+    else:
+        print(f"{bcolors.FAIL}{error_type} has been raised for line {line_number}{bcolors.ENDC}")
 
 # Files opening
 try:
@@ -72,6 +90,13 @@ for lines in filename:
         else:
             debug_const = False
 
+    if lines.startswith("lang: "):
+        lines = lines.replace("lang: ", "")
+        if lines == "fr":
+            language = "fr"
+        else:
+            language = "en"
+
 
 debug_file = open("debug.log", "w", encoding="utf-8")
 code_file = open(final_filename, "r", encoding="utf-8")
@@ -101,18 +126,6 @@ for i in range(0, len(code_lines)):
     code_lines[i] = result[0]
     result = code_lines[i].split(";")
     code_lines[i] = result[0]
-    result = code_lines[i].split("\n")
-    code_lines[i] = result[0]
-pop_positions = list()
-for i in range(0, len(code_lines)):
-    if code_lines[i] == "\n" or code_lines[i] == "" or code_lines[i] == " ":
-        pop_positions.append(i)
-pop_positions.reverse()
-for i in (range(0, len(code_lines)-3)):
-    try:
-        code_lines.pop(pop_positions[i])
-    except IndexError:
-        pass
 debug("other", lineno(), "code_lines = ", code_lines)
 
 
@@ -122,8 +135,11 @@ floats = {}
 strings = {}
 bools = {}
 
+line_numbers = 0
+
 # Instructions
 for line in code_lines:
+    line_numbers += 1
     if line.startswith("print"): # print instruction
         line = line.replace("print", "")
         if "(" in line and ")" in line:
@@ -145,7 +161,8 @@ for line in code_lines:
                 line = line.replace("{" + variables[0] + " " + variables[1] + "}", str(variable))
             print(line)
         else:
-            raise StatementError("Statements missing.")
+            error(line_numbers, "StatementError", "Statement missing.")
+            break
     elif line.startswith("int"):
         if "input(" in line:
             instruction = line.split(" ")
@@ -157,9 +174,14 @@ for line in code_lines:
                 instruction[3] = instruction[3].replace("input", "")
                 instruction[3] = instruction[3].replace("\\n", "\n")
                 instruction[3] = instruction[3].replace("\\t", "\t")
-                instruction[3] = int(input(instruction[3]))
+                try:
+                    instruction[3] = int(input(bcolors.WARNING+instruction[3]+bcolors.ENDC))
+                except ValueError:
+                    error(line_numbers, "ValueError", "What was inputted is not an integer !")
+                    break
             else:
-                raise StatementError
+                error(line_numbers, "StatementError")
+                break
             if "--round" in line:
                 instruction[3] = instruction[3].replace("-round(", "")
                 instruction[3] = round(float(instruction[3]))
@@ -176,7 +198,8 @@ for line in code_lines:
                 elif variables[0] == "float":
                     variable = floats.get(variables[1])
                 else:
-                    raise StatementError
+                    error(line_numbers, "StatementError")
+                    break
                 final_instruction = re.sub("({).*?(\})", "\g<1>\g<2>", instruction[4])
                 final_instruction = final_instruction.replace("{}", str(variable))
                 instruction[4] = final_instruction
@@ -209,11 +232,13 @@ for line in code_lines:
             try:
                 instruction[3] = int(instruction[3])
             except ValueError:
-                raise StatementError("Variable not int !")
+                error(line_numbers, "StatementError:", "Variable not int !")
+                break
         if isinstance(instruction[1], str) and isinstance(instruction[3], int) and instruction[2] == "=":
             ints[instruction[1]] = instruction[3]
         else:
-            raise StatementError
+            error(line_numbers, "StatementError")
+            break
     elif line.startswith("float"):
         if "input(" in line:
             instruction = line.split(" ")
@@ -225,9 +250,14 @@ for line in code_lines:
                 instruction[3] = instruction[3].replace("input", "")
                 instruction[3] = instruction[3].replace("\\n", "\n")
                 instruction[3] = instruction[3].replace("\\t", "\t")
-                instruction[3] = float(input(instruction[3]))
+                try:
+                    instruction[3] = float(input(bcolors.WARNING+instruction[3]+bcolors.ENDC))
+                except ValueError:
+                    error(line_numbers, "ValueError", "What was inputted is not an float number !")
+                    break
             else:
-                raise StatementError
+                error(line_numbers, "StatementError")
+                break
         elif "math" in line:
             instruction = line.split(" ")
             for i in range(4, len(instruction)):
@@ -241,7 +271,8 @@ for line in code_lines:
                 elif variables[0] == "float":
                     variable = floats.get(variables[1])
                 else:
-                    raise StatementError
+                    error(line_numbers, "StatementError")
+                    break
                 final_instruction = re.sub("({).*?(\})", "\g<1>\g<2>", instruction[4])
                 final_instruction = final_instruction.replace("{}", str(variable))
                 instruction[4] = final_instruction
@@ -265,17 +296,20 @@ for line in code_lines:
         else:
             instruction = line.split(" ")
             if len(instruction) != 4:
-                raise StatementError("Arguments Missing")
+                error(line_numbers, "StatementError", "Arguments missing !")
+                break
             try:
                 if "," in instruction[3]:
                     instruction[3] = instruction[3].replace(",", ".")
                 instruction[3] = float(instruction[3])
             except ValueError:
-                raise StatementError("Variable not float !")
+                error(line_numbers, "StatementError", "Variable not float !")
+                break
         if isinstance(instruction[1], str) and isinstance(instruction[3], float) and instruction[2] == "=":
             floats[instruction[1]] = instruction[3]
         else:
-            raise StatementError
+            error(line_numbers, "StatementError")
+            break
     elif line.startswith("str") or line.startswith("string"):
         if "input(" in line:
             instruction = line.split(" ")
@@ -287,25 +321,30 @@ for line in code_lines:
                 instruction[3] = instruction[3].replace("input", "")
                 instruction[3] = instruction[3].replace("\\n", "\n")
                 instruction[3] = instruction[3].replace("\\t", "\t")
-                instruction[3] = input(instruction[3])
+                instruction[3] = input(bcolors.WARNING+instruction[3]+bcolors.ENDC)
             else:
-                raise StatementError
+                error(line_numbers, "StatementError")
+                break
         else:
             instruction = line.split(" ")
             if len(instruction) != 4:
-                raise StatementError("Arguments Missing")
+                error(line_numbers, "StatementError", "Arguments missing !")
+                break
             try:
                 instruction[3] = str(instruction[3])
             except ValueError:
-                raise StatementError("Variable not string !")
+                error(line_numbers, "StatementError", "Variable not string !")
+                break
         if isinstance(instruction[1], str) and isinstance(instruction[3], str) and instruction[2] == "=":
             strings[instruction[1]] = instruction[3].replace("\n", "")
         else:
-            raise StatementError
+            error(line_numbers, "StatementError")
+            break
     elif line.startswith("bool") or line.startswith("boolean"):
         instruction = line.split(" ")
         if len(instruction) != 4:
-            raise StatementError("Arguments Missing")
+            error(line_numbers, "StatementError", "Arguments Missing !")
+            break
         try:
             if instruction[3].lower() == "false":
                 instruction[3] = 0
@@ -313,11 +352,13 @@ for line in code_lines:
                 instruction[3] = 1
             instruction[3] = bool(instruction[3])
         except ValueError:
-            raise StatementError("Variable not bool !")
+            error(line_numbers, "StatementError", "Variable not bool !")
+            break
         if isinstance(instruction[1], str) and isinstance(instruction[3], bool) and instruction[2] == "=":
             bools[instruction[1]] = bool(instruction[3])
         else:
-            raise StatementError
+            error(line_numbers, "StatementError")
+            break
     elif line.startswith("pause"):
         line = line.replace("pause", "")
         if "(" in line and ")" in line:
@@ -333,9 +374,11 @@ for line in code_lines:
                 elif variables[0] == "float":
                     variable = floats.get(variables[1])
                 elif variables[0] == "str" or variables[0] == "string":
-                    raise StatementError("Cannot get string for pause")
+                    error(line_numbers, "StatementError", "Cannot get string for pause")
+                    break
                 elif variables[0] == "bool" or variables[0] == "boolean":
-                    raise StatementError("Cannot get boolean for pause")
+                    error(line_numbers, "StatementError", "Cannot get boolean for pause")
+                    break
                 line = variable
             try:
                 time = int(line)
@@ -343,15 +386,19 @@ for line in code_lines:
                 try:
                     time = float(line)
                 except ValueError:
-                    raise StatementError
+                    error(line_numbers, "StatementError")
+                    break
             sleep(time)
         else:
-            raise StatementError("Statements missing.")
+            error(line_numbers, "StatementError", "Statements Missing !")
+            break
 
 debug("other", lineno(), ints)
 debug("other", lineno(), floats)
 debug("other", lineno(), strings)
 debug("other", lineno(), bools)
+
+print(f"\n{bcolors.OKBLUE}Program successfully stopped.{bcolors.ENDC}")
 
 code_file.close()
 debug_file.close()
