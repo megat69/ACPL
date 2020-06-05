@@ -48,5 +48,6 @@
     "temp-files-removed": "Temp bestanden verwiderd!",
     "update-applied": "Update toegepast!",
     "console-restart": "Console herstarten..."
-  }
+  },
+  "program-ended": "Programma succesvol gestopt."
 }

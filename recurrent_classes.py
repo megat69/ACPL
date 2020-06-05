@@ -1,4 +1,5 @@
 import inspect
+import sys
 
 class bcolors:
     with open("startup.acpl-ini", "r", encoding="utf-8") as startup_file:
@@ -36,6 +37,9 @@ class Text():
         self.critic_errors = self.texts["critic-errors"]
         self.statement_errors = self.texts["statement-errors"]
         self.updates = self.texts["update-checker"]
+
+    def get(self, key):
+        return self.texts.get(key)
 
 class CriticError(Exception):
     def __init__(self, *args):
@@ -101,3 +105,21 @@ def replace_line(file_name, line_num, text):
     out = open(file_name, 'w')
     out.writelines(lines)
     out.close()
+
+try:
+    startup_file = open("startup.acpl-ini", "r+", encoding="utf-8")
+except FileNotFoundError:
+    print("Unable to load startup.acpl-ini !")
+    sys.exit()
+startup = startup_file.readlines()
+
+for lines in startup:
+    if lines.endswith("\n"):
+        lines = lines.replace("\n", "")
+    if lines.startswith("debug-state: "):
+        lines = lines.replace("debug-state: ", "")
+        debug_state = lines
+        if debug_state.lower() == "false":
+            debug_const = False
+        else:
+            debug_const = True

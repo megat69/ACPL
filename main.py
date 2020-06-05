@@ -356,7 +356,7 @@ debug("other", lineno(), floats)
 debug("other", lineno(), strings)
 debug("other", lineno(), bools)
 
-print(f"\n{bcolors.OKBLUE}Program successfully stopped.{bcolors.ENDC}")
+print(f"\n{bcolors.OKBLUE}{texts.texts['program-ended']}{bcolors.ENDC}")
 
 code_file.close()
 debug_file.close()

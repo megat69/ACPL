@@ -48,5 +48,6 @@
     "temp-files-removed": "Temp files removed !",
     "update-applied": "Update applied !",
     "console-restart": "Restarting console..."
-  }
+  },
+  "program-ended": "Program successfully stopped."
 }

@@ -12,7 +12,7 @@
       "debug-state-help": "AIDE : la variable \"debug-state\" demande si vous voulez activer ou non le débug de développeur.\nType : Booléen.\nDefaut : False.\nActuel : {}.",
       "lang-help": "AIDE : la variable \"lang\" est utilisée pour savoir dans quel langage le système doit être affiché.\nType : string.\nOptions possibles : \"en\", \"fr\", ou \"nl\".\nDefaut : en.\nActuel : {}.",
       "use-colors-help": "AIDE : la variable \"use-colors\" est utilisée pour savoir si vous préférez utiliser les couleurs ou non. Certains systèmes d'exploitation ou logiciel ne le permettent pas.\nType : booléen.\nOptions possibles : \"True\" ou \"False\".\nDefaut : True.\nActuel : {}.",
-      "else-help": "Valeurs disponibles :\n\t- \"debug-state\"\n\t- \"lang\"\n\nTapez \"modify-ini help <variable>\" pour une meilleure aide.",
+      "else-help": "Valeurs disponibles :\n\t- \"debug-state\"\n\t- \"lang\"\n\t- \"use-colors\"\nTapez \"modify-ini help <variable>\" pour une meilleure aide.",
       "unable-to-modify-option": "Impossible de modifier cette option."
     },
     "help": {
@@ -24,7 +24,7 @@
       "modify-ini": "Modifie une variable spécifique dans le fichier 'startup.acpl-ini'. Meilleure aide avec 'modify-ini help all'."
     },
     "output": "Retour",
-    "reloading": "Rechargement de la console...",
+    "reloading": "Redémarrage de la console...",
     "unknown-command": "Commande inconnue.",
     "unable-load-startup": "Impossible de charger startup.acpl-ini !",
     "console-correctly-reloaded": "Console correctement redémarrée."
@@ -48,5 +48,6 @@
     "temp-files-removed": "Les fichiers temporaires ont été supprimmés !",
     "update-applied": "Mise à jour appliquée !",
     "console-restart": "Redémarrage de la console..."
-  }
+  },
+  "program-ended": "Programme terminé."
 }
