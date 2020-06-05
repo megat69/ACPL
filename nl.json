@@ -8,8 +8,10 @@
     "modify-ini": {
       "debug-state-modified": "Optie debug-state correct gemodificeerd in startup.acpl-ini met waarde {}.",
       "lang-modified": "Optie lang correct gemodificeerd in startup.acpl-ini met waarde {}.",
+      "use-colors-modified": "Optie \"use-colors\" correct gemodificeerd in startup.acpl-ini met waarde {}",
       "debug-state-help": "HULP : De \"debug-state\" verklaring vraagt of je de devlopper debug aan of uit wilt zetten.\nType: boolean.\nStandaard : False.\nMomenteel : {}.",
       "lang-help": "HULP : De \"lang\" verklaring hoort te weten in welke taal het systeem wordt weergegeven.\nType : string.\nMogelijke opties : \"en\", \"fr\", or \"nl\".\nStandaard : en.\nMomenteel : {}.",
+      "use-colors-help": "HULP: de \"use-colors\" verklaring hoort te weten of je kleuren er voor kiest kleuren te gebruiken of niet. Sommige OS software staat dat niet toe.\nType : boolean.\nMogelijke opties : \"True\" of \"False\".\nStandaard : True.\nDaadwerkelijk : {}.",
       "else-help": "Mogelijke waardes :\n\t- \"debug-state\"\n\t- \"lang\"\n\nType \"modify-ini help <verklaring>\" voor betere hulp.",
       "unable-to-modify-option": "Niet mogelijk om deze optie aan te passen."
     },

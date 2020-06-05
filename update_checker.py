@@ -8,40 +8,7 @@ from time import sleep
 from random import randrange
 import psutil
 import json
-
-class bcolors:
-    HEADER = '\033[95m'
-    OKBLUE = '\033[94m'
-    OKGREEN = '\033[92m'
-    WARNING = '\033[93m'
-    FAIL = '\033[91m'
-    ENDC = '\033[0m'
-    BOLD = '\033[1m'
-    UNDERLINE = '\033[4m'
-
-class Text():
-    def __init__(self, texts):
-        self.texts = texts
-        self.console = self.texts["console"]
-        self.console_modify_ini = self.console["modify-ini"]
-        self.console_help = self.console["help"]
-        self.critic_errors = self.texts["critic-errors"]
-        self.statement_errors = self.texts["statement-errors"]
-        self.updates = self.texts["update-checker"]
-
-class CriticError(Exception):
-    def __init__(self, *args):
-        if args:
-            self.message = args[0]
-        else:
-            self.message = None
-
-    def __str__(self):
-        if self.message:
-            return "CriticError : {0}".format(self.message)
-        else:
-            return "CriticError error has been raised."
-
+from recurrent_classes import *
 
 def moveAllFilesinDir(srcDir, dstDir):
     # Check if both the are directories
@@ -139,21 +106,24 @@ for line in data:
     line = str(line).replace("\\r\\n", "")
     
     if str(line).startswith("lang: "):
-        line = str(line).replace("lang: ", "")
-        if line == "fr":
-            language = "fr"
-        elif line == "nl":
-            language = "nl"
-        else:
-            language = "en"
-
-        try:
-            with open(language + ".json", "r", encoding="utf-8") as json_file:
-                texts = json.load(json_file)
-                json_file.close()
-                texts = Text(texts)
-        except NameError:
-            raise CriticError(texts.critic_errors["NameError_LanguageFile"])
+        with open("startup.acpl-ini", "r", encoding="utf-8") as startup_file:
+            line = startup_file.readlines()
+            line = line[1]
+            line = str(line).replace("lang: ", "")
+            line = line.replace("\n", "")
+            if line == "fr":
+                language = "fr"
+            elif line == "nl":
+                language = "nl"
+            else:
+                language = "en"
+            try:
+                with open(language + ".json", "r", encoding="utf-8") as json_file:
+                    texts = json.load(json_file)
+                    json_file.close()
+                    texts = Text(texts)
+            except NameError:
+                raise CriticError(texts.critic_errors["NameError_LanguageFile"])
 
     if str(line).startswith("version: "):
         line = line.replace("version: ", "")
@@ -168,8 +138,8 @@ for line in data:
 
         #print(line, "|", current_version)
 
-        current_version = current_version.split(".")
-        last_version = line.split(".")
+        current_version = current_version.split(".") # Version currently installed
+        last_version = line.split(".") # Version disponible online
 
         if len(last_version) < 3:
             last_version.append("0")

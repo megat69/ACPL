@@ -2,48 +2,10 @@ import os
 from time import sleep
 import sys
 import json
-
-class bcolors:
-    HEADER = '\033[95m'
-    OKBLUE = '\033[94m'
-    OKGREEN = '\033[92m'
-    WARNING = '\033[93m'
-    FAIL = '\033[91m'
-    ENDC = '\033[0m'
-    BOLD = '\033[1m'
-    UNDERLINE = '\033[4m'
-
-class CriticError(Exception):
-    def __init__(self, *args):
-        if args:
-            self.message = args[0]
-        else:
-            self.message = None
-
-    def __str__(self):
-        if self.message:
-            return "CriticError : {0}".format(self.message)
-        else:
-            return "CriticError error has been raised."
+from recurrent_classes import *
 
 running = True
 ini_file = "startup.acpl-ini"
-
-def replace_line(file_name, line_num, text):
-    lines = open(file_name, 'r').readlines()
-    lines[line_num] = text
-    out = open(file_name, 'w')
-    out.writelines(lines)
-    out.close()
-
-class Text():
-    def __init__(self, texts):
-        self.texts = texts
-        self.console = self.texts["console"]
-        self.console_modify_ini = self.console["modify-ini"]
-        self.console_help = self.console["help"]
-        self.critic_errors = self.texts["critic-errors"]
-        self.statement_errors = self.texts["statement-errors"]
 
 
 try:
@@ -153,11 +115,16 @@ while running:
         elif user_input[0] == "lang":
             replace_line(ini_file, 1, "lang: "+user_input[1]+"\n")
             output = texts.console_modify_ini["lang-modified"].format(user_input[1])
+        elif user_input[0] == "use-colors":
+            replace_line(ini_file, 6, "use-colors: "+user_input[1]+"\n")
+            output = texts.console_modify_ini["use-colors-modified"].format(user_input[1])
         elif user_input[0] == "help":
             if user_input[1] == "debug-state":
                 print(texts.console_modify_ini['debug-state-help'].format(str(debug_state)))
             elif user_input[1] == "lang":
                 print(texts.console_modify_ini['lang-help'].format(str(language)))
+            elif user_input[1] == "use-colors":
+                print(texts.console_modify_ini['use-colors-help'].format(str(bcolors.colors_used)))
             else:
                 print(texts.console_modify_ini["else-help"])
         else:
@@ -187,6 +154,9 @@ while running:
         sleep(2)
         os.system("python console.py")
         break
+
+    elif user_input.lower() == "update":
+        os.system("python update_checker.py")
 
     else:
         output = texts.console["unknown-command"]
