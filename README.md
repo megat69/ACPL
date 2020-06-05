@@ -5,6 +5,9 @@ This project has just been made for fun, and is completely useless ;)
 
 But still, if you want to use it, please credit me xD !
 
+### REQUIRED LIBRARIES ###
+`psutil` and `requests` libraries needs to be installed separately.
+
 ### DOCUMENTATION ###
 Actually, this program can only print, input, create variables, and pause.
 
