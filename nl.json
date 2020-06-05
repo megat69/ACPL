@@ -28,10 +28,12 @@
     "console-correctly-reloaded": "Console correct herladen."
   },
   "critic-errors": {
-    "NameError_LanguageFile": "Kan taal bestand niet laden !"
+    "NameError_LanguageFile": "Kan taal bestand niet laden !",
+    "ImpossibleLoad_StartupIni": "Kan startup.acpl-ini niet laden!"
   },
   "statement-errors": {
-
+    "on-line": "op regel",
+    "has-been-raised": "is opgeroepen voor lijn"
   },
   "update-checker": {
     "update-disponible-message": "Een nieuwe update ({}) is verkrijgbaar!",

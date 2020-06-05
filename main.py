@@ -4,6 +4,7 @@ import re
 from time import sleep
 from random import randrange
 import sys
+import json
 
 def lineno():
     return inspect.currentframe().f_back.f_lineno
@@ -51,20 +52,43 @@ class bcolors:
     BOLD = '\033[1m'
     UNDERLINE = '\033[4m'
 
+class Text():
+    def __init__(self, texts):
+        self.texts = texts
+        self.console = self.texts["console"]
+        self.console_modify_ini = self.console["modify-ini"]
+        self.console_help = self.console["help"]
+        self.critic_errors = self.texts["critic-errors"]
+        self.statement_errors = self.texts["statement-errors"]
+        self.updates = self.texts["update-checker"]
+
+class CriticError(Exception):
+    def __init__(self, *args):
+        if args:
+            self.message = args[0]
+        else:
+            self.message = None
+
+    def __str__(self):
+        if self.message:
+            return "CriticError : {0}".format(self.message)
+        else:
+            return "CriticError error has been raised."
+
 def error(line_number, error_type, message=None, *args):
     if args:
         for arg in args:
             message += arg
     if message != None:
-        print(f"{bcolors.FAIL}{error_type} on line {line_number} : {message}{bcolors.ENDC}")
+        print(f"{bcolors.FAIL}{error_type} {texts.statement_error['on-line']} {line_number} : {message}{bcolors.ENDC}")
     else:
-        print(f"{bcolors.FAIL}{error_type} has been raised for line {line_number}{bcolors.ENDC}")
+        print(f"{bcolors.FAIL}{error_type} {texts.statement_errors['has-been-raised']} {line_number}{bcolors.ENDC}")
 
 # Files opening
 try:
     filename_file = open("startup.acpl-ini", "r+", encoding="utf-8")
 except FileNotFoundError:
-    print("Unable to load startup.acpl-ini !")
+    print(texts.critic_errors["ImpossibleLoad_StartupIni"])
     sys.exit()
 filename = filename_file.readlines()
 for lines in filename:
@@ -94,8 +118,18 @@ for lines in filename:
         lines = lines.replace("lang: ", "")
         if lines == "fr":
             language = "fr"
+        elif lines == "nl":
+            language = "nl"
         else:
             language = "en"
+
+        try:
+            with open(language + ".json", "r", encoding="utf-8") as json_file:
+                texts = json.load(json_file)
+                json_file.close()
+                texts = Text(texts)
+        except NameError:
+            raise CriticError(texts.critic_errors["NameError_LanguageFile"])
 
 
 debug_file = open("debug.log", "w", encoding="utf-8")

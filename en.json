@@ -28,10 +28,12 @@
     "console-correctly-reloaded": "Console correctly reloaded."
   },
   "critic-errors": {
-    "NameError_LanguageFile": "Unable to load the language file !"
+    "NameError_LanguageFile": "Unable to load the language file !",
+    "ImpossibleLoad_StartupIni": "Unable to load startup.acpl-ini !"
   },
   "statement-errors": {
-
+    "on-line": "on line",
+    "has-been-raised": "has been raised for line"
   },
   "update-checker": {
     "update-disponible-message": "A new update ({}) is available !",

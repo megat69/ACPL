@@ -28,10 +28,12 @@
     "console-correctly-reloaded": "Console correctement redémarrée."
   },
   "critic-errors": {
-    "NameError_LanguageFile": "Impossible de charger le fichier de langues !"
+    "NameError_LanguageFile": "Impossible de charger le fichier de langues !",
+    "ImpossibleLoad_StartupIni": "Impossible de charger startup.acpl-ini !"
   },
   "statement-errors": {
-
+    "on-line": "sur la ligne",
+    "has-been-raised": "a été appelé pour la ligne"
   },
   "update-checker": {
     "update-disponible-message": "Une nouvelle mise à jour ({}) est disponible !",
