@@ -127,7 +127,10 @@ Syntax : pause(<seconds>)
 <seconds>
 Can be an integer value, a float value, or a variable (`int` or `float` only).
 If you use a variable, the syntax is `pause({<variable_type> <variable_name>}).
- 
+
+## Changelog for 1.4.1
+- Language translated everywhere !
+
 ## Changelog for 1.4
 - Now updates automatically !
 - Supports dutch *Console and errors only*
