@@ -128,6 +128,10 @@ Syntax : pause(<seconds>)
 Can be an integer value, a float value, or a variable (`int` or `float` only).
 If you use a variable, the syntax is `pause({<variable_type> <variable_name>}).
  
+## Changelog for 1.4
+- Now updates automatically !
+- Supports dutch *Console and errors only*
+
 ## Changelog for 1.3
 - Added custom error messages ;)
 - Added multilingual support (french and english). *Console and errors only are supported at the moment.*
