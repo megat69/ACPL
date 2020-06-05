@@ -1,0 +1,22 @@
+ACPl is een kleine programmeer taal gemaakt door een jonge franse student: TheAssasin.
+
+Het doel van deze taal is om simple te zijn, maar vooral is het gewoon een project om mijn vaardigheden te testen en te leren, dus verwacht er niet te veel van;) !
+
+Technisch deel :
+De taal heeft zijn syntax van overal, met dingen die op python lijken, javascript en C, en veel meer.
+
+The language have its syntax coming from everywhere, with python-like parts, JavaScript-like parts, C-like parts, and a lot more.
+Het is gemaakt in Python om geïnterpreteerd te worden.
+
+VOORDELEN en NADELEN :
+Voordelen :
+- Gemakkelijk
+- Fijn om te gebruiken
+- Ik zou het fijn vinden als je er iets mee maakt dus bedankt xD
+
+Nadelen :
+- Te weinig onderdelen
+- Erg langzame uitvoer tijd.
+- Gemeenschap
+
+En bedankt voor het lezen :) !
