@@ -80,6 +80,8 @@ for lines in startup:
         lines = lines.replace("lang: ", "")
         if lines == "fr":
             language = "fr"
+        elif lines == "nl":
+            language = "nl"
         else:
             language = "en"
 
@@ -99,6 +101,9 @@ for lines in startup:
 
 
 print(bcolors.BOLD+texts.console['bootup-message'].format(final_version, current_version)+bcolors.ENDC)
+startup_file.close()
+os.system("python update_checker.py")
+startup_file = open(ini_file, "r", encoding="utf-8").readlines()
 
 while running:
     output = None
@@ -143,10 +148,10 @@ while running:
         user_input = user_input.replace("modify-ini ", "")
         user_input = user_input.split(" ")
         if user_input[0] == "debug-state":
-            replace_line(ini_file, 3, "debug-state: "+user_input[1]+"\n")
+            replace_line(ini_file, 4, "debug-state: "+user_input[1]+"\n")
             output = texts.console_modify_ini["debug-state-modified"].format(user_input[1])
         elif user_input[0] == "lang":
-            replace_line(ini_file, 4, "lang: "+user_input[1]+"\n")
+            replace_line(ini_file, 1, "lang: "+user_input[1]+"\n")
             output = texts.console_modify_ini["lang-modified"].format(user_input[1])
         elif user_input[0] == "help":
             if user_input[1] == "debug-state":
@@ -167,7 +172,11 @@ while running:
               f"\t- 'modify-ini' : {texts.console_help['modify-ini']}\n")
 
     elif user_input.lower() == "about":
-        about = open(f"about_{language}.txt", "r", encoding="iso8859_15")
+        if language == "fr":
+            language_for_about = "fr"
+        else:
+            language_for_about = "en"
+        about = open(f"about_{language_for_about}.txt", "r", encoding="iso8859_15")
         for line in about.readlines():
             print(line, end="")
         about.close()
@@ -184,6 +193,3 @@ while running:
 
     if output != None:
         print(f"{bcolors.WARNING}{texts.console['output'].upper()} :{bcolors.ENDC}\n{output}")
-
-
-startup_file.close()

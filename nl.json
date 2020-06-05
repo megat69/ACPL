@@ -1,0 +1,48 @@
+{
+  "console": {
+    "bootup-message": "ACPL Console - laatste stabiele versie {} - {} CC-BY-SA",
+    "process-ended": "Proces beëindigd.",
+    "launch-code-file": "Starten {}...",
+    "last-stable-release": "Laatste stabiele versie",
+    "current-dev-build": "Actuele dev build",
+    "modify-ini": {
+      "debug-state-modified": "Optie debug-state correct gemodificeerd in startup.acpl-ini met waarde {}.",
+      "lang-modified": "Optie lang correct gemodificeerd in startup.acpl-ini met waarde {}.",
+      "debug-state-help": "HULP : De \"debug-state\" verklaring vraagt of je de devlopper debug aan of uit wilt zetten.\nType: boolean.\nStandaard : False.\nMomenteel : {}.",
+      "lang-help": "HULP : De \"lang\" verklaring hoort te weten in welke taal het systeem wordt weergegeven.\nType : string.\nMogelijke opties : \"en\", \"fr\", or \"nl\".\nStandaard : en.\nMomenteel : {}.",
+      "else-help": "Mogelijke waardes :\n\t- \"debug-state\"\n\t- \"lang\"\n\nType \"modify-ini help <verklaring>\" voor betere hulp.",
+      "unable-to-modify-option": "Niet mogelijk om deze optie aan te passen."
+    },
+    "help": {
+      "available-commands": "Beschikbare commando's",
+      "end": "Beëindigd het console proces.",
+      "run": "Voert een specifiek bestand uit. Syntax: 'run <bestand>'.",
+      "about": "Geeft een speciaal bericht van de auteur gebruikmakend van de taal ;)",
+      "version": "Geeft de laatste stabiele versie en de actuele dev build.",
+      "modify-ini": "Modificeerd een specifieke verklaring in het ini bestand. Betere hulp met 'modify-ini help all'."
+    },
+    "output": "Uitvoer",
+    "reloading": "Console herladen...",
+    "unknown-command": "Onbekend commando.",
+    "unable-load-startup": "Niet mogelijk om startup.acpl-ini te laden!",
+    "console-correctly-reloaded": "Console correct herladen."
+  },
+  "critic-errors": {
+    "NameError_LanguageFile": "Kan taal bestand niet laden !"
+  },
+  "statement-errors": {
+
+  },
+  "update-checker": {
+    "update-disponible-message": "Een nieuwe update ({}) is verkrijgbaar!",
+    "ask-install": "Wil je het installeren?",
+    "old-files-deletion": "Oude bestanden verwijderen...",
+    "old-files-deletion-complete": "Succesvol {} verwijderd",
+    "extracting-all-files": "Alle bestanden uitpakken...",
+    "files-successfully-extracted": "Bestanden succesvol uitgepakt.",
+    "removing-temp-files": "Temp bestanden verwijderen...",
+    "temp-files-removed": "Temp bestanden verwiderd!",
+    "update-applied": "Update toegepast!",
+    "console-restart": "Console herstarten..."
+  }
+}

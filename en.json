@@ -9,7 +9,7 @@
       "debug-state-modified": "Option debug-state modified correctly in startup.acpl-ini with value {}.",
       "lang-modified": "Option lang modified correctly in startup.acpl-ini with value {}.",
       "debug-state-help": "HELP : the \"debug-state\" statement asks if you want to enable or disable devlopper debug.\nType : boolean.\nDefault : False.\nActual : {}.",
-      "lang-help": "HELP : the \"lang\" statement is used to know in which language the system is displayed.\nType : string.\nPossible options : \"en\" or \"fr\".\nDefault : en.\nActual : {}.",
+      "lang-help": "HELP : the \"lang\" statement is used to know in which language the system is displayed.\nType : string.\nPossible options : \"en\", \"fr\", or \"nl\".\nDefault : en.\nActual : {}.",
       "else-help": "Available values :\n\t- \"debug-state\"\n\t- \"lang\"\n\nType \"modify-ini help <statement>\" for better help.",
       "unable-to-modify-option": "Unable to modify this option."
     },
@@ -32,5 +32,17 @@
   },
   "statement-errors": {
 
+  },
+  "update-checker": {
+    "update-disponible-message": "A new update ({}) is available !",
+    "ask-install": "Do you want to install it ?",
+    "old-files-deletion": "Deleting old files...",
+    "old-files-deletion-complete": "Successfully deleted {}.",
+    "extracting-all-files": "Extracting all the files...",
+    "files-successfully-extracted": "Files successfully extracted.",
+    "removing-temp-files": "Removing temp files...",
+    "temp-files-removed": "Temp files removed !",
+    "update-applied": "Update applied !",
+    "console-restart": "Restarting console..."
   }
 }

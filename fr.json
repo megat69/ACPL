@@ -9,7 +9,7 @@
       "debug-state-modified": "Option debug-state correctement modifiée dans le fichier startup.acpl-ini avec la valeur {}.",
       "lang-modified": "Option lang modifiée correctement dans le fichier startup.acpl-ini avec la valeur {}.",
       "debug-state-help": "AIDE : la variable \"debug-state\" demande si vous voulez activer ou non le débug de développeur.\nType : Booléen.\nDefaut : False.\nActuel : {}.",
-      "lang-help": "AIDE : la variable \"lang\" est utilisée pour savoir dans quel langage le système doit être affiché.\nType : string.\nOptions possibles : \"en\" ou \"fr\".\nDefaut : en.\nActuel : {}.",
+      "lang-help": "AIDE : la variable \"lang\" est utilisée pour savoir dans quel langage le système doit être affiché.\nType : string.\nOptions possibles : \"en\", \"fr\", ou \"nl\".\nDefaut : en.\nActuel : {}.",
       "else-help": "Valeurs disponibles :\n\t- \"debug-state\"\n\t- \"lang\"\n\nTapez \"modify-ini help <variable>\" pour une meilleure aide.",
       "unable-to-modify-option": "Impossible de modifier cette option."
     },
@@ -32,5 +32,17 @@
   },
   "statement-errors": {
 
+  },
+  "update-checker": {
+    "update-disponible-message": "Une nouvelle mise à jour ({}) est disponible !",
+    "ask-install": "Voulez-vous l'installer ?",
+    "old-files-deletion": "Supression des anciens fichiers...",
+    "old-files-deletion-complete": "{} a été correctement supprimmé.",
+    "extracting-all-files": "Extraction de tous les fichiers...",
+    "files-successfully-extracted": "Fichiers extraits avec succès.",
+    "removing-temp-files": "Suppression des fichiers temporaires...",
+    "temp-files-removed": "Les fichiers temporaires ont été supprimmés !",
+    "update-applied": "Mise à jour appliquée !",
+    "console-restart": "Redémarrage de la console..."
   }
 }
