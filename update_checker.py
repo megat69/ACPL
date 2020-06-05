@@ -10,15 +10,17 @@ import psutil
 import json
 from recurrent_classes import *
 
+
 def moveAllFilesinDir(srcDir, dstDir):
     # Check if both the are directories
-    if os.path.isdir(srcDir) and os.path.isdir(dstDir) :
+    if os.path.isdir(srcDir) and os.path.isdir(dstDir):
         # Iterate over all the files in source directory
         for filePath in glob.glob(srcDir + '\*'):
             # Move each file to destination Directory
             shutil.move(filePath, dstDir)
     else:
         print(f"{bcolors.FAIL}srcDir & dstDir should be Directories{bcolors.ENDC}")
+
 
 def replace_line(file_name, line_num, text):
     lines = open(file_name, 'r').readlines()
@@ -27,8 +29,9 @@ def replace_line(file_name, line_num, text):
     out.writelines(lines)
     out.close()
 
+
 def checkIfProcessRunning(processName):
-    #Iterate over the all the running process
+    # Iterate over the all the running process
     for proc in psutil.process_iter():
         try:
             # Check if process name contains the given name string.
@@ -38,31 +41,35 @@ def checkIfProcessRunning(processName):
             pass
     return False
 
+
 def update_program(url):
     r = requests.get(url)
     with open("new_version.zip", "wb") as code:
         code.write(r.content)
-    if checkIfProcessRunning("console.py"): #process_exists("console.py"):
+    if checkIfProcessRunning("console.py"):  # process_exists("console.py"):
         os.system("taskkill /im console.py")
         console_was_running = True
     else:
         console_was_running = False
     with ZipFile("new_version.zip", 'r') as zip:
         # printing all the contents of the zip file
-        #zip.printdir()
+        # zip.printdir()
         files = zip.filelist
         for i in range(len(files)):
             files[i] = str(files[i].filename).replace("ACPL-master/", "")
-            #print(files[i])
+            # print(files[i])
         print(f"{bcolors.WARNING}{texts.updates['old-files-deletion']}{bcolors.ENDC}\n")
         sleep(1)
         for i in range(1, len(files)):
             try:
-                os.remove(files[i])
-                print(f"{texts.updates['old-files-deletion-complete'].format(files[i])}")
+                if files[i] != "update_checker.py":
+                    os.remove(files[i])
+                    print(f"{texts.updates['old-files-deletion-complete'].format(files[i])}")
             except FileNotFoundError:
                 pass
-            sleep(randrange(1, 8)/10)
+            except PermissionError:
+                pass
+            sleep(randrange(1, 8) / 10)
         # extracting all the files
         sleep(1)
         print(f'{bcolors.WARNING}{texts.updates["extracting-all-files"]}{bcolors.ENDC}\n')
@@ -70,12 +77,21 @@ def update_program(url):
         ZipFile("new_version.zip", 'r').extractall()
         print(f"{bcolors.OKGREEN}{texts.updates['files-successfully-extracted']}{bcolors.ENDC}\n")
         sleep(1)
-        moveAllFilesinDir(os.getcwd()+"/ACPL-master/", os.getcwd())
+        try:
+            moveAllFilesinDir(os.getcwd() + "/ACPL-master/", os.getcwd())
+        except shutil.Error:
+            pass
         zip.close()
         print(f"{bcolors.WARNING}{texts.updates['removing-temp-files']}{bcolors.ENDC}")
         sleep(1)
         os.remove("new_version.zip")
-        os.rmdir(os.getcwd()+"/ACPL-master/")
+        try:
+            os.rmdir(os.getcwd() + "/ACPL-master/")
+        except OSError:
+            filelist = [f for f in os.listdir(os.getcwd() + "/ACPL-master/")]
+            for f in filelist:
+                os.remove(os.path.join(os.getcwd() + "/ACPL-master/", f))
+            os.rmdir(os.getcwd() + "/ACPL-master/")
         print(f'{bcolors.OKGREEN}{texts.updates["temp-files-removed"]}{bcolors.ENDC}\n\n')
         sleep(2)
         print(f"{bcolors.OKGREEN}{texts.updates['update-applied']}{bcolors.ENDC}\n")
@@ -86,10 +102,11 @@ def update_program(url):
                 os.system("python console.py")
                 ini_file.close()
 
+
 def ask_update_program(url):
     version = ""
     for chr in last_version:
-        version += chr+"."
+        version += chr + "."
     print(f"{bcolors.WARNING}{texts.updates['update-disponible-message'].format(version)}{bcolors.ENDC}")
     answer = ""
     while answer.lower() != "yes" and answer.lower() != "no":
@@ -97,14 +114,16 @@ def ask_update_program(url):
     if answer.lower() == "yes":
         update_program(url)
 
-data = urllib.request.urlopen("https://raw.githubusercontent.com/megat69/ACPL/master/startup.acpl-ini").readlines() # it's a file like object and works just like a file
+
+data = urllib.request.urlopen(
+    "https://raw.githubusercontent.com/megat69/ACPL/master/startup.acpl-ini").readlines()  # it's a file like object and works just like a file
 
 for line in data:
     if str(line).startswith("b'"):
         line = str(line).replace("b'", "")
         line = str(line).replace("'", "")
     line = str(line).replace("\\r\\n", "")
-    
+
     if str(line).startswith("lang: "):
         with open("startup.acpl-ini", "r", encoding="utf-8") as startup_file:
             line = startup_file.readlines()
@@ -136,10 +155,10 @@ for line in data:
                     break
             startup_file.close()
 
-        #print(line, "|", current_version)
+        # print(line, "|", current_version)
 
-        current_version = current_version.split(".") # Version currently installed
-        last_version = line.split(".") # Version disponible online
+        current_version = current_version.split(".")  # Version currently installed
+        last_version = line.split(".")  # Version disponible online
 
         if len(last_version) < 3:
             last_version.append("0")
