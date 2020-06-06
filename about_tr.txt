@@ -2,9 +2,9 @@ ACPL, genç bir Fransız öğrenci olan TheAssassin tarafından oluşturulan kü
 
 Bu dilin amacı basit olmaktır, ancak temel olarak, sadece becerilerimi test etmek ve öğrenmek için bir proje, bu yüzden çok fazla şey beklemeyin ;) !
 
-Technical part :
-The language have its syntax coming from everywhere, with python-like parts, JavaScript-like parts, C-like parts, and a lot more.
-It is transpiled in Python to be interpreted.
+Teknik Kısım:
+Dilin sözdizimi her yerden geliyor, Python benzeri parçalar, JavaScript benzeri parçalar, C benzeri parçalar ve çok daha fazlası.
+Yorumlanması için Python'a aktarılır.
 
 ARTILARI ve EKSİLERİ :
 Artıları:
