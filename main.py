@@ -6,6 +6,7 @@ from random import randrange
 import sys
 import json
 from recurrent_classes import *
+import os
 
 
 # Files opening
@@ -90,6 +91,7 @@ debug("other", lineno(), "code_lines = ", code_lines)
 # Var container
 variables_container = {}
 constants_container = {}
+used_libs = []
 
 line_numbers = 0
 is_in_comment = False
@@ -141,7 +143,7 @@ for line in code_lines:
                 if char != " " and char != "=" and actual_state == "name":
                     name += char
                 elif char == " " or char == "=" and actual_state == "name":
-                    line = line.replace(name, "")
+                    line = line.replace(name, "", 1)
                     break
             actual_state = "var"
             line = line.replace("=", "")
@@ -191,7 +193,7 @@ for line in code_lines:
                     content = randrange(0, int(content))
                 var_content = var_content.replace(f"random({old_content})", str(content))
             # Maths
-            if ("*" in var_content or "+" in var_content or "-" in var_content or "/" in var_content or "//" in var_content or "%" in var_content or "^" in var_content or "**" in var_content) and string.ascii_letters not in var_content:
+            if ("*" in var_content or "+" in var_content or re.compile("-{0}-{1}\w{0}").match(var_content) or "/" in var_content or "//" in var_content or "%" in var_content or "^" in var_content or "**" in var_content) and string.ascii_letters not in var_content:
                 var_content = var_content.replace("^", "**")
                 while "{" in var_content and "}" in var_content:
                     variable = line[line.find("{") + 1:line.find("}")]
@@ -201,6 +203,12 @@ for line in code_lines:
             # Round
             if round_bool:
                 var_content = round(float(var_content))
+            # LIBS
+            # STRING LIB
+            if "string" in used_libs:
+                import libs.lib_string
+                var_content = libs.lib_string.lower(var_content)
+                var_content = libs.lib_string.upper(var_content)
             variables_container[name] = var_content
             debug("other", lineno(), variables_container)
         elif line.startswith("pause"):
@@ -225,6 +233,15 @@ for line in code_lines:
                 sleep(time)
             else:
                 error(line_numbers, "StatementError", "Statements Missing !")
+                break
+        elif line.startswith("$use: "):
+            line = line.replace("$use:", "")
+            line = line.replace(" ", "")
+            line = line.replace("\n", "")
+            if os.path.exists(f"{os.getcwd()}/libs/lib_{line}.py") is True:
+                used_libs.append(line)
+            else:
+                error(line_numbers, "UnexistingLibError", "Lib is not existing or has not been installed.")
                 break
         elif line != "" and line != " " and line != "\n":
             error(line_numbers, "Error", "Unknown function or method !")

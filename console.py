@@ -3,6 +3,7 @@ from time import sleep
 import sys
 import json
 from recurrent_classes import *
+import requests
 
 running = True
 ini_file = "startup.acpl-ini"
@@ -161,6 +162,33 @@ while running:
 
     elif user_input.lower() == "update":
         os.system("python update_checker.py")
+
+    elif user_input.startswith("lib"):
+        user_input = user_input.replace("lib ", "")
+        if user_input.startswith("install"):
+            user_input = user_input.replace("install ", "")
+            url = "https://raw.githubusercontent.com/megat69/ACPL/master/libs/lib_"+user_input+".py"
+            r = requests.get(url)
+            existing = r.status_code == 200
+            if not existing:
+                print("Error : Lib does not exist !")
+                continue
+            with open(f"libs/lib_{user_input}.py", "wb") as code:
+                code.write(r.content)
+            print(f"Library {user_input} installed !")
+        elif user_input.startswith("update"):
+            user_input = user_input.replace("update ", "")
+            url = "https://raw.githubusercontent.com/megat69/ACPL/master/libs/lib_"+user_input+".py"
+            r = requests.get(url)
+            existing = r.status_code == 200
+            if not existing:
+                print("Error : Lib does not exist !")
+                continue
+            with open(f"libs/lib_{user_input}.py", "wb") as code:
+                code.write(r.content)
+            print(f"Library {user_input} updated !")
+        else:
+            raise CriticError
 
     else:
         output = texts.console["unknown-command"]

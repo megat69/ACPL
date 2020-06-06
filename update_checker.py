@@ -168,7 +168,8 @@ for line in data:
         # print(line, "|", current_version)
 
         if "-" in current_version:
-            current_version = current_version.replace("-", "")
+            current_version = str(current_version.replace("-", ""))
+            current_version = int(current_version)
 
         current_version = current_version.split(".")  # Version currently installed
         last_version = line.split(".")  # Version disponible online
