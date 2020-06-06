@@ -133,6 +133,24 @@ Syntax : pause(<seconds>)
 <seconds>
 Can be an integer value, a float value, or a variable.
 If you use a variable, the syntax is `pause({<variable_name>}).
+ 
+#### libraries ####
+For further detail, go to the wiki page.
+
+You can download and install libs through the console commands.
+
+Type `lib install <lib>` to install one and `lib update <lib>` to update one.
+
+To use one, declare at the beginning of your program `$use: <lib>`.
+
+**Actual disponble libs :**
+
+- String : basic string manipulations
+
+## Changelog for 2.2
+- Added libs
+- Added `lib` command to console
+- Added a few features
 
 ## Changelog for 2.1
 - Variables are usable everywhere again
