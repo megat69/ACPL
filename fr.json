@@ -47,7 +47,8 @@
     "removing-temp-files": "Suppression des fichiers temporaires...",
     "temp-files-removed": "Les fichiers temporaires ont été supprimmés !",
     "update-applied": "Mise à jour appliquée !",
-    "console-restart": "Redémarrage de la console..."
+    "console-restart": "Redémarrage de la console...",
+    "unable-to-install": "Cette version modifie le fichier de recherche de mises à jour. À cause de cela, nous sommes incapables de le modifier automatiquement (à moins que vous vouliez que tout soit supprimmé).\nCe que nous pouvons faire est télécharger et extraire la nouvelle version là où l'ACPL est installé.\nDonc :\n\t- Allez voir le dossier \"ACPL-master\" dans le répertoire où l'ACPL est installé.\n\t- Tapez \"end\" dans la console.\n\t- Copiez-collez le contenu du dossier \"ACPL-master\" APRÈS AVOIR FERMÉ CETTE FENÊTRE et remplacez les anciens fichiers."
   },
   "program-ended": "Programme terminé."
 }

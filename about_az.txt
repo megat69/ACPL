@@ -1,0 +1,20 @@
+ACPL balaca bir proqramlaşdırma dilidir, hansı ki cavan bir fransalî şagird tərəfindən düzəldilib : TheAssassin
+
+Bu dilin məqsədi sadədir, lakim başda olaraq, bu sadəcə mənim bacarıqlarımı test etdirmək üçündür, ona görə də çox şey gözləməyin ;) !
+
+Texniki hissə :
+Bu dilin sintaksisi hər yerdən gəlir, pythona-bənzər hissələri ilə, Javascriptə-bənzər hissələr, C-bənzər hissələr, və daha çoxu.
+Təfsir etmək üçün Pythonda tərcümə olunur.
+
+PROS və CONS :
+Pros :
+- Sadə
+- İşlənməsi gözəl
+- Buna bir şey etsəniz təşəkkür edirəm xD
+
+Cons :
+- Çoxlu özəlliklər
+- Həqiqətən az çalıştırma zamanı
+- İcma
+
+Və oxuduğunuz üçün çox sağolun :) !

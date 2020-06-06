@@ -1,5 +1,6 @@
 import inspect
 import sys
+import json
 
 class bcolors:
     with open("startup.acpl-ini", "r", encoding="utf-8") as startup_file:
@@ -16,6 +17,7 @@ class bcolors:
                     ENDC = '\033[0m'
                     BOLD = '\033[1m'
                     UNDERLINE = '\033[4m'
+                    ITALICS = '\x1B[3m'
                 else:
                     HEADER = ''
                     OKBLUE = ''
@@ -25,6 +27,7 @@ class bcolors:
                     ENDC = ''
                     BOLD = ''
                     UNDERLINE = ''
+                    ITALICS = ''
         startup_file.close()
         colors_used = HEADER != ''
 
@@ -59,7 +62,7 @@ def error(line_number, error_type, message=None, *args):
         for arg in args:
             message += arg
     if message != None:
-        print(f"{bcolors.FAIL}{error_type} {texts.statement_error['on-line']} {line_number} : {message}{bcolors.ENDC}")
+        print(f"{bcolors.FAIL}{error_type} {texts.statement_errors['on-line']} {line_number} : {message}{bcolors.ENDC}")
     else:
         print(f"{bcolors.FAIL}{error_type} {texts.statement_errors['has-been-raised']} {line_number}{bcolors.ENDC}")
 
@@ -67,7 +70,7 @@ def lineno():
     return inspect.currentframe().f_back.f_lineno
 
 def split(word):
-    return [char for char in word]
+    return list(word)
 
 def debug(entry_type, line, message, *args):
     if debug_const:
@@ -80,8 +83,10 @@ def debug(entry_type, line, message, *args):
         if args:
             for arg in args:
                 message += str(arg)
-        debug_msg = entry + "\t" + "(" + str(line) + ")\t" + str(message) + "\n"
-        debug_file.write(debug_msg)
+        debug_msg = bcolors.ITALICS + bcolors.OKBLUE + entry + "\t" + "(" + str(line) + ")\t" + str(message) + bcolors.ENDC + "\n"
+        with open("debug.log", "w", encoding="utf-8") as debug_file:
+            debug_file.write(debug_msg)
+            debug_file.close()
         print(debug_msg)
         if entry == "<<<":
             debug_file.write("\n")
@@ -123,3 +128,23 @@ for lines in startup:
             debug_const = False
         else:
             debug_const = True
+
+    if str(lines).startswith("lang: "):
+        with open("startup.acpl-ini", "r", encoding="utf-8") as startup_file:
+            lines = startup_file.readlines()
+            lines = lines[1]
+            lines = str(lines).replace("lang: ", "")
+            lines = lines.replace("\n", "")
+            if lines == "fr":
+                language = "fr"
+            elif lines == "nl":
+                language = "nl"
+            else:
+                language = "en"
+            try:
+                with open(language + ".json", "r", encoding="utf-8") as json_file:
+                    texts = json.load(json_file)
+                    json_file.close()
+                    texts = Text(texts)
+            except NameError:
+                raise CriticError(texts.critic_errors["NameError_LanguageFile"])

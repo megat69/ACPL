@@ -87,11 +87,8 @@ for i in range(0, len(code_lines)):
 debug("other", lineno(), "code_lines = ", code_lines)
 
 
-# Var containers
-ints = {}
-floats = {}
-strings = {}
-bools = {}
+# Var container
+variables_container = {}
 
 line_numbers = 0
 
@@ -105,239 +102,84 @@ for line in code_lines:
             line = line.replace(")", "")
             line = line.replace(";", "")
             while "{" in line and "}" in line:
-                variables = line[line.find("{") + 1:line.find("}")]
+                variable = line[line.find("{") + 1:line.find("}")]
                 debug("other", lineno(), "Variable found in print.")
-                variables = variables.split(" ")
-                if variables[0] == "int":
-                    variable = ints.get(variables[1])
-                elif variables[0] == "float":
-                    variable = floats.get(variables[1])
-                elif variables[0] == "str" or variables[0] == "string":
-                    variable = strings.get(variables[1])
-                elif variables[0] == "bool" or variables[0] == "boolean":
-                    variable = bools.get(variables[1])
-                line = line.replace("{" + variables[0] + " " + variables[1] + "}", str(variable))
+                line = line.replace("{" + variable + "}", str(variables_container[variable]))
             print(line)
         else:
             error(line_numbers, "StatementError", "Statement missing.")
             break
-    elif line.startswith("int"):
-        if "input(" in line:
-            instruction = line.split(" ")
-            for i in range(4, len(instruction)):
-                instruction[3] += " " + instruction[i]
-            if "(" in line and ")" in instruction[3]:
-                instruction[3] = instruction[3].replace("(", "")
-                instruction[3] = instruction[3].replace(")", "")
-                instruction[3] = instruction[3].replace("input", "")
-                instruction[3] = instruction[3].replace("\\n", "\n")
-                instruction[3] = instruction[3].replace("\\t", "\t")
-                try:
-                    instruction[3] = int(input(bcolors.WARNING+instruction[3]+bcolors.ENDC))
-                except ValueError:
-                    error(line_numbers, "ValueError", "What was inputted is not an integer !")
-                    break
-            else:
-                error(line_numbers, "StatementError")
-                break
-            if "--round" in line:
-                instruction[3] = instruction[3].replace("-round(", "")
-                instruction[3] = round(float(instruction[3]))
-        elif "math" in line:
-            instruction = line.split(" ")
-            if "{" in instruction[4] and "}" in instruction[4]:
-                for i in range(4, len(instruction)):
-                    instruction[4] += instruction[i]
-                variables = line[line.find("{") + 1:line.find("}")]
-                debug("other", lineno(), "Variable found in math.")
-                variables = variables.split(" ")
-                if variables[0] == "int":
-                    variable = ints.get(variables[1])
-                elif variables[0] == "float":
-                    variable = floats.get(variables[1])
-                else:
-                    error(line_numbers, "StatementError")
-                    break
-                final_instruction = re.sub("({).*?(\})", "\g<1>\g<2>", instruction[4])
-                final_instruction = final_instruction.replace("{}", str(variable))
-                instruction[4] = final_instruction
-                debug("other", lineno(), "final_instruction : ", final_instruction)
-                instruction[4] = instruction[4].replace("^", "**")
-            result = eval(str(instruction[4]))
-            instruction[3] = result
-            if "--round" in line:
-                instruction[3] = instruction[3].replace("-round(", "")
-                instruction[3] = round(float(instruction[3]))
-        elif "random(" in line:
-            instruction = line.split(" ")
-            if len(instruction) > 4:
-                instruction[3] += instruction[4]
-            debug("other", lineno(), instruction[3])
-            instruction[3] = instruction[3].replace("random(", "")
-            instruction[3] = instruction[3].replace(")", "")
-            instruction[3] = instruction[3].replace(" ", "")
-            if "," in instruction[3]:
-                randomness = instruction[3].split(",")
-            else:
-                randomness = [0, instruction[3]]
-            debug("other", lineno(), randomness)
-            instruction[3] = randrange(int(randomness[0]), int(randomness[1]))
-        else:
-            instruction = line.split(" ")
-            if "--round" in line:
-                instruction[3] = instruction[3].replace("--round(", "")
-                instruction[3] = round(float(instruction[3]))
-            try:
-                instruction[3] = int(instruction[3])
-            except ValueError:
-                error(line_numbers, "StatementError:", "Variable not int !")
-                break
-        if isinstance(instruction[1], str) and isinstance(instruction[3], int) and instruction[2] == "=":
-            ints[instruction[1]] = instruction[3]
-        else:
-            error(line_numbers, "StatementError")
-            break
-    elif line.startswith("float"):
-        if "input(" in line:
-            instruction = line.split(" ")
-            for i in range(4, len(instruction)):
-                instruction[3] += " " + instruction[i]
-            if "(" in line and ")" in instruction[3]:
-                instruction[3] = instruction[3].replace("(", "")
-                instruction[3] = instruction[3].replace(")", "")
-                instruction[3] = instruction[3].replace("input", "")
-                instruction[3] = instruction[3].replace("\\n", "\n")
-                instruction[3] = instruction[3].replace("\\t", "\t")
-                try:
-                    instruction[3] = float(input(bcolors.WARNING+instruction[3]+bcolors.ENDC))
-                except ValueError:
-                    error(line_numbers, "ValueError", "What was inputted is not an float number !")
-                    break
-            else:
-                error(line_numbers, "StatementError")
-                break
-        elif "math" in line:
-            instruction = line.split(" ")
-            for i in range(4, len(instruction)):
-                instruction[4] += instruction[i]
-            if "{" in instruction[4] and "}" in instruction[4]:
-                variables = line[line.find("{") + 1:line.find("}")]
-                debug("other", lineno(), "Variable found in math.")
-                variables = variables.split(" ")
-                if variables[0] == "int":
-                    variable = ints.get(variables[1])
-                elif variables[0] == "float":
-                    variable = floats.get(variables[1])
-                else:
-                    error(line_numbers, "StatementError")
-                    break
-                final_instruction = re.sub("({).*?(\})", "\g<1>\g<2>", instruction[4])
-                final_instruction = final_instruction.replace("{}", str(variable))
-                instruction[4] = final_instruction
-                debug("other", lineno(), "final_instruction : ", final_instruction)
-            result = eval(instruction[4])
-            instruction[3] = result
-        elif "random(" in line:
-            instruction = line.split(" ")
-            if len(instruction) > 4:
-                instruction[3] += instruction[4]
-            debug("other", lineno(), instruction[3])
-            instruction[3] = instruction[3].replace("random(", "")
-            instruction[3] = instruction[3].replace(")", "")
-            instruction[3] = instruction[3].replace(" ", "")
-            if "," in instruction[3]:
-                randomness = instruction[3].split(",")
-            else:
-                randomness = [0, instruction[3]]
-            debug("other", lineno(), randomness)
-            instruction[3] = randrange(int(randomness[0]), int(randomness[1]))
-        else:
-            instruction = line.split(" ")
-            if len(instruction) != 4:
-                error(line_numbers, "StatementError", "Arguments missing !")
-                break
-            try:
-                if "," in instruction[3]:
-                    instruction[3] = instruction[3].replace(",", ".")
-                instruction[3] = float(instruction[3])
-            except ValueError:
-                error(line_numbers, "StatementError", "Variable not float !")
-                break
-        if isinstance(instruction[1], str) and isinstance(instruction[3], float) and instruction[2] == "=":
-            floats[instruction[1]] = instruction[3]
-        else:
-            error(line_numbers, "StatementError")
-            break
-    elif line.startswith("str") or line.startswith("string"):
-        if "input(" in line:
-            instruction = line.split(" ")
-            for i in range(4, len(instruction)):
-                instruction[3] += " " + instruction[i]
-            if "(" in line and ")" in instruction[3]:
-                instruction[3] = instruction[3].replace("(", "")
-                instruction[3] = instruction[3].replace(")", "")
-                instruction[3] = instruction[3].replace("input", "")
-                instruction[3] = instruction[3].replace("\\n", "\n")
-                instruction[3] = instruction[3].replace("\\t", "\t")
-                instruction[3] = input(bcolors.WARNING+instruction[3]+bcolors.ENDC)
-            else:
-                error(line_numbers, "StatementError")
-                break
-        else:
-            instruction = line.split(" ")
-            if len(instruction) != 4:
-                error(line_numbers, "StatementError", "Arguments missing !")
-                break
-            try:
-                instruction[3] = str(instruction[3])
-            except ValueError:
-                error(line_numbers, "StatementError", "Variable not string !")
-                break
-        if isinstance(instruction[1], str) and isinstance(instruction[3], str) and instruction[2] == "=":
-            strings[instruction[1]] = instruction[3].replace("\n", "")
-        else:
-            error(line_numbers, "StatementError")
-            break
-    elif line.startswith("bool") or line.startswith("boolean"):
-        instruction = line.split(" ")
-        if len(instruction) != 4:
-            error(line_numbers, "StatementError", "Arguments Missing !")
-            break
+    elif line.startswith("var "):
+        line = line.replace("var ", "")
+        if line.endswith("\n"):
+            line = split(line)
+            line.pop()
+            temp_line = ""
+            for char in line:
+                temp_line += char
+            line = temp_line
+        line = line.replace("\\n", "\n")
         try:
-            if instruction[3].lower() == "false":
-                instruction[3] = 0
-            elif instruction[3].lower() == "true":
-                instruction[3] = 1
-            instruction[3] = bool(instruction[3])
+            if float(line):
+                line = line.replace(",", ".")
         except ValueError:
-            error(line_numbers, "StatementError", "Variable not bool !")
-            break
-        if isinstance(instruction[1], str) and isinstance(instruction[3], bool) and instruction[2] == "=":
-            bools[instruction[1]] = bool(instruction[3])
-        else:
-            error(line_numbers, "StatementError")
-            break
+            pass
+        name = ""
+        actual_state = "name"
+        for char in split(line):
+            if char != " " and char != "=" and actual_state == "name":
+                name += char
+            elif char == " " or char == "=" and actual_state == "name":
+                line = line.replace(name, "")
+                break
+        actual_state = "var"
+        line = line.replace("=", "")
+        while line.startswith(" "):
+            line = split(line)
+            line.pop(0)
+            temp_line = ""
+            for char in line:
+                temp_line += char
+            line = temp_line
+        var_content = ""
+        for char in split(line):
+            var_content += char
+        # Round
+        round_bool = "--round" in var_content
+        if round_bool:
+            var_content = var_content.replace("--round", "")
+        if var_content.endswith(" "):
+            var_content = split(var_content)
+            var_content.pop()
+            temp_var_content = ""
+            for temp_var_content_thing in var_content:
+                temp_var_content += temp_var_content_thing
+            var_content = temp_var_content
+        # Inputs
+        if var_content.startswith("input("):
+            var_content = var_content.replace("input(", "")
+            var_content = var_content.replace(")", "")
+            var_content = input(bcolors.WARNING + var_content + bcolors.ENDC)
+        # Maths
+        if ("*" in var_content or "+" in var_content or "-" in var_content or "/" in var_content or "//" in var_content or "%" in var_content or "^" in var_content or "**" in var_content) and string.ascii_letters not in var_content:
+            var_content = var_content.replace("^", "**")
+            var_content = eval(str(var_content))
+        # Round
+        if round_bool:
+            var_content = round(float(var_content))
+        variables_container[name] = var_content
+        debug("other", lineno(), variables_container)
     elif line.startswith("pause"):
         line = line.replace("pause", "")
         if "(" in line and ")" in line:
             line = line.replace("(", "")
             line = line.replace(")", "")
             line = line.replace(";", "")
+            line = line.replace("\n", "")
             if "{" in line and "}" in line:
-                variables = line[line.find("{") + 1:line.find("}")]
+                variable = line[line.find("{") + 1:line.find("}")]
                 debug("other", lineno(), "Variable found in pause.")
-                variables = variables.split(" ")
-                if variables[0] == "int":
-                    variable = ints.get(variables[1])
-                elif variables[0] == "float":
-                    variable = floats.get(variables[1])
-                elif variables[0] == "str" or variables[0] == "string":
-                    error(line_numbers, "StatementError", "Cannot get string for pause")
-                    break
-                elif variables[0] == "bool" or variables[0] == "boolean":
-                    error(line_numbers, "StatementError", "Cannot get boolean for pause")
-                    break
-                line = variable
+                line = variables_container[variable]
             try:
                 time = int(line)
             except ValueError:
@@ -350,11 +192,10 @@ for line in code_lines:
         else:
             error(line_numbers, "StatementError", "Statements Missing !")
             break
+    elif line != "" and line != " " and line != "\n":
+        error(line_numbers, "Error", "Unknown function or method !")
 
-debug("other", lineno(), ints)
-debug("other", lineno(), floats)
-debug("other", lineno(), strings)
-debug("other", lineno(), bools)
+debug("other", lineno(), variables_container)
 
 print(f"\n{bcolors.OKBLUE}{texts.texts['program-ended']}{bcolors.ENDC}")
 

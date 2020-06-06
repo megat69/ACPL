@@ -41,6 +41,12 @@ def checkIfProcessRunning(processName):
             pass
     return False
 
+def extract_new_version(url):
+    r = requests.get(url)
+    with open("new_version.zip", "wb") as code:
+        code.write(r.content)
+    with ZipFile("new_version.zip", 'r') as zip:
+        zip.extractall(os.getcwd())
 
 def update_program(url):
     r = requests.get(url)
@@ -112,7 +118,11 @@ def ask_update_program(url):
     while answer.lower() != "yes" and answer.lower() != "no":
         answer = input(f"{bcolors.WARNING}{texts.updates['ask-install']} (Yes/No){bcolors.ENDC}\n")
     if answer.lower() == "yes":
-        update_program(url)
+        if "-" in last_version:
+            print(f"{bcolors.FAIL}{bcolors.BOLD}{texts.updates['unable-to-install']}{bcolors.ENDC}")
+            extract_new_version(url)
+        else:
+            update_program(url)
 
 
 data = urllib.request.urlopen(
@@ -157,6 +167,9 @@ for line in data:
 
         # print(line, "|", current_version)
 
+        if "-" in current_version:
+            current_version = current_version.replace("-", "")
+
         current_version = current_version.split(".")  # Version currently installed
         last_version = line.split(".")  # Version disponible online
 
@@ -166,9 +179,17 @@ for line in data:
         if len(current_version) < 3:
             current_version.append("0")
 
-        if int(current_version[0]) < int(last_version[0]):
-            ask_update_program('https://github.com/megat69/ACPL/archive/master.zip')
-        elif int(current_version[1]) < int(last_version[1]):
-            ask_update_program('https://github.com/megat69/ACPL/archive/master.zip')
-        elif int(current_version[2]) < int(last_version[2]):
-            ask_update_program('https://github.com/megat69/ACPL/archive/master.zip')
+        if "-" not in last_version:
+            if int(current_version[0]) < int(last_version[0]):
+                ask_update_program('https://github.com/megat69/ACPL/archive/master.zip')
+            elif int(current_version[1]) < int(last_version[1]):
+                ask_update_program('https://github.com/megat69/ACPL/archive/master.zip')
+            elif int(current_version[2]) < int(last_version[2]):
+                ask_update_program('https://github.com/megat69/ACPL/archive/master.zip')
+        else:
+            if current_version[0] != last_version[0]:
+                ask_update_program('https://github.com/megat69/ACPL/archive/master.zip')
+            elif current_version[1] != last_version[1]:
+                ask_update_program('https://github.com/megat69/ACPL/archive/master.zip')
+            elif current_version[2] != last_version[2]:
+                ask_update_program('https://github.com/megat69/ACPL/archive/master.zip')

@@ -1,0 +1,20 @@
+ACPL, genç bir Fransız öğrenci olan TheAssassin tarafından oluşturulan küçük bir programlama dilidir.
+
+Bu dilin amacı basit olmaktır, ancak temel olarak, sadece becerilerimi test etmek ve öğrenmek için bir proje, bu yüzden çok fazla şey beklemeyin ;) !
+
+Technical part :
+The language have its syntax coming from everywhere, with python-like parts, JavaScript-like parts, C-like parts, and a lot more.
+It is transpiled in Python to be interpreted.
+
+ARTILARI ve EKSİLERİ :
+Artıları:
+- Basit
+- Kullanımı güzel
+- Onunla bir şey yaparsan lütfen çok teşekkür ederim xD
+
+Eksileri :
+- Çok az özellik var
+- Gerçekten yavaş yürütme süresi
+- Topluluk
+
+Ve okuduğunuz için teşekkürler :) !

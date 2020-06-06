@@ -1,0 +1,9 @@
+print(Hiii !) # Print
+
+# Asking
+var TimeToWait = input(How much time do you want to wait ? (In seconds)\n)
+var Reminder = input(And for what purpose ? Give me your reminder.\n)
+
+# Main
+pause({TimeToWait})
+print(You asked me to remind you this thing : {Reminder})

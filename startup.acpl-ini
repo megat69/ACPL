@@ -1,7 +1,7 @@
-filename: code
-lang: en
-version: 1.4.5
-current-version: Pre1.4c_F23
+filename: code_sample2
+lang: fr
+version: 2.0-
+current-version: Pre2.0c_D4
 debug-state: False
 console-reloaded: False
 use-colors: True

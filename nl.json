@@ -47,7 +47,8 @@
     "removing-temp-files": "Temp bestanden verwijderen...",
     "temp-files-removed": "Temp bestanden verwiderd!",
     "update-applied": "Update toegepast!",
-    "console-restart": "Console herstarten..."
+    "console-restart": "Console herstarten...",
+    "unable-to-install": "Deze update maakt veranderingen aan het update_checker bestand. Daarom is het niet mogelijk om hem automatisch te installeren.  (Behalve als je wilt dat alles wordt verwijderd).\nWat we kunnen doen is de nieuwe versie downloaden en uitpakken in de folder waar ACPL is geïnstalleerd. \nDus :\n\t- Ga de \"ACPL-master\" map checken in de map waar ACPL is geïnstalleerd.\n\t- Type \"end\" in de console.\n\t- Copy-paste de content van \"ACPL-master\" NA HET SLUITEN VAN DIT VENSTER en vervang alle oude bestanden."
   },
   "program-ended": "Programma succesvol gestopt."
 }

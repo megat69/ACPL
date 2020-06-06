@@ -47,7 +47,8 @@
     "removing-temp-files": "Removing temp files...",
     "temp-files-removed": "Temp files removed !",
     "update-applied": "Update applied !",
-    "console-restart": "Restarting console..."
+    "console-restart": "Restarting console...",
+    "unable-to-install": "This version makes changes to the update_checker file. Because of that, we are unable to install it automatically (unless you want everything to be deleted).\nWhat we can do is downloading and extracting the new version in the folder where ACPL is installed.\nSo :\n\t- Go check the \"ACPL-master\" folder in the folder where ACPL is installed.\n\t- Type \"end\" in the console.\n\t- Copy-paste the content of \"ACPL-master\" AFTER CLOSING THIS WINDOW and replace all old files."
   },
   "program-ended": "Program successfully stopped."
 }

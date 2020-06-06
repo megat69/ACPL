@@ -44,6 +44,10 @@ for lines in startup:
             language = "fr"
         elif lines == "nl":
             language = "nl"
+        elif lines == "az":
+            language = "az"
+        elif lines == "tr":
+            language = "tr"
         else:
             language = "en"
 
