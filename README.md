@@ -148,6 +148,8 @@ To use one, declare at the beginning of your program `$use: <lib>`.
 - String : basic string manipulations
 
 ## Changelog for 2.2
+*Apply manually !*
+
 - Added libs
 - Added `lib` command to console
 - Added a few features
