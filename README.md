@@ -74,7 +74,7 @@ It depends :
    <text> is the text that will be asked to the user.
    You can also put `\n` to create a newline.
 
- - You can also do mathematical equations to affect variables. Those equations **CAN NOT** contain any space.
+ - You can also do mathematical equations to affect variables.
    They can also contain variables.
    Syntax : `<equation>`
    At the moment, it is no longer variables in them.
@@ -83,7 +83,7 @@ It depends :
    Therefore, type `random(<first_number>, [second_number])`.
    If both numbers are given, the result will be a random number between them.
    Else, it will be a random number between 0 and <first_number>.
-   *Variables are not usable inside at the moment.*
+   You can also replace numbers by variables.
 
 **MODIFIERS :**
  - Actually, only one exists : `--round`.
@@ -107,25 +107,25 @@ We want to calculate `3*(6^2)` and store it into a variable "operation".
 *Input :*
 `var operation = 3*(6^2)`
 
-**EXAMPLE 4 :** *Broken at the moment*
+**EXAMPLE 4 :**
 We have a variable "age" containing the value `18`. We want to multiply it by 2 *(don't ask why xD)*
 And then store it into "double"
 *Input :*
-`var double = 2*{int age}`
+`var double = 2*{age}`
 
-**EXAMPLE 5 :** *Also broken*
+**EXAMPLE 5 :**
 We ask the user for his age and we multiply it by 5.
 *Input :*
 `int age = input(What is your age ? )
-int new_age = 2*{int age}
-print(Your new age is now {int age} xD !)`
+int new_age = 2*{age}
+print(Your new age is now {age} xD !)`
 *Output (for this example, age equals 18) :*
 `Your new age is now 90 xD !`
 
-**EXAMPLE 6 :** *Broken again*
+**EXAMPLE 6 :**
 You want a random number between 1 and 50 for the Lotto.
 *Input :*
-`int Lotto = random(1, 50)`
+`var Lotto = random(1, 50)`
 
 #### pause ####
 You can pause for a certain amount of time using `pause` method.
@@ -133,6 +133,9 @@ Syntax : pause(<seconds>)
 <seconds>
 Can be an integer value, a float value, or a variable.
 If you use a variable, the syntax is `pause({<variable_name>}).
+
+## Changelog for 2.1
+- Variables are usable everywhere again
 
 ## Changelog for 2.0
 ** TO APPLY MANUALLY **
