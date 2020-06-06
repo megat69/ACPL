@@ -140,7 +140,7 @@ If you use a variable, the syntax is `pause({<variable_name>}).
 *Older versions not compatible with this one !*
 - No longer typed vars, they are now flexible, with new syntax !
 - Rewrote the entire code, now simpler, faster, better, a with more functionalities !
-- Now translated in Azeri and Turkish !
+- Now translated in Azerbaijani and Turkish !
 - Updated the update checker, works better now.
 
 ## Changelog for 1.4.4
