@@ -196,6 +196,7 @@ To use one, declare at the beginning of your program `$use: <lib>`.
 **Actual disponble libs :**
 
 - String : basic string manipulations
+- Wait_until_user_input : gives a new funtion to wait until user input.
 
 ## Changelog for 2.3
 - `if` and `else` are finally here !
