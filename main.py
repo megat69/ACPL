@@ -41,15 +41,10 @@ for lines in filename:
 
     if lines.startswith("lang: "):
         lines = lines.replace("lang: ", "")
-        if lines == "fr":
-            language = "fr"
-        elif lines == "nl":
-            language = "nl"
-        else:
-            language = "en"
+        language = lines
 
         try:
-            with open(language + ".json", "r", encoding="utf-8") as json_file:
+            with open("trad_" + language + ".json", "r", encoding="utf-8") as json_file:
                 texts = json.load(json_file)
                 json_file.close()
                 texts = Text(texts)

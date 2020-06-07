@@ -136,18 +136,13 @@ for line in data:
 
     if str(line).startswith("lang: "):
         with open("startup.acpl-ini", "r", encoding="utf-8") as startup_file:
-            line = startup_file.readlines()
-            line = line[1]
-            line = str(line).replace("lang: ", "")
-            line = line.replace("\n", "")
-            if line == "fr":
-                language = "fr"
-            elif line == "nl":
-                language = "nl"
-            else:
-                language = "en"
+            lines = startup_file.readlines()
+            lines = lines[1]
+            lines = str(lines).replace("lang: ", "")
+            lines = lines.replace("\n", "")
+            language = lines
             try:
-                with open(language + ".json", "r", encoding="utf-8") as json_file:
+                with open("trad_" + language + ".json", "r", encoding="utf-8") as json_file:
                     texts = json.load(json_file)
                     json_file.close()
                     texts = Text(texts)

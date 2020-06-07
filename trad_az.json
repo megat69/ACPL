@@ -1,0 +1,54 @@
+{
+  "console": {
+    "bootup-message": "ACPL Konsolu - Son sabit buraxılış{} - {} - CC-BY-SA",
+    "process-ended": "Proses bitdi.",
+    "launch-code-file": " {} Başladılır..",
+    "last-stable-release": "Son sabit buraxılış",
+    "current-dev-build": "Hazırki development quruluşu",
+    "modify-ini": {
+      "debug-state-modified": "Seçim ayılama vəziyyəti {} ilə startup.acpl-ini uğurla dəyişdirildi.",
+      "lang-modified": "Seçim dilinin vəziyyəti {} ilə startup.acpl-ini uğurla dəyişdirildi.",
+      "use-colors-modified": "Seçim \"rəngləri-işlət\"vəziyyəti {} ilə startup.acpl-ini uğurla dəyişdirildi.",
+      "debug-state-help": "Kömək : Əgər siz developer debugunu açmaq istəyirsinizsə, \"debug-state\" ifadəsi sizdən açmağı soruşacaq.\nTip : boolean.\nDefolt : False.\nAktual : {}.",
+      "lang-help": "Kömək : the \"dil\" ifadəsi sizdən hansı dili seçəcəyinizi soruşur .\nTip : string.\nMümkün Seçimlər : \"en\", \"fr\", or \"nl\".\nDefolt : en.\nAktual : {}.",
+      "use-colors-help": "Kömək :  \"use-colors\" sizdən hər hansı bir rəngin istifadəsini və yaxud əksini soruşur. Bəzi sistemlər bunu dəstəkləmir.\nTip : boolean.\nMümkün Seçimlər : \"True\" or \"False\".\nDefolt : True.\nAktual: {}.",
+      "else-help": "Mövcüd Seçimlər :\n\t- \"debug-state\"\n\t- \"lang\"\n\nType \"modify-ini help <statement>\" çox yaxşı kömək üçün.",
+      "unable-to-modify-option": "Bu seçimi dəyişdirmək mümkün deyil."
+    },
+    "help": {
+      "available-commands": "Mümkün Komandalar",
+      "end": "Konsol prosesini bitirir.",
+      "run": "Spesifik faylı çalışdırar : 'run <fayl>'.",
+      "about": "Dil haqqında müəllifdən xüsusi bir mesaj verir",
+      "version": "Ən son sabit versiya və aktual dev quruluşu haqqında məlumat verir.",
+      "modify-ini": "Faylda spesifik ifadəni dəyişdirir. Ətraflı məlumat üçün 'modify-ini help all'."
+    },
+    "output": "Çıxış",
+    "reloading": "Konsol təzələnir..",
+    "unknown-command": "Bilinməyən komanda.",
+    "unable-load-startup": "'startup.acpl-ini'ni Başlatmaq mümkün deyil!",
+    "console-correctly-reloaded": "Konsol düzgün olaraq başladıldı"
+  },
+  "critic-errors": {
+    "NameError_LanguageFile": "Dil faylını yükləmək mümkün deyil !",
+    "ImpossibleLoad_StartupIni": "'startul.acpl-ini'ni başlatmaq mümkün deyil !"
+  },
+  "statement-errors": {
+    "on-line": "Xətdə",
+    "has-been-raised": "Xətt üçün qaldırıldı."
+  },
+  "update-checker": {
+    "update-disponible-message":"Yeni güncəlləmə ({}) Mövcuddur!",
+    "ask-install": "Endirmək istəyirsən?",
+    "old-files-deletion": "Köhnə fayllar silinir..",
+    "old-files-deletion-complete": " {} Uğurla silindi.",
+    "extracting-all-files": "Bütün fayllar çıxarılır..",
+    "files-successfully-extracted": "Fayllar uğurla çıxardıldı.",
+    "removing-temp-files": "Lazımsız fayllar silinir..",
+    "temp-files-removed": "Lazımsız fayllar silindi!",
+    "update-applied": "Güncəlləmə qəbul edildi!",
+    "console-restart": "Konsol yenidən başladılır..",
+    "unable-to-install": "Bu versiya update_checker faylında dəyişikliklər edəcək. Çünki bizim bunu avtomatik endirməmiz mümkün deyil(sənin hər şeyin silinməsini istəmədiyin vaxta qədər).\nBizim etdiyimiz şey isə ACPL-nin olduğu yerə yeni versiya fayllarını endirmək və çıxartmaqdır.\nİndi :\n\t-  \"ACPL-master\" faylını yoxla, hansı ki ACPL faylında yerləşdirilib.\n\t-  \"end\" Konsolda bunu yaz.\n\t- \"ACPL-master\" Faylının içindəki kontentləri PƏNCƏRƏNİ QAPADANDAN SONRA və bütün köhnə faylları yerləştirəndən sonra kopyala və yapışdır et."
+  },
+  "program-ended": "Proqram uğurla dayandırıldı."
+}

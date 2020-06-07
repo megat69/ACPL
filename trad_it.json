@@ -1,0 +1,54 @@
+{
+  "console": {
+    "bootup-message": "Console ACPL - ultima versione stabile : {} - {} - CC-BY-SA",
+    "process-ended": "Processo finito.",
+    "launch-code-file": "Lancio di {}...",
+    "last-stable-release": "ultima versione stabile",
+    "current-dev-build": "Costruzione attuale del sviluppo",
+    "modify-ini": {
+      "debug-state-modified": "Opzione stato di debug correttamente modificata nel file startup.acpl-ini con la valore {}.",
+      "lang-modified": "Opzione lang modificata correttamente nel file startup.acpl-ini con la valore {}.",
+      "use-colors-modified": "Opzione \"use-colors\" modificata correttamente in startup.acpl-ini con la valore {}",
+      "debug-state-help": "AIUTO : la variabile \"debug-state\" chiede se vuole attivare o no il debug di sviluppatore.\nTipo : Booleano.\nPredefinito : False.\nAttuale : {}.",
+      "lang-help": "AIUTO : la variabile \"lang\" è usata per sapere in che linguaggio il sistema deve essere visualizzato .\nTipo : string.\nOpzioni possibili : \"en\", \"fr\", o \"nl\".\nPredefinito : en.\nAttuale : {}.",
+      "use-colors-help": "AIUTO : la variabile \"use-colors\" è usata per sapere se prefera utilizzare i colori o no. Alcuni sistemi operativi o software non lo permettono.\nTipo : booleano.\nOpzioni possibili : \"True\" o \"False\".\nPredefinito : True.\nAttuale : {}.",
+      "else-help": "Valori disponibili :\n\t- \"debug-state\"\n\t- \"lang\"\n\t- \"use-colors\"\nDigita \"modify-ini help <variabile>\" per un aiuto migliore.",
+      "unable-to-modify-option": "Impossibile modificare questa opzione."
+    },
+    "help": {
+      "available-commands": "Comandi disponibili",
+      "end": "Finsce il processo della console.",
+      "run": "Avvia un file specifico. Sintassi : 'run <file>'.",
+      "about": "Manda un messaggio speciale dell'autore relativo al linguaggio ;)",
+      "version": "Indica l'ultima versione stabile e la costruzione del sviluppo.",
+      "modify-ini": "Modifica una variabile specifica nel file 'startup.acpl-ini'. Aiuto migliore con 'modify-ini help all'."
+    },
+    "output": "Uscita",
+    "reloading": "Rivviare della console",
+    "unknown-command": "Comando sconosciuto.",
+    "unable-load-startup": "Impossibile caricare startup.acpl-ini !",
+    "console-correctly-reloaded": "Console correttamente rivviata."
+  },
+  "critic-errors": {
+    "NameError_LanguageFile": "Impossibile caricare la lingua !",
+    "ImpossibleLoad_StartupIni": "Impossibile caricare startup.acpl-ini !"
+  },
+  "statement-errors": {
+    "on-line": "sulla linea",
+    "has-been-raised": "è stato chiamato per la linea "
+  },
+  "update-checker": {
+    "update-disponible-message": "Un nuovo aggiornamento ({}) è disponibile !",
+    "ask-install": "Volete installarlo ?",
+    "old-files-deletion": "Soppressione dei vecchi file...",
+    "old-files-deletion-complete": "{} è stato correttamente eliminato.",
+    "extracting-all-files": "Estrazione di tutti i file...",
+    "files-successfully-extracted": "File extratto con sucesso.",
+    "removing-temp-files": "Sopressione dei file temporanei...",
+    "temp-files-removed": "I file temporanei sono stati eliminati !",
+    "update-applied": "Aggiornamento applicato !",
+    "console-restart": "Rivviare della console...",
+    "unable-to-install": "Questa versione modifica il file della ricerca di aggiornamento. A causa di questo, siamo incapaci di modificarlo automaticamente (a meno che vuole che tutto sia eliminato).\nPossiamo scaricare et estrarre la nuova versione ladovve ACPL è installato.\nQuindi :\n\t- Trova la cartella \"ACPL-master\" nello reportario dove ACPL è installato.\n\t- Scrive \"end\" nella console.\n\t- Copia e incolla il contenuto della cartella \"ACPL-master\" DOPPO AVERE APRIRE QUESTA FINESTRA e sostituisce i vecchi file."
+  },
+  "program-ended": "Programma finito."
+}

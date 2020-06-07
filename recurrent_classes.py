@@ -135,14 +135,9 @@ for lines in startup:
             lines = lines[1]
             lines = str(lines).replace("lang: ", "")
             lines = lines.replace("\n", "")
-            if lines == "fr":
-                language = "fr"
-            elif lines == "nl":
-                language = "nl"
-            else:
-                language = "en"
+            language = lines
             try:
-                with open(language + ".json", "r", encoding="utf-8") as json_file:
+                with open("trad_" + language + ".json", "r", encoding="utf-8") as json_file:
                     texts = json.load(json_file)
                     json_file.close()
                     texts = Text(texts)
