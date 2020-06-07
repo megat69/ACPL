@@ -9,6 +9,7 @@ Big thanks to all the translators, and if you want to meet them, just join our [
 
 ### REQUIRED LIBRARIES ###
 `psutil` and `requests` libraries needs to be installed separately.
+You can also run `setup.py`.
 
 ### DOCUMENTATION ###
 Actually, this program can only print, input, create variables, and pause.
