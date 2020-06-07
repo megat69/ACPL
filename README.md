@@ -197,6 +197,7 @@ To use one, declare at the beginning of your program `$use: <lib>`.
 
 - String : basic string manipulations
 - Wait_until_user_input : gives a new funtion to wait until user input.
+- Run_file : allows you to run another ACPL code file.
 
 ## Changelog for 2.3
 - `if` and `else` are finally here !
