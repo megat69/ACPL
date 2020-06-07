@@ -216,7 +216,7 @@ To use one, declare at the beginning of your program `$use: <lib>`.
 - Variables are usable everywhere again
 
 ## Changelog for 2.0
-** TO APPLY MANUALLY **
+**TO APPLY MANUALLY**
 
 *Older versions not compatible with this one !*
 - No longer typed vars, they are now flexible, with new syntax !
