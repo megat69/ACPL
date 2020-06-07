@@ -95,9 +95,14 @@ used_libs = []
 
 line_numbers = 0
 is_in_comment = False
+indentation_required = 0
+condition = []
+for i in range(20):
+    condition.append(True)
 
 # Instructions
 for line in code_lines:
+    was_if = False
     line_numbers += 1
     if "/*" in line:
         is_in_comment = True
@@ -105,6 +110,62 @@ for line in code_lines:
         is_in_comment = False
         continue
     if not is_in_comment:
+        line = split(line)
+        indentation_level = 0
+        try:
+            while line[0] == "\t":
+                indentation_level += 1
+                line.pop(0)
+        except IndexError:
+            line = [""]
+            pass
+        temp_line = ""
+        for char in line:
+            temp_line += char
+        line = temp_line
+
+        if indentation_level == 0:
+            indentation_required = 0
+            #condition[indentation_level] = True
+        if indentation_level > indentation_required:
+            continue
+        if line.startswith("if"):
+            line = line.replace("if ", "")
+            line = line.replace("\n", "")
+            was_if = True
+            if line.endswith(":"):
+                line = split(line)
+                line.pop()
+                temp_line = ""
+                for char in line:
+                    temp_line += char
+                line = temp_line
+            else:
+                error(line_numbers, "StatementError", "If has to finish with \":\" !")
+            line = line.replace("&&", "and")
+            line = line.replace("||", "or")
+            while "{" in line and "}" in line:
+                variable = line[line.find("{") + 1:line.find("}")]
+                try:
+                    line = line.replace("{"+variable+"}", str(variables_container[variable]))
+                except KeyError:
+                    error(line_numbers, "ArgumentError", f"The variable \"{variable}\" is not existing or has been declared later in the code.")
+            condition[indentation_level] = eval(str(line))
+            if condition[indentation_level]:
+                indentation_required += 1
+        elif line.startswith("else"):
+            if condition[indentation_level] is False:
+                indentation_required += 1
+            else:
+                indentation_required -= 1
+            was_if = True
+
+        if indentation_level < indentation_required and was_if is False:
+            indentation_required -= 1
+        elif indentation_level > indentation_required:
+            continue
+
+
         if line.startswith("print"): # print instruction
             line = line.replace("print", "")
             if "(" in line and ")" in line:
@@ -171,7 +232,12 @@ for line in code_lines:
             # Inputs
             if var_content.startswith("input("):
                 var_content = var_content.replace("input(", "")
-
+                var_content = split(var_content)
+                var_content.pop()
+                temp_var_content = ""
+                for char in var_content:
+                    temp_var_content += char
+                var_content = temp_var_content
                 var_content = input(bcolors.WARNING + var_content + bcolors.ENDC)
             # Random
             if "random(" in var_content:
@@ -243,7 +309,7 @@ for line in code_lines:
             else:
                 error(line_numbers, "UnexistingLibError", "Lib is not existing or has not been installed.")
                 break
-        elif line != "" and line != " " and line != "\n":
+        elif line != "" and line != " " and line != "\n" and was_if == False:
             error(line_numbers, "Error", "Unknown function or method !")
 
 debug("other", lineno(), variables_container)
