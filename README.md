@@ -127,6 +127,56 @@ You want a random number between 1 and 50 for the Lotto.
 *Input :*
 `var Lotto = random(1, 50)`
 
+#### if ####
+The `if` function is made to check if a condition is true or false.
+
+If true, it will execute the following instructions block ; if false, two cases :
+- There is nothing after : the program won't run the instructions block.
+- It is an `else` : the program will run the instruction block after the else.
+
+No `elseif` at the moment.
+
+**Syntax :**
+
+`if <condition>:`
+
+    <instructions>
+`else:`
+
+    <instructions>
+The condition can contain as many variables as you want, and is with these operators :
+- `==` : compares if equal
+- `!=` : compares if different
+- `<` : compares if inferior
+- `>` : compares if superior
+- `<=` : compares if inferior or equal
+- `>=` : compares if superior or equal
+- `in` : compares if a string is inside another
+
+You can join more by typing :
+- `and` or `&&`, if so, it will be true only if all conditions are true.
+- `or` or ``||`, if so, it will be true if at least one of the conditions is true.
+
+The `<instructions>` can be whatever, but they need to have one more **TAB** than the if.
+
+Spaces does not work.
+
+**Example 1 :**
+
+*Input :*
+
+`var age = input(What is your age ? )`
+
+`if {age} >= 18:`
+
+	print(Congrats, you can vote !)
+`else:`
+	
+        if {age} <= 0:
+		print(LIAR !)
+        else:
+		print(So you're a child ?)`
+
 #### pause ####
 You can pause for a certain amount of time using `pause` method.
 Syntax : pause(<seconds>)
@@ -146,6 +196,11 @@ To use one, declare at the beginning of your program `$use: <lib>`.
 **Actual disponble libs :**
 
 - String : basic string manipulations
+
+## Changelog for 2.3
+- `if` and `else` are finally here !
+  Go to the wiki for further information
+- Italian translation !
 
 ## Changelog for 2.2
 *Apply manually !*
