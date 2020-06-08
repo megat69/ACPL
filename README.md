@@ -1,4 +1,4 @@
-![https://img.shields.io/discord/718802975153324093?label=Discord%20server]
+!(https://img.shields.io/discord/718802975153324093?label=Discord%20server)
 
 # ACPL
 My own programming language (compiled in Python).
