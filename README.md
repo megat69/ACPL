@@ -1,4 +1,4 @@
-![Discord users online](https://img.shields.io/discord/718802975153324093?label=Discord%20server)
+![Discord users online](https://img.shields.io/discord/718802975153324093?label=Discord%20server) ![Repository size](https://img.shields.io/github/repo-size/megat69/ACPL?label=Repository%20size%20-%20files%20size)
 
 # ACPL
 My own programming language (compiled in Python).
