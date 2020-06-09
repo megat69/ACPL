@@ -1,7 +1,7 @@
 ![Discord users online](https://img.shields.io/discord/718802975153324093?label=Discord%20server) ![Repository size](https://img.shields.io/github/repo-size/megat69/ACPL?label=Repository%20size%20-%20files%20size) ![Downloads](https://img.shields.io/github/downloads/megat69/ACPL/total?label=Overall%20downloads) ![Stars](https://img.shields.io/github/stars/megat69/ACPL) ![Last release](https://img.shields.io/github/v/release/megat69/ACPL?label=Last%20release) ![OS support](https://img.shields.io/badge/OS%20Support-Windows-success) ![OS support](https://img.shields.io/badge/OS%20Support-Mac%2C%20Linux-orange) ![Commits](https://img.shields.io/github/commit-activity/w/megat69/ACPL?label=Commits) ![Last release date](https://img.shields.io/github/release-date/megat69/ACPL?label=Last%20release%20date)
 
 # ACPL
-My own programming language (compiled in Python).
+My own programming language (interpreted in Python).
 
 This project has just been made for fun, and is completely useless ;)
 
@@ -14,8 +14,6 @@ Big thanks to all the translators, and if you want to meet them, just join our [
 You can also run `setup.py`.
 
 ### DOCUMENTATION ###
-Actually, this program can only print, input, create variables, and pause.
-
 Things to know :
 This program works line per line, which means that it is **ONE INSTRUCTION PER LINE**.
 You can also use a comma (`;`) to mark the end of the line, but it is not required.
@@ -203,6 +201,10 @@ To use one, declare at the beginning of your program `$use: <lib>`.
 - Run_file : allows you to run another ACPL code file.
 - Os : allow you to run a system command.
 - Colors : Allows you to put colors in your prints or variables ONLY IF the `use-colors` in the `startup.acpl-ini` is set to `True`.
+- Files : Basic file manipulations. *Does not work very well*
+
+## Changelog for 2.5
+- Added a compiler ! You can now transpile your ACPL programs in Python !
 
 ## Changelog for 2.4
 - New lib : colors
