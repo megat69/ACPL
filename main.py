@@ -7,7 +7,7 @@ import sys
 import json
 from recurrent_classes import *
 import os
-
+import msvcrt
 
 # Files opening
 try:
@@ -41,6 +41,7 @@ for lines in filename:
 
     if lines.startswith("lang: "):
         lines = lines.replace("lang: ", "")
+        lines = lines.replace("\n", "")
         language = lines
 
         try:
@@ -97,6 +98,8 @@ for i in range(20):
 
 # Instructions
 for line in code_lines:
+    if msvcrt.kbhit() and msvcrt.getch() == chr(27).encode():
+        sys.exit()
     was_if = False
     line_numbers += 1
     if "/*" in line:
@@ -179,7 +182,7 @@ for line in code_lines:
                 error(line_numbers, "StatementError", "Statement missing.")
                 break
         elif line.startswith("var "):
-            line = line.replace("var ", "")
+            line = line.replace("var ", "", 1)
             if line.endswith("\n"):
                 line = split(line)
                 line.pop()
@@ -202,7 +205,7 @@ for line in code_lines:
                     line = line.replace(name, "", 1)
                     break
             actual_state = "var"
-            line = line.replace("=", "")
+            line = line.replace("=", "", 1)
             while line.startswith(" "):
                 line = split(line)
                 line.pop(0)
@@ -304,12 +307,33 @@ for line in code_lines:
             else:
                 error(line_numbers, "UnexistingLibError", "Lib is not existing or has not been installed.")
                 break
+        elif line.startswith("lib"):
+            line = line.replace("lib ", "", 1)
+            for lib in used_libs:
+                if lib in line:
+                    with open(f"libs/lib_{lib}.py", "r") as lib_content:
+                        lib_content = lib_content.readlines()
+                        with open("temp.py", "w+") as executable:
+                            for i in range(len(lib_content)):
+                                if "var_line" in lib_content[i]:
+                                    line = line.replace("\n", "")
+                                    lib_content[i] = lib_content[i].replace("var_line", f'"{line}"')
+                                lib_content[i] = lib_content[i].replace("VARIABLES_CONTAINER", str(variables_container))
+                            executable.writelines(lib_content)
+                            #print(variables_container)
+                            if "variables" in lib_content[1]:
+                                with open("var_transfer.json", "r+", encoding="utf-8") as transfer_file:
+                                    variables_container = json.load(transfer_file)
+                                    transfer_file.close()
+                                    os.remove(f"{os.getcwd()}/var_transfer.json")
+                                    #print(variables_container)
+                            executable.close()
+                    os.system("python temp.py")
         elif line != "" and line != " " and line != "\n" and was_if == False:
             error(line_numbers, "Error", "Unknown function or method !")
 
 debug("other", lineno(), variables_container)
 
-print(f"\n{bcolors.OKBLUE}{texts.texts['program-ended']}{bcolors.ENDC}")
 
 code_file.close()
 debug_file.close()

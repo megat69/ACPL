@@ -164,7 +164,6 @@ for line in data:
 
         if "-" in current_version:
             current_version = str(current_version.replace("-", ""))
-            current_version = int(current_version)
 
         current_version = current_version.split(".")  # Version currently installed
         last_version = line.split(".")  # Version disponible online
@@ -175,7 +174,13 @@ for line in data:
         if len(current_version) < 3:
             current_version.append("0")
 
-        if "-" not in last_version:
+        for i in last_version:
+            if "-" in i:
+                cannot_update = True
+                break
+            else:
+                cannot_update = False
+        if cannot_update is False:
             if int(current_version[0]) < int(last_version[0]):
                 ask_update_program('https://github.com/megat69/ACPL/archive/master.zip')
             elif int(current_version[1]) < int(last_version[1]):

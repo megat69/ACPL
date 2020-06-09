@@ -13,7 +13,8 @@
       "lang-help": "AIDE : la variable \"lang\" est utilisée pour savoir dans quel langage le système doit être affiché.\nType : string.\nOptions possibles : \"en\", \"fr\", ou \"nl\".\nDefaut : en.\nActuel : {}.",
       "use-colors-help": "AIDE : la variable \"use-colors\" est utilisée pour savoir si vous préférez utiliser les couleurs ou non. Certains systèmes d'exploitation ou logiciel ne le permettent pas.\nType : booléen.\nOptions possibles : \"True\" ou \"False\".\nDefaut : True.\nActuel : {}.",
       "else-help": "Valeurs disponibles :\n\t- \"debug-state\"\n\t- \"lang\"\n\t- \"use-colors\"\nTapez \"modify-ini help <variable>\" pour une meilleure aide.",
-      "unable-to-modify-option": "Impossible de modifier cette option."
+      "unable-to-modify-option": "Impossible de modifier cette option.",
+      "compile-code-file": "Compilation de {}..."
     },
     "help": {
       "available-commands": "Available commands",

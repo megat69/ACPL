@@ -13,7 +13,8 @@
       "lang-help": "YARDIM : \"lang\" ifadesi sistemin hangi dilde görüntülendiğini bilmek için kullanılır.\nTür : string.\nOlası seçenekler : \"en\", \"fr\", or \"nl\".\nVarsayılan : en.\nGerçek : {}.",
       "use-colors-help": "YARDIM : \"use-colors\" ifadesi renkleri kullanmayı tercih edip etmediğinizi bilmek için kullanılır. Bazı işletim sistemleri veya yazılımlar buna izin vermez.\nTür : booléen.\nOlası seçenekler : \"True\" veya \"False\".\nVarsayılan : True.\nGerçek : {}.",
       "else-help": "Kullanılabilir Değerler :\n\t- \"debug-state\"\n\t- \"lang\"\n\nType \"modify-ini help <statement>\" ile daha iyi yardım.",
-      "unable-to-modify-option": "Bu seçenek değiştirilemiyor."
+      "unable-to-modify-option": "Bu seçenek değiştirilemiyor.",
+      "compile-code-file": "{} Derleniyor..."
     },
     "help": {
       "available-commands": "Kullanılabilir komutlar",

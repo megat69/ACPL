@@ -13,8 +13,7 @@
       "lang-help": "Kömək : the \"dil\" ifadəsi sizdən hansı dili seçəcəyinizi soruşur .\nTip : string.\nMümkün Seçimlər : \"en\", \"fr\", or \"nl\".\nDefolt : en.\nAktual : {}.",
       "use-colors-help": "Kömək :  \"use-colors\" sizdən hər hansı bir rəngin istifadəsini və yaxud əksini soruşur. Bəzi sistemlər bunu dəstəkləmir.\nTip : boolean.\nMümkün Seçimlər : \"True\" or \"False\".\nDefolt : True.\nAktual: {}.",
       "else-help": "Mövcüd Seçimlər :\n\t- \"debug-state\"\n\t- \"lang\"\n\nType \"modify-ini help <statement>\" çox yaxşı kömək üçün.",
-      "unable-to-modify-option": "Bu seçimi dəyişdirmək mümkün deyil.",
-      "compile-code-file":"{} Tərtib edilir..."
+      "unable-to-modify-option": "Bu seçimi dəyişdirmək mümkün deyil."
     },
     "help": {
       "available-commands": "Mümkün Komandalar",
