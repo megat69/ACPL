@@ -180,7 +180,7 @@ while running:
                 code.write(r.content)
             print(f"Library {user_input} updated !")
         else:
-            raise CriticError
+            error(0, "CommandError", "Command unknown !")
 
     elif user_input.startswith("compile"):
         user_input = user_input.replace("compile ", "", 1)

@@ -178,6 +178,7 @@ for line in code_lines:
                         line = line.replace("{"+variable+"}", str(variables_container[variable]))
                     except KeyError:
                         error(line_numbers, "ArgumentError", f"The variable \"{variable}\" is not existing or has been declared later in the code.")
+                        break
                 print(line)
             else:
                 error(line_numbers, "StatementError", "Statement missing.")
