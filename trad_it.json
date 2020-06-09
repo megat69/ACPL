@@ -5,6 +5,7 @@
     "launch-code-file": "Lancio di {}...",
     "last-stable-release": "ultima versione stabile",
     "current-dev-build": "Costruzione attuale del sviluppo",
+    "compile-code-file": "Compilazione {}...",
     "modify-ini": {
       "debug-state-modified": "Opzione stato di debug correttamente modificata nel file startup.acpl-ini con la valore {}.",
       "lang-modified": "Opzione lang modificata correttamente nel file startup.acpl-ini con la valore {}.",
@@ -13,8 +14,7 @@
       "lang-help": "AIUTO : la variabile \"lang\" è usata per sapere in che linguaggio il sistema deve essere visualizzato .\nTipo : string.\nOpzioni possibili : \"en\", \"fr\", o \"nl\".\nPredefinito : en.\nAttuale : {}.",
       "use-colors-help": "AIUTO : la variabile \"use-colors\" è usata per sapere se prefera utilizzare i colori o no. Alcuni sistemi operativi o software non lo permettono.\nTipo : booleano.\nOpzioni possibili : \"True\" o \"False\".\nPredefinito : True.\nAttuale : {}.",
       "else-help": "Valori disponibili :\n\t- \"debug-state\"\n\t- \"lang\"\n\t- \"use-colors\"\nDigita \"modify-ini help <variabile>\" per un aiuto migliore.",
-      "unable-to-modify-option": "Impossibile modificare questa opzione.",
-      "compile-code-file": "Compilazione {}..."
+      "unable-to-modify-option": "Impossibile modificare questa opzione."
     },
     "help": {
       "available-commands": "Comandi disponibili",
