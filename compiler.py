@@ -109,6 +109,7 @@ with open(f"compiled_{final_filename}.py", "w", encoding="utf-8") as compiled_fi
                 line = line.replace("\"", "\\\"") # Replacement of "
                 line = line.replace("print(", "print(f\"") # Replacement of print
                 line = line.replace(")\n", "\")\n") # Add of the quote
+                line = line.replace(") \n", "\")\n") # Add of the quote
             elif line.startswith("var"):
                 line = line.replace("var ", "", 1)
                 while "{" in line and "}" in line:
@@ -151,7 +152,7 @@ with open(f"compiled_{final_filename}.py", "w", encoding="utf-8") as compiled_fi
                 if "{" in line and "}" in line:
                     variable = line[line.find("{") + 1:line.find("}")]
                     line = line.replace("{"+variable+"}", variable)
-                line += ")"
+                line = line.replace("\n", ")\n")
             elif line.startswith("$use: "):
                 line = line.replace("$use:", "")
                 line = line.replace(" ", "")
@@ -177,3 +178,5 @@ with open(f"compiled_{final_filename}.py", "w", encoding="utf-8") as compiled_fi
             line = ("\t" * indentation_level) + line
             compiled_file.write(line)
     compiled_file.close()
+
+print(bcolors.OKBLUE+texts.console["compiling-successfull"]+bcolors.ENDC)

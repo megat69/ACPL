@@ -6,6 +6,7 @@
     "last-stable-release": "Son sabit buraxılış",
     "current-dev-build": "Hazırki development quruluşu",
     "compile-code-file":"{} Tərtib edilir...",
+    "compiling-successfull": "Compiling successfull !",
     "modify-ini": {
       "debug-state-modified": "Seçim ayılama vəziyyəti {} ilə startup.acpl-ini uğurla dəyişdirildi.",
       "lang-modified": "Seçim dilinin vəziyyəti {} ilə startup.acpl-ini uğurla dəyişdirildi.",

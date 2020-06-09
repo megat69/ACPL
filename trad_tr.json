@@ -6,6 +6,7 @@
     "last-stable-release": "Son kararlı sürüm",
     "current-dev-build": "Mevcut geliştirme",
     "compile-code-file": "{} Derleniyor...",
+    "compiling-successfull": "Compiling successfull !",
     "modify-ini": {
       "debug-state-modified": "Seçenek hata-ayıklama-durumu startup.acpl-ini içinde değerle doğru şekilde değiştirildi {}.",
       "lang-modified": "Option lang modified correctly in startup.acpl-ini with value {}.",

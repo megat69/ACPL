@@ -6,6 +6,7 @@
     "last-stable-release": "Dernière version stable",
     "current-dev-build": "Build de développement actuel",
     "compile-code-file": "Compilation de {}...",
+    "compiling-successfull": "Compiling terminée avec succès !",
     "modify-ini": {
       "debug-state-modified": "Option debug-state correctement modifiée dans le fichier startup.acpl-ini avec la valeur {}.",
       "lang-modified": "Option lang modifiée correctement dans le fichier startup.acpl-ini avec la valeur {}.",
