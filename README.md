@@ -202,6 +202,11 @@ To use one, declare at the beginning of your program `$use: <lib>`.
 - Wait_until_user_input : gives a new funtion to wait until user input.
 - Run_file : allows you to run another ACPL code file.
 - Os : allow you to run a system command.
+- Colors : Allows you to put colors in your prints or variables ONLY IF the `use-colors` in the `startup.acpl-ini` is set to `True`.
+
+## Changelog for 2.4
+- New lib : colors
+- Now able to access the code's variables in the libs ! Just look how it has been done in `libs/lib_colors.py`.
 
 ## Changelog for 2.3
 - `if` and `else` are finally here !
