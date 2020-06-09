@@ -41,6 +41,7 @@ for lines in startup:
 
     if lines.startswith("lang: "):
         lines = lines.replace("lang: ", "")
+        lines = lines.replace("\n", "")
         language = lines
 
         try:
@@ -180,6 +181,15 @@ while running:
             print(f"Library {user_input} updated !")
         else:
             raise CriticError
+
+    elif user_input.startswith("compile"):
+        user_input = user_input.replace("compile ", "", 1)
+        replace_line('startup.acpl-ini', 0, 'filename: '+user_input+"\n")
+        if not user_input.endswith(".acpl"):
+            user_input += ".acpl"
+        print(f"{bcolors.OKBLUE}{texts.console['compile-code-file'].format(user_input)}{bcolors.ENDC}")
+        sleep(1.7)
+        os.system("python compiler.py")
 
     else:
         output = texts.console["unknown-command"]
