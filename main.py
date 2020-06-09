@@ -148,6 +148,7 @@ for line in code_lines:
                     line = line.replace("{"+variable+"}", str(variables_container[variable]))
                 except KeyError:
                     error(line_numbers, "ArgumentError", f"The variable \"{variable}\" is not existing or has been declared later in the code.")
+                    break
             condition[indentation_level] = eval(str(line))
             if condition[indentation_level]:
                 indentation_required += 1
@@ -319,14 +320,14 @@ for line in code_lines:
                                     line = line.replace("\n", "")
                                     lib_content[i] = lib_content[i].replace("var_line", f'"{line}"')
                                 lib_content[i] = lib_content[i].replace("VARIABLES_CONTAINER", str(variables_container))
+                                lib_content[i] = lib_content[i].replace("line_numbers", f"int({line_numbers})")
+                                if "variables" in lib_content[1]:
+                                    with open("var_transfer.json", "r+", encoding="utf-8") as transfer_file:
+                                        variables_container = json.load(transfer_file)
+                                        transfer_file.close()
+                                        #print(variables_container)
                             executable.writelines(lib_content)
                             #print(variables_container)
-                            if "variables" in lib_content[1]:
-                                with open("var_transfer.json", "r+", encoding="utf-8") as transfer_file:
-                                    variables_container = json.load(transfer_file)
-                                    transfer_file.close()
-                                    os.remove(f"{os.getcwd()}/var_transfer.json")
-                                    #print(variables_container)
                             executable.close()
                     os.system("python temp.py")
         elif line != "" and line != " " and line != "\n" and was_if == False:
