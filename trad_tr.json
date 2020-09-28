@@ -5,17 +5,17 @@
     "launch-code-file": "Başlatılıyor {}...",
     "last-stable-release": "Son kararlı sürüm",
     "current-dev-build": "Mevcut geliştirme",
-    "compile-code-file": "{} Derleniyor...",
-    "compiling-successfull": "Compiling successfull !",
     "modify-ini": {
       "debug-state-modified": "Seçenek hata-ayıklama-durumu startup.acpl-ini içinde değerle doğru şekilde değiştirildi {}.",
       "lang-modified": "Option lang modified correctly in startup.acpl-ini with value {}.",
       "use-colors-modified": "\"use-colors\" seçeneği, startup.acpl-ini'de değerle doğru şekilde değiştirildi {}",
+      "process-time-round-numbers": "HELP : the \"process-time-round-numbers\" statement is used to know how many numbers will be behind the dot for the processing time.\nType : integer.\nDefault : 6.\nActual : {}.",
       "debug-state-help": "YARDIM :\"debug-state\" ifadesi size geliştirici hata ayıklamasını etkinleştirmek veya devre dışı bırakmak isteyip istemediğinizi sorar.\nTip : boolean.\nVarsayılan : False.\nGerçek : {}.",
       "lang-help": "YARDIM : \"lang\" ifadesi sistemin hangi dilde görüntülendiğini bilmek için kullanılır.\nTür : string.\nOlası seçenekler : \"en\", \"fr\", or \"nl\".\nVarsayılan : en.\nGerçek : {}.",
       "use-colors-help": "YARDIM : \"use-colors\" ifadesi renkleri kullanmayı tercih edip etmediğinizi bilmek için kullanılır. Bazı işletim sistemleri veya yazılımlar buna izin vermez.\nTür : booléen.\nOlası seçenekler : \"True\" veya \"False\".\nVarsayılan : True.\nGerçek : {}.",
       "else-help": "Kullanılabilir Değerler :\n\t- \"debug-state\"\n\t- \"lang\"\n\nType \"modify-ini help <statement>\" ile daha iyi yardım.",
-      "unable-to-modify-option": "Bu seçenek değiştirilemiyor."
+      "unable-to-modify-option": "Bu seçenek değiştirilemiyor.",
+      "compile-code-file": "{} Derleniyor..."
     },
     "help": {
       "available-commands": "Kullanılabilir komutlar",

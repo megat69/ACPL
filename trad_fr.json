@@ -5,8 +5,6 @@
     "launch-code-file": "Lancement de {}...",
     "last-stable-release": "Dernière version stable",
     "current-dev-build": "Build de développement actuel",
-    "compile-code-file": "Compilation de {}...",
-    "compiling-successfull": "Compilation terminée avec succès !",
     "modify-ini": {
       "debug-state-modified": "Option debug-state correctement modifiée dans le fichier startup.acpl-ini avec la valeur {}.",
       "lang-modified": "Option lang modifiée correctement dans le fichier startup.acpl-ini avec la valeur {}.",
@@ -14,8 +12,10 @@
       "debug-state-help": "AIDE : la variable \"debug-state\" demande si vous voulez activer ou non le débug de développeur.\nType : Booléen.\nDefaut : False.\nActuel : {}.",
       "lang-help": "AIDE : la variable \"lang\" est utilisée pour savoir dans quel langage le système doit être affiché.\nType : string.\nOptions possibles : \"en\", \"fr\", ou \"nl\".\nDefaut : en.\nActuel : {}.",
       "use-colors-help": "AIDE : la variable \"use-colors\" est utilisée pour savoir si vous préférez utiliser les couleurs ou non. Certains systèmes d'exploitation ou logiciel ne le permettent pas.\nType : booléen.\nOptions possibles : \"True\" ou \"False\".\nDefaut : True.\nActuel : {}.",
+      "process-time-round-numbers": "HELP : the \"process-time-round-numbers\" statement is used to know how many numbers will be behind the dot for the processing time.\nType : integer.\nDefault : 6.\nActual : {}.",
       "else-help": "Valeurs disponibles :\n\t- \"debug-state\"\n\t- \"lang\"\n\t- \"use-colors\"\nTapez \"modify-ini help <variable>\" pour une meilleure aide.",
-      "unable-to-modify-option": "Impossible de modifier cette option."
+      "unable-to-modify-option": "Impossible de modifier cette option.",
+      "compile-code-file": "Compilation de {}..."
     },
     "help": {
       "available-commands": "Available commands",

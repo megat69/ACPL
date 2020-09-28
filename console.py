@@ -115,6 +115,9 @@ while running:
         elif user_input[0] == "use-colors":
             replace_line(ini_file, 6, "use-colors: "+user_input[1]+"\n")
             output = texts.console_modify_ini["use-colors-modified"].format(user_input[1])
+        elif user_input[0] == "process-time-round-numbers":
+            replace_line(ini_file, 7, "process-time-round-numbers: "+user_input[1]+"\n")
+            output = "process-time-round-numbers modified with value {}.".format(user_input[1])
         elif user_input[0] == "help":
             if user_input[1] == "debug-state":
                 print(texts.console_modify_ini['debug-state-help'].format(str(debug_state)))
@@ -122,6 +125,8 @@ while running:
                 print(texts.console_modify_ini['lang-help'].format(str(language)))
             elif user_input[1] == "use-colors":
                 print(texts.console_modify_ini['use-colors-help'].format(str(bcolors.colors_used)))
+            elif user_input[1] == "process-time-round-numbers":
+                print(texts.console_modify_ini['process-time-round-numbers'].format(str(bcolors.colors_used)))
             else:
                 print(texts.console_modify_ini["else-help"])
         else:
@@ -180,7 +185,7 @@ while running:
                 code.write(r.content)
             print(f"Library {user_input} updated !")
         else:
-            error(0, "CommandError", "Command unknown !")
+            raise CriticError
 
     elif user_input.startswith("compile"):
         user_input = user_input.replace("compile ", "", 1)
