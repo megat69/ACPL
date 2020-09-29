@@ -85,10 +85,11 @@ used_libs = []
 
 # Use variables
 is_in_comment = False
-line_numbers = 1
+line_numbers = 0
 execute_until_endif = False
 
-for line in code_lines:
+while line_numbers < len(code_lines):
+    line = code_lines[line_numbers]
     if msvcrt.kbhit() and msvcrt.getch() == chr(27).encode():
         sys.exit()
     if "/*" in line:
@@ -116,20 +117,51 @@ for line in code_lines:
             else:
                 execute_until_endif = True
             last_condition = line
+            line_numbers += 1
+            continue
         elif line.startswith("else"):
             if eval(last_condition) is False:
                 execute_until_endif = False
             else:
                 execute_until_endif = True
+                line_numbers += 1
+                continue
 
         if line.startswith("endif") or line.startswith("end if"):
             execute_until_endif = False
             line_numbers += 1
             continue
 
+        if line.startswith("for"):  # for <name> <min> <max>
+            line = line.replace("for ", "", 1)
+            line = line.split(" ")
+            try:
+                variables_container[line[0]] = int(line[1])
+            except ValueError:
+                error(line_numbers, "ArgumentNotInt", "Argument should be integer !")
+            for_var = line[0]
+            try:
+                for_max = int(line[2])
+            except ValueError:
+                error(line_numbers, "ArgumentNotInt", "Argument should be integer !")
+            for_line_number = line_numbers + 1
+            line_numbers += 1
+            continue
+
+        if line.startswith("endfor") or line.startswith("end for"):
+            variables_container[for_var] += 1
+            if variables_container[for_var] < for_max:
+                line_numbers = for_line_number
+                continue
+            else:
+                variables_container.pop(for_var)
+
+
         if execute_until_endif is False:
             if line.startswith("print"):
                 line = line.replace("print ", "", 1)
+                if line.endswith("\n"):
+                    line = line[:-1]  # Removing the \n
                 print(line)
             elif line.startswith("var"):
                 line = line.replace("var ", "", 1)
@@ -221,8 +253,9 @@ for line in code_lines:
                                 # print(variables_container)
                                 executable.close()
                         os.system("python temp.py")
-            elif line != "" and line != " " and line != "\n" and line != "if" and line != "else" and line != "endif" and line != "end if":
-                error(line_numbers, "Error", "Unknown function or method !")
+            elif line != "" and line != " " and line != "\n" and line != "if" and line != "else" and line != "endif" and line != "end if" and line != "for" and line != "endfor" and line != "end for":
+                if debug_const is True:
+                    error(line_numbers, "Error", "Unknown function or method !")
 
     line_numbers += 1
 

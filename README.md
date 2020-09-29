@@ -156,6 +156,46 @@ You can join more by typing :
 
 The `<instructions>` can be whatever, but they need to have one more **TAB** than the if.
 
+#### for ####
+You can loop for a certain amount of times using a for loop.
+
+Syntax :
+```
+for <variable_name> <min> <max>
+<instructions>
+endfor
+```
+
+Both `end for` and `endfor` are possible.
+
+<variable_name> should be a name for a variable.
+This variable is going to be created for the loop, usable inside, and destroyed after.
+
+It will be incremented every looping.
+
+<min> is the default value of <variable_name>
+
+<max> is the maximum value of the variable.
+
+Example :
+
+*Input :*
+```
+for i 3 5
+print Hey ! It's the {i} looping !
+endfor
+print And now I'm out...
+```
+*Output :*
+```
+Hey ! It's the 3 looping !
+Hey ! It's the 4 looping !
+Hey ! It's the 5 looping !
+And now I'm out...
+```
+
+*Notice you can place an `if` statement inside, but no other loop.*
+
 
 #### pause ####
 You can pause for a certain amount of time using `pause` method.
@@ -181,6 +221,9 @@ To use one, declare at the beginning of your program `$use: <lib>`.
 - Os : allow you to run a system command.
 - Colors : Allows you to put colors in your prints or variables ONLY IF the `use-colors` in the `startup.acpl-ini` is set to `True`.
 - Files : Basic file manipulations. *Does not work very well*
+
+## Changelog for 3.2
+- Added `for` loop
 
 ## Changelog for 3.1
 - Added if and else
