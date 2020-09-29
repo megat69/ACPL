@@ -1,0 +1,9 @@
+var variable1 = input 0 ou 1 ?
+var variable2 = input 0 ou 1 ?
+if {variable1} == 0 or {variable2} == 0
+print Dedans !
+endif
+else
+print Autre condition
+endif
+print En dehors du if !

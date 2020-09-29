@@ -5,8 +5,6 @@
     "launch-code-file": " {} Başladılır..",
     "last-stable-release": "Son sabit buraxılış",
     "current-dev-build": "Hazırki development quruluşu",
-    "compile-code-file":"{} Tərtib edilir...",
-    "compiling-successfull": "Compiling successfull !",
     "modify-ini": {
       "debug-state-modified": "Seçim ayılama vəziyyəti {} ilə startup.acpl-ini uğurla dəyişdirildi.",
       "lang-modified": "Seçim dilinin vəziyyəti {} ilə startup.acpl-ini uğurla dəyişdirildi.",
@@ -14,8 +12,10 @@
       "debug-state-help": "Kömək : Əgər siz developer debugunu açmaq istəyirsinizsə, \"debug-state\" ifadəsi sizdən açmağı soruşacaq.\nTip : boolean.\nDefolt : False.\nAktual : {}.",
       "lang-help": "Kömək : the \"dil\" ifadəsi sizdən hansı dili seçəcəyinizi soruşur .\nTip : string.\nMümkün Seçimlər : \"en\", \"fr\", or \"nl\".\nDefolt : en.\nAktual : {}.",
       "use-colors-help": "Kömək :  \"use-colors\" sizdən hər hansı bir rəngin istifadəsini və yaxud əksini soruşur. Bəzi sistemlər bunu dəstəkləmir.\nTip : boolean.\nMümkün Seçimlər : \"True\" or \"False\".\nDefolt : True.\nAktual: {}.",
+      "process-time-round-numbers": "HELP : the \"process-time-round-numbers\" statement is used to know how many numbers will be behind the dot for the processing time.\nType : integer.\nDefault : 6.\nActual : {}.",
       "else-help": "Mövcüd Seçimlər :\n\t- \"debug-state\"\n\t- \"lang\"\n\nType \"modify-ini help <statement>\" çox yaxşı kömək üçün.",
-      "unable-to-modify-option": "Bu seçimi dəyişdirmək mümkün deyil."
+      "unable-to-modify-option": "Bu seçimi dəyişdirmək mümkün deyil.",
+      "compile-code-file":"{} Tərtib edilir..."
     },
     "help": {
       "available-commands": "Mümkün Komandalar",

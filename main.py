@@ -8,6 +8,9 @@ import json
 from recurrent_classes import *
 import os
 import msvcrt
+import timeit
+
+time_launch = timeit.default_timer()
 
 # Files opening
 try:
@@ -52,6 +55,10 @@ for lines in filename:
         except NameError:
             raise CriticError(texts.critic_errors["NameError_LanguageFile"])
 
+    if lines.startswith("process-time-round-numbers: "):
+        lines = lines.replace("process-time-round-numbers: ", "")
+        process_time_round_numbers = int(lines)
+
 
 debug_file = open("debug.log", "w", encoding="utf-8")
 code_file = open(final_filename, "r", encoding="utf-8")
@@ -59,18 +66,6 @@ code_file = open(final_filename, "r", encoding="utf-8")
 # Code lines getting
 code_lines = code_file.readlines()
 debug("other", lineno(), code_lines)
-
-# Multilines comments (WIP)
-"""all_lines = ""
-for line in code_lines:
-    all_lines += line + "NEWLINE"
-start = all_lines.find( '/*' )
-end = all_lines.find( '*/' )
-if start != -1 and end != -1:
-    result = all_lines[start+1:end]
-    all_lines.replace(result, "")
-all_lines = all_lines.split("NEWLINE")
-print("ALL_LINES", all_lines, end="    END\n\n\n")"""
 
 # Blank lines removing
 debug("in", lineno(), "Entrée dans la boucle pour retirer les commentaires et lignes vides des instructions.")
@@ -83,260 +78,152 @@ for i in range(0, len(code_lines)):
     code_lines[i] = result[0]
 debug("other", lineno(), "code_lines = ", code_lines)
 
-
 # Var container
 variables_container = {}
-constants_container = {}
+#constants_container = {}
 used_libs = []
 
-line_numbers = 0
+# Use variables
 is_in_comment = False
-indentation_required = 0
-condition = []
-for i in range(20):
-    condition.append(True)
+line_numbers = 1
+execute_until_endif = False
 
-# Instructions
 for line in code_lines:
     if msvcrt.kbhit() and msvcrt.getch() == chr(27).encode():
         sys.exit()
-    was_if = False
-    line_numbers += 1
     if "/*" in line:
         is_in_comment = True
     if "*/" in line:
         is_in_comment = False
         continue
     if not is_in_comment:
-        line = split(line)
-        indentation_level = 0
-        try:
-            while line[0] == "\t":
-                indentation_level += 1
-                line.pop(0)
-        except IndexError:
-            line = [""]
-            pass
-        temp_line = ""
-        for char in line:
-            temp_line += char
-        line = temp_line
+        line = line.replace("\t", "")
 
-        if indentation_level == 0:
-            indentation_required = 0
-            #condition[indentation_level] = True
-        if indentation_level > indentation_required:
-            continue
-        if line.startswith("if"):
-            line = line.replace("if ", "")
-            line = line.replace("\n", "")
-            was_if = True
-            if line.endswith(":"):
-                line = split(line)
-                line.pop()
-                temp_line = ""
-                for char in line:
-                    temp_line += char
-                line = temp_line
-            else:
-                error(line_numbers, "StatementError", "If has to finish with \":\" !")
-            line = line.replace("&&", "and")
-            line = line.replace("||", "or")
-            while "{" in line and "}" in line:
-                variable = line[line.find("{") + 1:line.find("}")]
-                try:
-                    line = line.replace("{"+variable+"}", str(variables_container[variable]))
-                except KeyError:
-                    error(line_numbers, "ArgumentError", f"The variable \"{variable}\" is not existing or has been declared later in the code.")
-                    break
-            condition[indentation_level] = eval(str(line))
-            if condition[indentation_level]:
-                indentation_required += 1
-        elif line.startswith("else"):
-            if condition[indentation_level] is False:
-                indentation_required += 1
-            else:
-                indentation_required -= 1
-            was_if = True
-
-        if indentation_level < indentation_required and was_if is False:
-            indentation_required -= 1
-        elif indentation_level > indentation_required:
-            continue
-
-
-        if line.startswith("print"): # print instruction
-            line = line.replace("print", "")
-            if "(" in line and ")" in line:
-                line = line.replace("(", "")
-                line = line.replace(")", "")
-                line = line.replace(";", "")
-                while "{" in line and "}" in line:
-                    variable = line[line.find("{") + 1:line.find("}")]
-                    debug("other", lineno(), "Variable found in print.")
-                    try:
-                        line = line.replace("{"+variable+"}", str(variables_container[variable]))
-                    except KeyError:
-                        error(line_numbers, "ArgumentError", f"The variable \"{variable}\" is not existing or has been declared later in the code.")
-                        break
-                print(line)
-            else:
-                error(line_numbers, "StatementError", "Statement missing.")
-                break
-        elif line.startswith("var "):
-            line = line.replace("var ", "", 1)
-            if line.endswith("\n"):
-                line = split(line)
-                line.pop()
-                temp_line = ""
-                for char in line:
-                    temp_line += char
-                line = temp_line
-            line = line.replace("\\n", "\n")
+        while "{" in line and "}" in line:
+            variable = line[line.find("{") + 1:line.find("}")]
+            debug("other", lineno(), f"Variable {variable} found in print.")
             try:
-                if float(line):
-                    line = line.replace(",", ".")
-            except ValueError:
-                pass
-            name = ""
-            actual_state = "name"
-            for char in split(line):
-                if char != " " and char != "=" and actual_state == "name":
-                    name += char
-                elif char == " " or char == "=" and actual_state == "name":
-                    line = line.replace(name, "", 1)
-                    break
-            actual_state = "var"
-            line = line.replace("=", "", 1)
-            while line.startswith(" "):
-                line = split(line)
-                line.pop(0)
-                temp_line = ""
-                for char in line:
-                    temp_line += char
-                line = temp_line
-            var_content = ""
-            for char in split(line):
-                var_content += char
-            # Round
-            round_bool = "--round" in var_content
-            if round_bool:
-                var_content = var_content.replace("--round", "")
-            if var_content.endswith(" "):
-                var_content = split(var_content)
-                var_content.pop()
-                temp_var_content = ""
-                for temp_var_content_thing in var_content:
-                    temp_var_content += temp_var_content_thing
-                var_content = temp_var_content
-            # Inputs
-            if var_content.startswith("input("):
-                var_content = var_content.replace("input(", "")
-                var_content = split(var_content)
-                var_content.pop()
-                temp_var_content = ""
-                for char in var_content:
-                    temp_var_content += char
-                var_content = temp_var_content
-                var_content = input(bcolors.WARNING + var_content + bcolors.ENDC)
-            # Random
-            if "random(" in var_content:
-                while "{" in var_content and "}" in var_content:
-                    variable = line[line.find("{") + 1:line.find("}")]
-                    debug("other", lineno(), "Variable found in print.")
-                    var_content = var_content.replace("{"+variable+"}", str(variables_container[variable]))
-                old_content = var_content[var_content.find("random(") + 1:line.find(")")]
-                content = old_content
-                content = content.replace(" ", "")
-                if "," in content:
-                    content = content.replace(")", "")
-                    old_content = old_content.replace(")", "")
-                    content = content.replace("andom(", "")
-                    old_content = old_content.replace("andom(", "")
-                    content = content.split(",")
-                    content = randrange(int(content[0]), int(content[1]))
-                else:
-                    content = randrange(0, int(content))
-                var_content = var_content.replace(f"random({old_content})", str(content))
-            # Maths
-            if ("*" in var_content or "+" in var_content or re.compile("-{0}-{1}\w{0}").match(var_content) or "/" in var_content or "//" in var_content or "%" in var_content or "^" in var_content or "**" in var_content) and string.ascii_letters not in var_content:
-                var_content = var_content.replace("^", "**")
-                while "{" in var_content and "}" in var_content:
-                    variable = line[line.find("{") + 1:line.find("}")]
-                    debug("other", lineno(), "Variable found in print.")
-                    var_content = var_content.replace("{"+variable+"}", str(variables_container[variable]))
-                var_content = eval(str(var_content))
-            # Round
-            if round_bool:
-                var_content = round(float(var_content))
-            # LIBS
-            # STRING LIB
-            if "string" in used_libs:
-                import libs.lib_string
-                var_content = libs.lib_string.lower(var_content)
-                var_content = libs.lib_string.upper(var_content)
-            variables_container[name] = var_content
-            debug("other", lineno(), variables_container)
-        elif line.startswith("pause"):
-            line = line.replace("pause", "")
-            if "(" in line and ")" in line:
-                line = line.replace("(", "")
-                line = line.replace(")", "")
-                line = line.replace(";", "")
-                line = line.replace("\n", "")
-                if "{" in line and "}" in line:
-                    variable = line[line.find("{") + 1:line.find("}")]
-                    debug("other", lineno(), "Variable found in pause.")
-                    line = variables_container[variable]
+                line = line.replace("{" + variable + "}", str(variables_container[variable]))
+            except KeyError:
+                error(line_numbers, "ArgumentError",
+                      f"The variable \"{variable}\" is not existing or has been declared later in the code.")
+
+
+        if line.startswith("if "):
+            line = line.replace("if ", "", 1)
+            if eval(line) is True:
+                execute_until_endif = False
+            else:
+                execute_until_endif = True
+            last_condition = line
+        elif line.startswith("else"):
+            if eval(last_condition) is False:
+                execute_until_endif = False
+            else:
+                execute_until_endif = True
+
+        if line.startswith("endif") or line.startswith("end if"):
+            execute_until_endif = False
+            line_numbers += 1
+            continue
+
+        if execute_until_endif is False:
+            if line.startswith("print"):
+                line = line.replace("print ", "", 1)
+                print(line)
+            elif line.startswith("var"):
+                line = line.replace("var ", "", 1)
+                if line.endswith("\n"):
+                    line = split(line)
+                    line.pop()
+                    temp_line = ""
+                    for char in line:
+                        temp_line += char
+                    line = temp_line
+                line = line.replace("\\n", "\n")
+
+                line = line.split(" ") # Result : [name, "=", content]
+
+                if str(line[2]).lower() == "true":
+                    line[2] = True
+                elif str(line[2]).lower() == "false":
+                    line[2] = False
+
+                if line[2].startswith("input"):
+                    line[2] = line[2].replace("input", "", 1)
+                    for i in range(3, len(line)):
+                        line[2] = line[2] + " " + line[i]
+                    line[2] += " "
+                    line[2] = input(line[2])
+
+                if line[2].startswith("random"):
+                    line[2] = line[2].replace("random", "", 1)
+                    for i in range(3, len(line) - 1):
+                        line[2] = line[2] + " " + line[i]
+
+                    if len(line) == 4:
+                        rand_min = 0
+                        rand_max = line[3].replace(",", "")
+                    else:
+                        rand_min = line[3].replace(",", "")
+                        rand_max = line[4]
+                    line[2] = randrange(int(rand_min), int(rand_max))
+
                 try:
-                    time = int(line)
+                    line[2] = eval(line[2])
+                except SyntaxError:
+                    pass
+                except TypeError:
+                    pass
+
+                try:
+                    line[2] = int(line[2])
                 except ValueError:
                     try:
-                        time = float(line)
+                        line[2] = float(line[2])
                     except ValueError:
-                        error(line_numbers, "StatementError")
-                        break
-                sleep(time)
-            else:
-                error(line_numbers, "StatementError", "Statements Missing !")
-                break
-        elif line.startswith("$use: "):
-            line = line.replace("$use:", "")
-            line = line.replace(" ", "")
-            line = line.replace("\n", "")
-            if os.path.exists(f"{os.getcwd()}/libs/lib_{line}.py") is True:
-                used_libs.append(line)
-            else:
-                error(line_numbers, "UnexistingLibError", "Lib is not existing or has not been installed.")
-                break
-        elif line.startswith("lib"):
-            line = line.replace("lib ", "", 1)
-            for lib in used_libs:
-                if lib in line:
-                    with open(f"libs/lib_{lib}.py", "r") as lib_content:
-                        lib_content = lib_content.readlines()
-                        with open("temp.py", "w+") as executable:
-                            for i in range(len(lib_content)):
-                                if "var_line" in lib_content[i]:
-                                    line = line.replace("\n", "")
-                                    lib_content[i] = lib_content[i].replace("var_line", f'"{line}"')
-                                lib_content[i] = lib_content[i].replace("VARIABLES_CONTAINER", str(variables_container))
-                                lib_content[i] = lib_content[i].replace("line_numbers", f"int({line_numbers})")
-                                if "variables" in lib_content[1]:
-                                    with open("var_transfer.json", "r+", encoding="utf-8") as transfer_file:
-                                        variables_container = json.load(transfer_file)
-                                        transfer_file.close()
-                                        #print(variables_container)
-                            executable.writelines(lib_content)
-                            #print(variables_container)
-                            executable.close()
-                    os.system("python temp.py")
-        elif line != "" and line != " " and line != "\n" and was_if == False:
-            error(line_numbers, "Error", "Unknown function or method !")
+                        line[2] = str(line[2])
 
-debug("other", lineno(), variables_container)
+                variables_container[line[0]] = line[2]
 
+            elif line.startswith("pause"):
+                line = line.replace("pause ", "", 1)
+                sleep(float(line))
 
-code_file.close()
-debug_file.close()
-filename_file.close()
+            elif line.startswith("$use: "):
+                line = line.replace("$use:", "")
+                line = line.replace(" ", "")
+                line = line.replace("\n", "")
+                if os.path.exists(f"{os.getcwd()}/libs/lib_{line}.py") is True:
+                    used_libs.append(line)
+                else:
+                    error(line_numbers, "UnexistingLibError", "Lib is not existing or has not been installed.")
+                    break
+            elif line.startswith("lib "):
+                line = line.replace("lib ", "", 1)
+                for lib in used_libs:
+                    if lib in line:
+                        with open(f"libs/lib_{lib}.py", "r") as lib_content:
+                            lib_content = lib_content.readlines()
+                            with open("temp.py", "w+") as executable:
+                                for i in range(len(lib_content)):
+                                    if "var_line" in lib_content[i]:
+                                        line = line.replace("\n", "")
+                                        lib_content[i] = lib_content[i].replace("var_line", f'"{line}"')
+                                    lib_content[i] = lib_content[i].replace("VARIABLES_CONTAINER", str(variables_container))
+                                    lib_content[i] = lib_content[i].replace("line_numbers", f"int({line_numbers})")
+                                    if "variables" in lib_content[1]:
+                                        with open("var_transfer.json", "r+", encoding="utf-8") as transfer_file:
+                                            variables_container = json.load(transfer_file)
+                                            transfer_file.close()
+                                            # print(variables_container)
+                                executable.writelines(lib_content)
+                                # print(variables_container)
+                                executable.close()
+                        os.system("python temp.py")
+            elif line != "" and line != " " and line != "\n" and line != "if" and line != "else" and line != "endif" and line != "end if":
+                error(line_numbers, "Error", "Unknown function or method !")
+
+    line_numbers += 1
+
+print(f"{bcolors.OKBLUE}Process time : {round((timeit.default_timer()-time_launch), process_time_round_numbers)}s{bcolors.ENDC}")

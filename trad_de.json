@@ -5,6 +5,8 @@
     "launch-code-file": "Launching {}...",
     "last-stable-release": "Last stable release",
     "current-dev-build": "Current dev build",
+    "compile-code-file": "Compiling {}...",
+    "compiling-successfull": "Compiling successfull !",
     "modify-ini": {
       "debug-state-modified": "Option debug-state modified correctly in startup.acpl-ini with value {}.",
       "lang-modified": "Option lang modified correctly in startup.acpl-ini with value {}.",
@@ -14,8 +16,7 @@
       "use-colors-help": "HELP : the \"use-colors\" statement is used to know if you prefer to use colors or not. Some OS or softwares does not allow it.\nType : booléen.\nPossible options : \"True\" or \"False\".\nDefaut : True.\nActual : {}.",
       "process-time-round-numbers": "HELP : the \"process-time-round-numbers\" statement is used to know how many numbers will be behind the dot for the processing time.\nType : integer.\nDefault : 6.\nActual : {}.",
       "else-help": "Available values :\n\t- \"debug-state\"\n\t- \"lang\"\n\nType \"modify-ini help <statement>\" for better help.",
-      "unable-to-modify-option": "Unable to modify this option.",
-      "compile-code-file": "Compiling {}..."
+      "unable-to-modify-option": "Unable to modify this option."
     },
     "help": {
       "available-commands": "Available commands",
@@ -50,7 +51,8 @@
     "temp-files-removed": "Temp files removed !",
     "update-applied": "Update applied !",
     "console-restart": "Restarting console...",
-    "unable-to-install": "This version makes changes to the update_checker file. Because of that, we are unable to install it automatically (unless you want everything to be deleted).\nWhat we can do is downloading and extracting the new version in the folder where ACPL is installed.\nSo :\n\t- Go check the \"ACPL-master\" folder in the folder where ACPL is installed.\n\t- Type \"end\" in the console.\n\t- Copy-paste the content of \"ACPL-master\" AFTER CLOSING THIS WINDOW and replace all old files."
+    "unable-to-install": "This version makes changes to the update_checker file. Because of that, we are unable to install it automatically (unless you want everything to be deleted).\nWhat we can do is downloading and extracting the new version in the folder where ACPL is installed.\nSo :\n\t- Go check the \"ACPL-master\" folder in the folder where ACPL is installed.\n\t- Type \"end\" in the console.\n\t- Copy-paste the content of \"ACPL-master\" AFTER CLOSING THIS WINDOW and replace all old files.",
+    "no-internet-connection": "Keine Internet Verbindung da."
   },
   "program-ended": "Program successfully stopped."
 }
