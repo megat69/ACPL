@@ -20,7 +20,7 @@ You can also use a comma (`;`) to mark the end of the line, but it is not requir
 This can be modified through the `startup.ini` file or the console.
 This language also does not use quotes (`"`).
 
-Plugin for [Sublime Text 3](https://www.sublimetext.com/3) (Syntax highlighting) disponible in the [wiki](https://github.com/megat69/ACPL/wiki/Sublime-Text---Color-Highlighting).
+~~Plugin for [Sublime Text 3](https://www.sublimetext.com/3) (Syntax highlighting) disponible in the [wiki](https://github.com/megat69/ACPL/wiki/Sublime-Text---Color-Highlighting).~~ *Not remade for current version*
 Plugin for ini file also disponible in the [wiki](https://github.com/megat69/ACPL/wiki/Sublime-Text---Color-Highlighting).
 
 Before everything, open the console (file `console.py`). Type `help` inside if required.
@@ -28,14 +28,14 @@ Help for the console is not provided in the documentation.
 
 #### comments #####
 You can comment line per line with `#` or `//`.
-There is no way to do multiline comments at the moment.
+Multiline comments are done with `/*` and `*/`.
 
 #### print ####
 You can use the print method to send something in the console.
 
 **EXAMPLE 1 :**
 *Input :*
-`print(Hello)`
+`print Hello`
 *Output :*
 `Hello`
 
@@ -45,7 +45,7 @@ In practise, if we have a string variable named "pseudo" containing the value "T
 
 **EXAMPLE 2 :**
 *Input :*
-`print(Hello, {pseudo} !)`
+`print Hello, {pseudo} !`
 *Output :*
 `Hello, TheAssassin !`
 
@@ -64,32 +64,25 @@ The variable name. Note that two variables with different types can have the sam
 It depends :
 
  - If integer, it is simply a whole number.
- - If float, as written earlier, the whole part and the decimal part are seprated by a comma (`,`) or a dot (`.`).
+ - If float, as written earlier, the whole part and the decimal part are seprated by a dot (`.`).
  - If string, it is as many characters, symbols, and digits as you want.
  - If boolean, it is `true` or `false`. Every type of lower and upper case is accepted.
 
 **SPECIAL VALUES :**
  - It can also be special values :  you can meet the `input` method.
    It asks the user to type something in the console.
-   Syntax : `input(<text>)`
+   Syntax : `input <text>`
    <text> is the text that will be asked to the user.
    You can also put `\n` to create a newline.
 
  - You can also do mathematical equations to affect variables.
    They can also contain variables.
    Syntax : `<equation>`
-   At the moment, it is no longer variables in them.
  - You can also define them as random.
-   **Random deleted at the moment !**
-   Therefore, type `random(<first_number>, [second_number])`.
+   Therefore, type `random <first_number>, [second_number]`.
    If both numbers are given, the result will be a random number between them.
    Else, it will be a random number between 0 and <first_number>.
    You can also replace numbers by variables.
-
-**MODIFIERS :**
- - Actually, only one exists : `--round`.
-   It basically rounds the result.
-   Syntax : `<var_name> = <value> --round`
 
 **EXAMPLE 1 :**
 We want to create a variable "pseudo" containing "TheAssassin".
@@ -104,9 +97,9 @@ We want to ask the user for his pseudo :
 `var pseudo = input(What is your pseudo ? )`
 
 **EXAMPLE 3 :**
-We want to calculate `3*(6^2)` and store it into a variable "operation".
+We want to calculate `3*(6**2)` and store it into a variable "operation".
 *Input :*
-`var operation = 3*(6^2)`
+`var operation = 3*(6**2)`
 
 **EXAMPLE 4 :**
 We have a variable "age" containing the value `18`. We want to multiply it by 2 *(don't ask why xD)*
@@ -117,18 +110,19 @@ And then store it into "double"
 **EXAMPLE 5 :**
 We ask the user for his age and we multiply it by 5.
 *Input :*
-`int age = input(What is your age ? )
+`int age = input What is your age ? 
 int new_age = 2*{age}
-print(Your new age is now {age} xD !)`
+print Your new age is now {age} xD !`
 *Output (for this example, age equals 18) :*
 `Your new age is now 90 xD !`
 
 **EXAMPLE 6 :**
 You want a random number between 1 and 50 for the Lotto.
 *Input :*
-`var Lotto = random(1, 50)`
+`var Lotto = random 1, 50`
 
 #### if ####
+
 The `if` function is made to check if a condition is true or false.
 
 If true, it will execute the following instructions block ; if false, two cases :
@@ -139,12 +133,14 @@ No `elseif` at the moment.
 
 **Syntax :**
 
-`if <condition>:`
+`if <condition>`
 
-    <instructions>
-`else:`
+<instructions>
+endif
+`else`
+<instructions>
+endif
 
-    <instructions>
 The condition can contain as many variables as you want, and is with these operators :
 - `==` : compares if equal
 - `!=` : compares if different
@@ -155,35 +151,18 @@ The condition can contain as many variables as you want, and is with these opera
 - `in` : compares if a string is inside another
 
 You can join more by typing :
-- `and` or `&&`, if so, it will be true only if all conditions are true.
-- `or` or ``||`, if so, it will be true if at least one of the conditions is true.
+- `and`, if so, it will be true only if all conditions are true.
+- `or`, if so, it will be true if at least one of the conditions is true.
 
 The `<instructions>` can be whatever, but they need to have one more **TAB** than the if.
 
-Spaces does not work.
-
-**Example 1 :**
-
-*Input :*
-
-`var age = input(What is your age ? )`
-
-`if {age} >= 18:`
-
-	print(Congrats, you can vote !)
-`else:`
-	
-        if {age} <= 0:
-		print(LIAR !)
-        else:
-		print(So you're a child ?)`
 
 #### pause ####
 You can pause for a certain amount of time using `pause` method.
-Syntax : pause(<seconds>)
+Syntax : pause <seconds>
 <seconds>
 Can be an integer value, a float value, or a variable.
-If you use a variable, the syntax is `pause({<variable_name>}).
+If you use a variable, the syntax is `pause {<variable_name>}.
  
 #### libraries ####
 For further detail, go to the wiki page.
@@ -202,6 +181,17 @@ To use one, declare at the beginning of your program `$use: <lib>`.
 - Os : allow you to run a system command.
 - Colors : Allows you to put colors in your prints or variables ONLY IF the `use-colors` in the `startup.acpl-ini` is set to `True`.
 - Files : Basic file manipulations. *Does not work very well*
+
+## Changelog for 3.1
+- Added if and else
+
+### Changelog for 3.0
+*Apply manually*
+- Remade whole code
+- Remade syntax
+- Added a new option in the ini file
+- Removed compiler
+- Improved processing time
 
 ## Changelog for 2.5
 - Added a compiler ! You can now transpile your ACPL programs in Python !
