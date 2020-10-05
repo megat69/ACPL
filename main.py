@@ -109,6 +109,15 @@ while line_numbers < len(code_lines):
                 error(line_numbers, "ArgumentError",
                       f"The variable \"{variable}\" is not existing or has been declared later in the code.")
 
+        while "<" in line and ">" in line:
+            equation = line[line.find("<") + 1:line.find(">")]
+            debug("other", lineno(), f"Equation {equation} found in print.")
+            try:
+                line = line.replace(f"<{str(equation)}>", str(eval(str(equation))))
+            except KeyError:
+                error(line_numbers, "ArgumentError",
+                      f"The equation \"{equation}\" is not existing or has been declared later in the code.")
+
 
         if line.startswith("if "):
             line = line.replace("if ", "", 1)
@@ -222,6 +231,10 @@ while line_numbers < len(code_lines):
                 line = line.replace("pause ", "", 1)
                 sleep(float(line))
 
+            elif line.startswith("deletevar"):
+                line = line.replace("deletevar ", "", 1)
+                variables_container.pop(line)
+
             elif line.startswith("$use: "):
                 line = line.replace("$use:", "")
                 line = line.replace(" ", "")
@@ -256,6 +269,9 @@ while line_numbers < len(code_lines):
             elif line != "" and line != " " and line != "\n" and line != "if" and line != "else" and line != "endif" and line != "end if" and line != "for" and line != "endfor" and line != "end for":
                 if debug_const is True:
                     error(line_numbers, "Error", "Unknown function or method !")
+
+    if debug_state:
+        debug("other", line_numbers, f"Variables : {variables_container}")
 
     line_numbers += 1
 

@@ -1,8 +1,8 @@
-filename: PROJECTS/Test_For
+filename: __Projects/test_equation
 lang: en
-version: 3.2.1
-current-version: Pre2.3f_H12
+version: 3.3.0
+current-version: Pre3.3b_A7
 debug-state: False
 console-reloaded: False
-use-colors: False
+use-colors: True
 process-time-round-numbers: 6
