@@ -51,6 +51,15 @@ In practise, if we have a string variable named "pseudo" containing the value "T
 
 It works with every type of variable.
 
+Otherwise, you can use `<equation>` to make an equation.
+
+With a variable `number` equals to ten, that we want to multiply by two :
+
+*Input :*
+`print 10 multiplied by 2 equals <{number}*2>`
+*Output :*
+`10 multiplied by 2 equals 20`
+
 #### variables ####
 Variables have to be defined clearly.
 It follows the form `var <var_name> = <value>`.
@@ -204,6 +213,14 @@ Syntax : pause <seconds>
 Can be an integer value, a float value, or a variable.
 If you use a variable, the syntax is `pause {<variable_name>}.
  
+#### deletevar ####
+You can delete an unnecessary variable and free memory with this instruction.
+
+Simply type `deletevar <variable_name>` to do so.
+
+*Example :*
+`deletevar Test` will delete var `Test`.
+ 
 #### libraries ####
 For further detail, go to the wiki page.
 
@@ -221,6 +238,17 @@ To use one, declare at the beginning of your program `$use: <lib>`.
 - Os : allow you to run a system command.
 - Colors : Allows you to put colors in your prints or variables ONLY IF the `use-colors` in the `startup.acpl-ini` is set to `True`.
 - Files : Basic file manipulations. *Does not work very well*
+
+### Changelog for 3.3
+- Added the support for equations.
+It works this way :
+
+*Input :*
+`print 10 multiplied by 2 equals <{number}*2>`
+*Output :*
+`10 multiplied by 2 equals 20`
+
+- Added the `deletevar` command.
 
 ### Changelog for 3.2.1
 - Added `ini-content` command to the console.
