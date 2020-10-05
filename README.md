@@ -222,13 +222,17 @@ To use one, declare at the beginning of your program `$use: <lib>`.
 - Colors : Allows you to put colors in your prints or variables ONLY IF the `use-colors` in the `startup.acpl-ini` is set to `True`.
 - Files : Basic file manipulations. *Does not work very well*
 
-## Changelog for 3.2
+### Changelog for 3.2.1
+- Added `ini-content` command to the console.
+This command allows you to see what's inside the ini file from the console.
+
+### Changelog for 3.2
 - Added `for` loop
 
-## Changelog for 3.1
+### Changelog for 3.1
 - Added if and else
 
-### Changelog for 3.0
+## Changelog for 3.0
 *Apply manually*
 - Remade whole code
 - Remade syntax
@@ -236,26 +240,28 @@ To use one, declare at the beginning of your program `$use: <lib>`.
 - Removed compiler
 - Improved processing time
 
-## Changelog for 2.5
+## Changelog for 3.0
+
+### Changelog for 2.5
 - Added a compiler ! You can now transpile your ACPL programs in Python !
 
-## Changelog for 2.4
+### Changelog for 2.4
 - New lib : colors
 - Now able to access the code's variables in the libs ! Just look how it has been done in `libs/lib_colors.py`.
 
-## Changelog for 2.3
+### Changelog for 2.3
 - `if` and `else` are finally here !
   Go to the wiki for further information
 - Italian translation !
 
-## Changelog for 2.2
+### Changelog for 2.2
 *Apply manually !*
 
 - Added libs
 - Added `lib` command to console
 - Added a few features
 
-## Changelog for 2.1
+### Changelog for 2.1
 - Variables are usable everywhere again
 
 ## Changelog for 2.0
@@ -267,54 +273,54 @@ To use one, declare at the beginning of your program `$use: <lib>`.
 - Now translated in Azerbaijani and Turkish !
 - Updated the update checker, works better now.
 
-## Changelog for 1.4.4
+### Changelog for 1.4.4
 **EMERGENCY UPDATE - To apply manually**
 - Big changes made to the updater.
 
-## Changelog for 1.4.3
+### Changelog for 1.4.3
 - Fixed a lot of bugs and shells.
 
-## Changelog for 1.4.2
+### Changelog for 1.4.2
 - Added option `use-colors` in the ini file, defining if it will use the colors or not in the console.
 
-## Changelog for 1.4.1
+### Changelog for 1.4.1
 - Language translated everywhere !
 
-## Changelog for 1.4
+### Changelog for 1.4
 - Now updates automatically !
 - Supports dutch *Console and errors only*
 
-## Changelog for 1.3
+### Changelog for 1.3
 - Added custom error messages ;)
 - Added multilingual support (french and english). *Console and errors only are supported at the moment.*
 
-## Changelog for 1.2
+### Changelog for 1.2
 - Added syntax highlighting for sublime text (`.acpl` and `.acpl-ini` files)
 - Added multiple variable support in print
 - Added a `reload` command for the console
 - Upgraded `startup.acpl-ini`
 
 ## Changelog for 1.0
-### **1.0 is here !**
+## **1.0 is here !**
 - Added a console
 - You can now run files named differently than "code.acpl" through the console
 - Added a "startup.ini" files containing requirements for both console and compiler
 - Added console commands (Watch more in the documentation)
 
-## Changelog for 0.8
+### Changelog for 0.8
 - Added the support for randomness in variable creation
 - Added the support for round in int creation
 
-## Changelog for 0.7
+### Changelog for 0.7
 - Added the support for mathematical equations in variable creation
 
-## Changelog for 0.6
+### Changelog for 0.6
 - Added the `code.acpl` file containing a code sample.
 
-## Changelog for 0.5
+### Changelog for 0.5
 - Added inputs for all types
 - Added pauses
 
-## Changelog for 0.4
+### Changelog for 0.4
 
 First official release.
