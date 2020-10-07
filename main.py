@@ -87,6 +87,7 @@ used_libs = []
 is_in_comment = False
 line_numbers = 0
 execute_until_endif = False
+in_for = False
 
 while line_numbers < len(code_lines):
     line = code_lines[line_numbers]
@@ -96,6 +97,7 @@ while line_numbers < len(code_lines):
         is_in_comment = True
     if "*/" in line:
         is_in_comment = False
+        line_numbers += 1
         continue
     if not is_in_comment:
         line = line.replace("\t", "")
@@ -142,6 +144,7 @@ while line_numbers < len(code_lines):
             continue
 
         if line.startswith("for"):  # for <name> <min> <max>
+            in_for = True
             line = line.replace("for ", "", 1)
             line = line.split(" ")
             try:
@@ -158,6 +161,7 @@ while line_numbers < len(code_lines):
             continue
 
         if line.startswith("endfor") or line.startswith("end for"):
+            in_for = False
             variables_container[for_var] += 1
             if variables_container[for_var] < for_max:
                 line_numbers = for_line_number
@@ -192,6 +196,7 @@ while line_numbers < len(code_lines):
 
                 if line[2].startswith("input"):
                     line[2] = line[2].replace("input", "", 1)
+                    line[2] = line[2].replace(" ", "", 1)
                     for i in range(3, len(line)):
                         line[2] = line[2] + " " + line[i]
                     line[2] += " "
