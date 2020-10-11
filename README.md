@@ -13,6 +13,14 @@ Big thanks to all the translators, and if you want to meet them, just join our [
 `psutil` and `requests` libraries needs to be installed separately.
 You can also run `setup.py`.
 
+### COMPILING ###
+The language can be compiled in Python using the following process.
+
+The most interesting thing about this update is the compiler, obviously.
+It works very simply :
+After setting the corresponding `ini` options with the `modify-ini` console command, just type the following command : `compile <ACPL_file> <final_python_file_filename>`
+It will generate the corresponding python file with the name you inputted.
+
 ### DOCUMENTATION ###
 Things to know :
 This program works line per line, which means that it is **ONE INSTRUCTION PER LINE**.
@@ -205,6 +213,8 @@ And now I'm out...
 
 *Notice you can place an `if` statement inside, but no other loop.*
 
+You can break the loop at any moment by using the `break` instruction.
+
 
 #### pause ####
 You can pause for a certain amount of time using `pause` method.
@@ -238,6 +248,35 @@ To use one, declare at the beginning of your program `$use: <lib>`.
 - Os : allow you to run a system command.
 - Colors : Allows you to put colors in your prints or variables ONLY IF the `use-colors` in the `startup.acpl-ini` is set to `True`.
 - Files : Basic file manipulations. *Does not work very well*
+
+### Changelog for 3.4
+- **Compiler**
+The biggest feature so far. It has been so much work preparing that.
+It actually is an ACPL to Python compiler. *Or transpiler, btw*
+It allows you to generate a Python file from an ACPL file, which is much easier to distribute, knowing how few people downloaded ACPL.
+- **Console command : *pyrun***
+This very simple command allows you, by the ACPL console, to run a Python file.
+It's pretty easy, and allows you to check if your ACPL files compiled to Python are still working. If they are not, contact me.
+- **Console command : *open***
+Allows you to open a specified file in its default program.
+That's as simple as it sounds.
+- **Added console command *display***
+  - Syntax : `display <file>`
+  - Prints the raw content of the file in the console.
+- **Added `break` instruction for loops.**
+  - This instruction make you able to break the loop when you call it.
+- **BUGFIXES**
+It's quite explicit. But as you might have seen, 3.3.2 was VERY buggy.
+It's now mostly fixed.
+*Remember it's just a PreRelease btw*
+- **Options *modify-ini***
+  - `startup-check-update` : Boolean. Allows you to choose whether or not you prefer the ACPL console to check updates at startup or not.
+  I find this very useful.
+  - `open-compiled-file` : Boolean. If True, the brand new newly compiled file you just generated in Python will open in its default program.
+  Quite neat, isn't it ?
+  - `leave-comments-at-compiling` : Boolean *(again xD)*. If True, the single-line comments will be kept through compiling and will appear in the final compiled Python file. If False, they simply won't.
+  - `compiling-style` : Chooses compiling style. If "compacted" or "collapsed", the compiled result will be very short and unclear. If "expanded", it will be much more readable /\*\ *Beware with that last ! It tends to leave a lot of blank lines.*
+
 
 ### Changelog for 3.3
 - Added the support for equations.
