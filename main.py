@@ -11,6 +11,7 @@ import msvcrt
 import timeit
 
 time_launch = timeit.default_timer()
+final_filename = ""
 
 # Files opening
 try:
@@ -80,7 +81,6 @@ debug("other", lineno(), "code_lines = ", code_lines)
 
 # Var container
 variables_container = {}
-#constants_container = {}
 used_libs = []
 
 # Use variables
@@ -88,6 +88,14 @@ is_in_comment = False
 line_numbers = 0
 execute_until_endif = False
 in_for = False
+is_breaking = False
+wait_next_loop = False
+
+# Undefined variables
+last_condition = None
+for_var = None
+for_max = None
+for_line_number = None
 
 while line_numbers < len(code_lines):
     line = code_lines[line_numbers]
@@ -120,6 +128,7 @@ while line_numbers < len(code_lines):
                 error(line_numbers, "ArgumentError",
                       f"The equation \"{equation}\" is not existing or has been declared later in the code.")
 
+        debug("other", line_numbers, f"line = {line}")
 
         if line.startswith("if "):
             line = line.replace("if ", "", 1)
@@ -162,15 +171,26 @@ while line_numbers < len(code_lines):
 
         if line.startswith("endfor") or line.startswith("end for"):
             in_for = False
-            variables_container[for_var] += 1
-            if variables_container[for_var] < for_max:
-                line_numbers = for_line_number
-                continue
+            wait_next_loop = False
+            if is_breaking is False:
+                variables_container[for_var] += 1
+                if variables_container[for_var] < for_max:
+                    line_numbers = for_line_number
+                    continue
+                else:
+                    variables_container.pop(for_var)
             else:
                 variables_container.pop(for_var)
+                is_breaking = False
 
+        if line.startswith("break") and execute_until_endif is False:
+            is_breaking = True
 
-        if execute_until_endif is False:
+        # continue instruction. Disabled because not working.
+        """if line.startswith("coninue") and execute_until_endif is False:
+            wait_next_loop = True"""
+
+        if execute_until_endif is False and is_breaking is False and wait_next_loop is False:
             if line.startswith("print"):
                 line = line.replace("print ", "", 1)
                 if line.endswith("\n"):
@@ -187,14 +207,14 @@ while line_numbers < len(code_lines):
                     line = temp_line
                 line = line.replace("\\n", "\n")
 
-                line = line.split(" ") # Result : [name, "=", content]
+                line = line.split(" ")  # Result : [name, "=", content]
 
                 if str(line[2]).lower() == "true":
                     line[2] = True
                 elif str(line[2]).lower() == "false":
                     line[2] = False
 
-                if line[2].startswith("input"):
+                if str(line[2]).startswith("input"):
                     line[2] = line[2].replace("input", "", 1)
                     line[2] = line[2].replace(" ", "", 1)
                     for i in range(3, len(line)):
@@ -202,7 +222,7 @@ while line_numbers < len(code_lines):
                     line[2] += " "
                     line[2] = input(line[2])
 
-                if line[2].startswith("random"):
+                if str(line[2]).startswith("random"):
                     line[2] = line[2].replace("random", "", 1)
                     for i in range(3, len(line) - 1):
                         line[2] = line[2] + " " + line[i]

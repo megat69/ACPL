@@ -15,7 +15,10 @@
       "lang-help": "HELP : the \"lang\" statement is used to know in which language the system is displayed.\nType : string.\nPossible options : \"en\", \"fr\", or \"nl\".\nDefault : en.\nActual : {}.",
       "use-colors-help": "HELP : the \"use-colors\" statement is used to know if you prefer to use colors or not. Some OS or softwares does not allow it.\nType : booléen.\nPossible options : \"True\" or \"False\".\nDefaut : True.\nActual : {}.",
       "process-time-round-numbers": "HELP : the \"process-time-round-numbers\" statement is used to know how many numbers will be behind the dot for the processing time.\nType : integer.\nDefault : 6.\nActual : {}.",
-      "else-help": "Available values :\n\t- \"debug-state\"\n\t- \"lang\"\n\nType \"modify-ini help <statement>\" for better help.",
+      "open-compiled-file": "HELP : the \"open-compiled-file\" statement is used to know if the file just compiled has to be opened at the end or not.\nType : Bool.\nDefault : False.\nActual : {}.",
+      "startup-check-update": "HELP : the \"startup-check-update\" statement is used to know if the console has to check update at startup or not.\nType : Bool.\nDefault : True.\nActual : {}.",
+      "leave-comments-at-compiling": "HELP : the \"leave-comments-at-compiling\" statement is used to know if you want to keep the comments in the compiled python file (readability), or not (processing time).\nType : Bool.\nDefault : False.\nActual : {}.",
+      "else-help": "Available values :\n\t- \"debug-state\"\n\t- \"lang\"\n\t- \"process-time-round-numbers\"\n\t- \"open-compiled-file\"\n\t- \"leave-comments-at-compiling\"\n\t- \"startup-check-update\"\n\nType \"modify-ini help <statement>\" for better help.",
       "unable-to-modify-option": "Unable to modify this option."
     },
     "help": {

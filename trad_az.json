@@ -13,7 +13,10 @@
       "lang-help": "Kömək : the \"dil\" ifadəsi sizdən hansı dili seçəcəyinizi soruşur .\nTip : string.\nMümkün Seçimlər : \"en\", \"fr\", or \"nl\".\nDefolt : en.\nAktual : {}.",
       "use-colors-help": "Kömək :  \"use-colors\" sizdən hər hansı bir rəngin istifadəsini və yaxud əksini soruşur. Bəzi sistemlər bunu dəstəkləmir.\nTip : boolean.\nMümkün Seçimlər : \"True\" or \"False\".\nDefolt : True.\nAktual: {}.",
       "process-time-round-numbers": "HELP : the \"process-time-round-numbers\" statement is used to know how many numbers will be behind the dot for the processing time.\nType : integer.\nDefault : 6.\nActual : {}.",
-      "else-help": "Mövcüd Seçimlər :\n\t- \"debug-state\"\n\t- \"lang\"\n\nType \"modify-ini help <statement>\" çox yaxşı kömək üçün.",
+      "open-compiled-file": "HELP : the \"open-compiled-file\" statement is used to know if the file just compiled has to be opened at the end or not.\nType : Bool.\nDefault : False.\nActual : {}.",
+      "startup-check-update": "HELP : the \"startup-check-update\" statement is used to know if the console has to check update at startup or not.\nType : Bool.\nDefault : True.\nActual : {}.",
+      "leave-comments-at-compiling": "HELP : the \"leave-comments-at-compiling\" statement is used to know if you want to keep the comments in the compiled python file (readability), or not (processing time).\nType : Bool.\nDefault : False.\nActual : {}.",
+      "else-help": "Mövcüd Seçimlər :\n\t- \"debug-state\"\n\t- \"lang\"\n\t- \"process-time-round-numbers\"\n\t- \"open-compiled-file\"\n\t- \"leave-comments-at-compiling\"\n\t- \"startup-check-update\"\n\nType \"modify-ini help <statement>\" çox yaxşı kömək üçün.",
       "unable-to-modify-option": "Bu seçimi dəyişdirmək mümkün deyil.",
       "compile-code-file":"{} Tərtib edilir..."
     },

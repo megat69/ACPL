@@ -13,7 +13,10 @@
       "lang-help": "AIUTO : la variabile \"lang\" è usata per sapere in che linguaggio il sistema deve essere visualizzato .\nTipo : string.\nOpzioni possibili : \"en\", \"fr\", o \"nl\".\nPredefinito : en.\nAttuale : {}.",
       "use-colors-help": "AIUTO : la variabile \"use-colors\" è usata per sapere se prefera utilizzare i colori o no. Alcuni sistemi operativi o software non lo permettono.\nTipo : booleano.\nOpzioni possibili : \"True\" o \"False\".\nPredefinito : True.\nAttuale : {}.",
       "process-time-round-numbers": "HELP : the \"process-time-round-numbers\" statement is used to know how many numbers will be behind the dot for the processing time.\nType : integer.\nDefault : 6.\nActual : {}.",
-      "else-help": "Valori disponibili :\n\t- \"debug-state\"\n\t- \"lang\"\n\t- \"use-colors\"\nDigita \"modify-ini help <variabile>\" per un aiuto migliore.",
+      "open-compiled-file": "HELP : the \"open-compiled-file\" statement is used to know if the file just compiled has to be opened at the end or not.\nType : Bool.\nDefault : False.\nActual : {}.",
+      "startup-check-update": "HELP : the \"startup-check-update\" statement is used to know if the console has to check update at startup or not.\nType : Bool.\nDefault : True.\nActual : {}.",
+      "leave-comments-at-compiling": "HELP : the \"leave-comments-at-compiling\" statement is used to know if you want to keep the comments in the compiled python file (readability), or not (processing time).\nType : Bool.\nDefault : False.\nActual : {}.",
+      "else-help": "Valori disponibili :\n\t- \"debug-state\"\n\t- \"lang\"\n\t- \"process-time-round-numbers\"\n\t- \"open-compiled-file\"\n\t- \"leave-comments-at-compiling\"\n\t- \"startup-check-update\"\n\nDigita \"modify-ini help <variabile>\" per un aiuto migliore.",
       "unable-to-modify-option": "Impossibile modificare questa opzione.",
       "compile-code-file": "Compilazione {}..."
     },
