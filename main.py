@@ -90,12 +90,16 @@ execute_until_endif = False
 in_for = False
 is_breaking = False
 wait_next_loop = False
+in_while = False
 
 # Undefined variables
 last_condition = None
 for_var = None
 for_max = None
 for_line_number = None
+while_condition = None
+while_line = None
+skip_while = False
 
 while line_numbers < len(code_lines):
     line = code_lines[line_numbers]
@@ -112,7 +116,7 @@ while line_numbers < len(code_lines):
 
         while "{" in line and "}" in line:
             variable = line[line.find("{") + 1:line.find("}")]
-            debug("other", lineno(), f"Variable {variable} found in print.")
+            debug("other", lineno(), f"Variable {variable} found.")
             try:
                 line = line.replace("{" + variable + "}", str(variables_container[variable]))
             except KeyError:
@@ -128,7 +132,7 @@ while line_numbers < len(code_lines):
                 error(line_numbers, "ArgumentError",
                       f"The equation \"{equation}\" is not existing or has been declared later in the code.")
 
-        debug("other", line_numbers, f"line = {line}")
+        #debug("other", line_numbers, f"line : {line}")
 
         if line.startswith("if "):
             line = line.replace("if ", "", 1)
@@ -145,6 +149,31 @@ while line_numbers < len(code_lines):
             else:
                 execute_until_endif = True
                 line_numbers += 1
+                continue
+
+        if line.startswith("while"):
+            line = line.replace("while ", "", 1)
+            if line.endswith("\n"):
+                line = line[:-1]
+            while_condition = line
+            in_while = True
+            while_line = line_numbers
+            if eval(while_condition) and is_breaking is False:
+                skip_while = False
+            else:
+                skip_while = True
+        elif line.startswith("endwhile") or line.startswith("end while"):
+            if eval(while_condition) and is_breaking is False:
+                line_numbers = while_line
+                wait_next_loop = False
+                continue
+            else:
+                in_while = False
+                skip_while = False
+                line_numbers += 1
+                wait_next_loop = False
+                if is_breaking:
+                    is_breaking = False
                 continue
 
         if line.startswith("endif") or line.startswith("end if"):
@@ -186,18 +215,29 @@ while line_numbers < len(code_lines):
         if line.startswith("break") and execute_until_endif is False:
             is_breaking = True
 
-        # continue instruction. Disabled because not working.
-        """if line.startswith("coninue") and execute_until_endif is False:
-            wait_next_loop = True"""
+        if line.startswith("continue") and execute_until_endif is False:
+            wait_next_loop = True
 
-        if execute_until_endif is False and is_breaking is False and wait_next_loop is False:
+        if execute_until_endif is False and is_breaking is False and wait_next_loop is False and skip_while is False:
             if line.startswith("print"):
                 line = line.replace("print ", "", 1)
                 if line.endswith("\n"):
                     line = line[:-1]  # Removing the \n
                 print(line)
             elif line.startswith("var"):
-                line = line.replace("var ", "", 1)
+                line = line.replace("var", "", 1)
+                var_type = None
+
+                if line.startswith(":"):
+                    if line.startswith(":int"):
+                        var_type = "int"
+                    elif line.startswith("float"):
+                        var_type = "float"
+                    else:
+                        var_type = "str"
+                    line = line.replace(":"+var_type, "", 1)
+                line = line.replace(" ", "", 1)
+
                 if line.endswith("\n"):
                     line = split(line)
                     line.pop()
@@ -219,7 +259,8 @@ while line_numbers < len(code_lines):
                     line[2] = line[2].replace(" ", "", 1)
                     for i in range(3, len(line)):
                         line[2] = line[2] + " " + line[i]
-                    line[2] += " "
+                    while line[2].startswith(" "):
+                        line[2] = line[2].replace(" ", "", 1)
                     line[2] = input(line[2])
 
                 if str(line[2]).startswith("random"):
@@ -241,6 +282,8 @@ while line_numbers < len(code_lines):
                     pass
                 except TypeError:
                     pass
+                except NameError:
+                    line[2] = "\""+line[2]+"\""
 
                 try:
                     line[2] = int(line[2])
@@ -250,7 +293,15 @@ while line_numbers < len(code_lines):
                     except ValueError:
                         line[2] = str(line[2])
 
-                variables_container[line[0]] = line[2]
+                if var_type is not None:
+                    if var_type == "int":
+                        variables_container[line[0]] = int(line[2])
+                    elif var_type == "float":
+                        variables_container[line[0]] = float(line[2])
+                    else:
+                        variables_container[line[0]] = str(line[2])
+                else:
+                    variables_container[line[0]] = line[2]
 
             elif line.startswith("pause"):
                 line = line.replace("pause ", "", 1)

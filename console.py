@@ -71,6 +71,8 @@ while running:
     output = None
     user_input = input("\n>>> ")
 
+    debug("in", lineno(), user_input)
+
     if user_input.lower() == "end":
         print(f"{bcolors.OKBLUE}{texts.console['process-ended']}{bcolors.ENDC}")
         break
@@ -127,6 +129,9 @@ while running:
         elif user_input[0] == "compiling-style":
             replace_line(ini_file, 12, "compiling-style: " + str(user_input[1]) + "\n")
             output = "compiling-style modified with value {}.".format(user_input[1])
+        elif user_input[0] == "compile-ask-for-replace":
+            replace_line(ini_file, 13, "compile-ask-for-replace: " + str(user_input[1]) + "\n")
+            output = "compile-ask-for-replace modified with value {}.".format(user_input[1])
         elif user_input[0] == "help":
             if user_input[1] == "debug-state":
                 print(texts.console_modify_ini['debug-state-help'].format(str(debug_state)))
@@ -213,6 +218,8 @@ while running:
     elif user_input.startswith("compile"):
         user_input = user_input.replace("compile ", "", 1)
         user_input = user_input.split(" ")
+        if len(user_input) == 1:
+            user_input.append(user_input[0]+".py")
         if not user_input[0].endswith(".acpl"):
             user_input[0] += ".acpl"
         replace_line('startup.acpl-ini', 0, 'filename: '+user_input[0]+"\n")
@@ -254,6 +261,13 @@ while running:
             print(file_line, end="")
         file.close()
         print(f"{bcolors.OKBLUE}File content ends here.{bcolors.ENDC}")
+
+    elif user_input.startswith("creator"): # Easter egg ?
+        ascii_art = open("ascii-art.txt", "r")
+        for ascii_line in ascii_art.readlines():
+            print(ascii_line, end="")
+        ascii_art.close()
+        print("\n\nMerci d'avoir jeté un coup d'oeil au code.")
 
     else:
         output = texts.console["unknown-command"]

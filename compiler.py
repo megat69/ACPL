@@ -38,13 +38,6 @@ for config_line in config_file.readlines():
             config_line = os.getcwd()+"/"+config_line
 
         compiled_file_filename = config_line
-        if os.path.exists(compiled_file_filename):
-            confirm = input(f"{bcolors.FAIL}This file, located at \"{compiled_file_filename}\" already exists.\nDo you want to replace it ? (Yes/No) {bcolors.ENDC}")
-            while confirm.lower() != "yes" and confirm.lower() != "no":
-                print("Wrong answer.")
-                confirm = input(f"{bcolors.FAIL}This file, located at \"{compiled_file_filename}\" already exists.\nDo you want to replace it ? (Yes/No) {bcolors.ENDC}")
-            if confirm.lower() == "no":
-                sys.exit()
 
     elif config_line.startswith("open-compiled-file: "):
         config_line = config_line.replace("open-compiled-file: ", "", 1).replace("\n", "")
@@ -58,10 +51,23 @@ for config_line in config_file.readlines():
         config_line = config_line.replace("compiling-style: ", "", 1).replace("\n", "")
         compiling_style = config_line
 
+    elif config_line.startswith("compile-ask-for-replace"):
+        config_line = config_line.replace("compile-ask-for-replace: ", "", 1).replace("\n", "")
+        compile_ask_for_replace = config_line
+
     """elif lines.startswith("process-time-round-numbers: "):
         lines = lines.replace("process-time-round-numbers: ", "")
         process_time_round_numbers = int(lines)"""
 process_time_round_numbers = 6
+
+if os.path.exists(compiled_file_filename) and compile_ask_for_replace == "True":
+    confirm = input(f"{bcolors.FAIL}This file, located at \"{compiled_file_filename}\" already exists.\nDo you want to replace it ? (Yes/No) {bcolors.ENDC}")
+    while confirm.lower() != "yes" and confirm.lower() != "no":
+        print("Wrong answer.")
+        confirm = input(
+            f"{bcolors.FAIL}This file, located at \"{compiled_file_filename}\" already exists.\nDo you want to replace it ? (Yes/No) {bcolors.ENDC}")
+    if confirm.lower() == "no":
+        sys.exit()
 
 time_launch = timeit.default_timer()
 
@@ -155,6 +161,25 @@ while line_numbers < len(code_lines):
             indentation_required -= 1
             line = ""
 
+        if line.startswith("while"):
+            indentation_required += 1
+            if line.endswith("\n"):
+                line = line[:-1]
+            line += ":"
+            while "{" in line and "}" in line:
+                variable = line[line.find("{") + 1:line.find("}")]
+                debug("other", lineno(), f"Variable {variable} found in print.")
+                try:
+                    line = line.replace("{" + variable + "}", variable)
+                except KeyError:
+                    error(line_numbers, "ArgumentError", f"The variable \"{variable}\" is not existing or has been declared later in the code.")
+            compiled_file.write(line + "\n")
+            line_numbers += 1
+            continue
+        elif line.startswith("endwhile") or line.startswith("end while"):
+            indentation_required -= 1
+            line = ""
+
         if line.startswith("if"):
             while "<" in line and ">" in line:
                 equation = line[line.find("<") + 1:line.find(">")]
@@ -202,10 +227,21 @@ while line_numbers < len(code_lines):
                 line = line[:-1]
             line = "print(f\""+line+"\")"
 
-        elif line.startswith("var "):
-            line = line.replace("var ", "", 1)
+        elif line.startswith("var"):
+            line = line.replace("var", "", 1)
+            var_type = None
 
             do_regroup = True
+
+            if line.startswith(":"):
+                if line.startswith(":int"):
+                    var_type = 'int'
+                elif line.startswith(":float"):
+                    var_type = 'float'
+                else:
+                    var_type = 'str'
+                line = line.replace(":"+var_type, "", 1)
+            line = line.replace(" ", "", 1)
 
             line = line.split(" ")  # Result : [name, "=", content]
 
@@ -218,7 +254,7 @@ while line_numbers < len(code_lines):
                 line[2] = "input(f\""+line[2].replace(" ", "", 1)+"\")"
                 do_regroup = False
 
-            if str(line[2]).startswith("random"):
+            elif str(line[2]).startswith("random"):
                 line[2] = line[2].replace("random", "", 1)
                 for i in range(3, len(line) - 1):
                     line[2] = line[2] + " " + line[i]
@@ -230,7 +266,7 @@ while line_numbers < len(code_lines):
                     rand_min = line[3].replace(",", "")
                     rand_max = line[4]
 
-                line[2] = "randrange("+rand_min+", "+rand_max[:-1]+")"
+                line[2] = "randrange(int("+rand_min+"), int("+rand_max[:-1]+"))"
 
                 while "{" in line[2] and "}" in line[2]:
                     variable = line[2][line[2].find("{") + 1:line[2].find("}")]
@@ -241,6 +277,16 @@ while line_numbers < len(code_lines):
                         error(line_numbers, "ArgumentError",
                               f"The variable \"{variable}\" is not existing or has been declared later in the code.")
                 do_regroup = False
+
+            else:
+                try:
+                    line[2] = eval(line[2])
+                except SyntaxError:
+                    print(line[2])
+                    pass
+                except NameError:
+                    print(line[2])
+                    pass
 
             if do_regroup:
                 for i in range(3, len(line)):
@@ -265,7 +311,10 @@ while line_numbers < len(code_lines):
             elif str(line[2]).lower() == "f\"false\"":
                 line[2] = False
 
-            line = line[0] + " = " + str(line[2])
+            if var_type is not None:
+                line = line[0] + " = " + var_type + "(" + str(line[2]) + ")"
+            else:
+                line = line[0] + " = " + str(line[2])
 
         elif line.startswith("pause"):
             line = line.replace("pause ", "", 1)
@@ -285,6 +334,9 @@ while line_numbers < len(code_lines):
 
         elif line.startswith("break"):
             line = "break"
+
+        elif line.startswith("continue"):
+            line = "continue"
 
         else:
             line = ""
