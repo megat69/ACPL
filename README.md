@@ -70,9 +70,7 @@ With a variable `number` equals to ten, that we want to multiply by two :
 
 #### variables ####
 Variables have to be defined clearly.
-It follows the form `var <var_name> = <value>`.
-
-**Change for 2.0 :** No longer variable types
+It follows the form `var[:var_type] <var_name> = <value>`.
 
 <var_name>
 The variable name. Note that two variables with different types can have the same name, even if not recommended.
@@ -84,6 +82,16 @@ It depends :
  - If float, as written earlier, the whole part and the decimal part are seprated by a dot (`.`).
  - If string, it is as many characters, symbols, and digits as you want.
  - If boolean, it is `true` or `false`. Every type of lower and upper case is accepted.
+ 
+ `[:var_type]`
+ This one is special ; you can force a variable type by typing `var:type` instead of `var`.
+ 
+ The current variable types are :
+ - `int`
+ - `float`
+ - and `str`
+ 
+**This is required if you want to use the compiler.**
 
 **SPECIAL VALUES :**
  - It can also be special values :  you can meet the `input` method.
@@ -213,7 +221,23 @@ And now I'm out...
 
 *Notice you can place an `if` statement inside, but no other loop.*
 
-You can break the loop at any moment by using the `break` instruction.
+You can break the loop at any moment by using the `break` instruction, or go to the next loop by typing `continue`.
+
+#### while ####
+The while loop will execute a bloc of instructions as long as a condition is true.
+
+*Syntax :*
+```
+while <condition>
+   <instructions>
+endwhile
+```
+
+Both `endwhile` and `end while` are possible.
+
+The conditions are the exact same as the `if`.
+
+For this loop too, you can break the loop at any moment by using the `break` instruction, or go to the next loop by typing `continue`.
 
 
 #### pause ####
@@ -248,6 +272,23 @@ To use one, declare at the beginning of your program `$use: <lib>`.
 - Os : allow you to run a system command.
 - Colors : Allows you to put colors in your prints or variables ONLY IF the `use-colors` in the `startup.acpl-ini` is set to `True`.
 - Files : Basic file manipulations. *Does not work very well*
+
+### Changelog for 3.5.0
+- Instruction "continue"
+- Easter egg 👀 
+- Boucle "while"
+  - Executes a condition as long as it is true
+  - Syntax : 
+```
+while <condition>
+   <instructions>
+endwhile
+```
+- modify-ini "compile-ask-for-replace"
+- input type
+  - if you put ":<type>", the variable will be of this type.
+  - Types are : "int", "float", and "str".
+  - It is required if you use the compiler.
 
 ### Changelog for 3.4
 - **Compiler**
