@@ -9,6 +9,7 @@ from recurrent_classes import *
 import os
 import msvcrt
 import timeit
+from math import *
 
 time_launch = timeit.default_timer()
 final_filename = ""
@@ -227,24 +228,42 @@ while line_numbers < len(code_lines):
             elif line.startswith("var"):
                 line = line.replace("var", "", 1)
                 var_type = None
+                var_action = None
+                var_parameters = None
 
                 if line.startswith(":"):
                     if line.startswith(":int"):
                         var_type = "int"
-                    elif line.startswith("float"):
+                    elif line.startswith(":float"):
                         var_type = "float"
                     else:
                         var_type = "str"
-                    line = line.replace(":"+var_type, "", 1)
-                line = line.replace(" ", "", 1)
+                    line = line.replace(":"+var_type, "", 1) # ERROR HERE !
+                if line.startswith(" "):
+                    line = line.replace(" ", "", 1)
+
+                if line.startswith("--"):
+                    if line.startswith("--lowercase"):
+                        var_action = "lowercase"
+                    elif line.startswith("--uppercase"):
+                        var_action = "uppercase"
+                    elif line.startswith("--round:"):
+                        var_action = "round"
+                        var_parameters = [re.search('\-\-round\:\d*', line).group(0).replace("--round:", "")]
+                    elif line.startswith("--ceil"):
+                        var_action = "ceil"
+                    if var_parameters is None:
+                        line = line.replace("--" + var_action, "", 1)
+                    else:
+                        var_parameters_to_str = ""
+                        for param in var_parameters:
+                            var_parameters_to_str += param
+                        line = line.replace("--" + var_action + ":" + var_parameters_to_str, "", 1)
+                    if line.startswith(" "):
+                        line = line.replace(" ", "", 1)
 
                 if line.endswith("\n"):
-                    line = split(line)
-                    line.pop()
-                    temp_line = ""
-                    for char in line:
-                        temp_line += char
-                    line = temp_line
+                    line = line[:-1]
                 line = line.replace("\\n", "\n")
 
                 line = line.split(" ")  # Result : [name, "=", content]
@@ -254,6 +273,8 @@ while line_numbers < len(code_lines):
                 elif str(line[2]).lower() == "false":
                     line[2] = False
 
+                recombine = True
+
                 if str(line[2]).startswith("input"):
                     line[2] = line[2].replace("input", "", 1)
                     line[2] = line[2].replace(" ", "", 1)
@@ -262,6 +283,12 @@ while line_numbers < len(code_lines):
                     while line[2].startswith(" "):
                         line[2] = line[2].replace(" ", "", 1)
                     line[2] = input(line[2])
+                    try:
+                        for i in range(3, len(line)):
+                            line.pop(i)
+                    except IndexError:
+                        pass
+                    recombine = False
 
                 if str(line[2]).startswith("random"):
                     line[2] = line[2].replace("random", "", 1)
@@ -275,6 +302,11 @@ while line_numbers < len(code_lines):
                         rand_min = line[3].replace(",", "")
                         rand_max = line[4]
                     line[2] = randrange(int(rand_min), int(rand_max))
+                    recombine = False
+
+                if recombine:
+                    for i in range(3, len(line)):
+                        line[2] += " "+line[i]
 
                 try:
                     line[2] = eval(line[2])
@@ -286,12 +318,24 @@ while line_numbers < len(code_lines):
                     line[2] = "\""+line[2]+"\""
 
                 try:
-                    line[2] = int(line[2])
+                    if "." not in str(line[2]):
+                        line[2] = int(line[2])
+                    elif re.search("\d*", str(line[2]).replace(".", "")).group(0) == str(line[2]):
+                        line[2] = float(line[2])
                 except ValueError:
                     try:
                         line[2] = float(line[2])
                     except ValueError:
                         line[2] = str(line[2])
+
+                if var_action == "lowercase":
+                    line[2] = str(line[2]).lower()
+                elif var_action == "uppercase":
+                    line[2] = str(line[2]).upper()
+                elif var_action == "round":
+                    line[2] = round(float(str(line[2]).replace("= ", "", 1)), int(var_parameters[0].replace("--round:", "", 1)))
+                elif var_action == "ceil":
+                    line[2] = ceil(float(str(line[2]).replace("= ", "", 1)))
 
                 if var_type is not None:
                     if var_type == "int":

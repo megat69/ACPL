@@ -166,7 +166,8 @@ while running:
               f"\t- 'compile' : Compiles an ACPL file to a Python file\n"
               f"\t- 'ini-content' : Displays the content of the ini file\n"
               f"\t- 'open' : Opens a specific file in its default program\n"
-              f"\t- 'display' : Prints the content of a specified file.\n")
+              f"\t- 'display' : Prints the content of a specified file.\n"
+              f"\t- 'change-line'/'modify-line' : Modifies a specific line in a plain text file.\n")
 
     elif user_input.lower() == "about":
         if language == "fr":
@@ -268,6 +269,18 @@ while running:
             print(ascii_line, end="")
         ascii_art.close()
         print("\n\nMerci d'avoir jeté un coup d'oeil au code.")
+
+    elif user_input.startswith("change-line") or user_input.startswith("modify-line"):  # change-line <file> <line_number> <new_text>
+        user_input = user_input.replace("change-line ", "", 1)
+        user_input = user_input.replace("modify-line ", "", 1)
+        user_input = user_input.split(" ")
+        for i in range(3, len(user_input)):
+            user_input[2] += " " + user_input[i]
+        while len(user_input) > 3:
+            user_input.pop(3)
+        replace_line(user_input[0], user_input[1], user_input[2])
+        print(f"Line {user_input[1]} modified in {user_input[0]} with value :\n{user_input[2]}")
+
 
     else:
         output = texts.console["unknown-command"]

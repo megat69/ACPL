@@ -97,7 +97,7 @@ execute_until_endif = False
 indentation_required = 0
 
 compiled_file = open(compiled_file_filename, "w", encoding="utf-8")
-compiled_file.write("# Compiled from ACPL programming language\n# Download from github : https://www.github.com/megat69/ACPL\n\nfrom time import sleep\nfrom random import randrange\n\n")
+compiled_file.write("# Compiled from ACPL programming language\n# Download from github : https://www.github.com/megat69/ACPL\n\nfrom time import sleep\nfrom random import randrange\nfrom math import *\n\n")
 
 while line_numbers < len(code_lines):
     line = code_lines[line_numbers]
@@ -135,20 +135,11 @@ while line_numbers < len(code_lines):
 
         while "<" in line and ">" in line:
             equation = line[line.find("<") + 1:line.find(">")]
-            while "{" in line and "}" in equation:
-                variable = equation[equation.find("{") + 1:equation.find("}")]
-                debug("other", lineno(), f"Variable {variable} found in print.")
-                try:
-                    line = line.replace("{" + variable + "}", variable)
-                except KeyError:
-                    error(line_numbers, "ArgumentError",
-                          f"The variable \"{variable}\" is not existing or has been declared later in the code.")
-            debug("other", lineno(), f"Equation {equation} found.")
-            try:
-                line = line.replace(f"<{str(equation)}>", "{"+equation+"}")
-            except KeyError:
-                error(line_numbers, "ArgumentError",
-                      f"The equation \"{equation}\" is not existing or has been declared later in the code.")
+            new_equation = line[line.find("<") + 1:line.find(">")]
+            while "{" in new_equation and "}" in new_equation:
+                variable = new_equation[new_equation.find("{") + 1:new_equation.find("}")]
+                new_equation = new_equation.replace("{"+variable+"}", variable)
+            line = line.replace("<"+equation+">", "{"+new_equation+"}")
 
         if line.startswith("for"):
             indentation_required += 1
@@ -230,6 +221,8 @@ while line_numbers < len(code_lines):
         elif line.startswith("var"):
             line = line.replace("var", "", 1)
             var_type = None
+            var_action = None
+            var_parameters = None
 
             do_regroup = True
 
@@ -241,9 +234,35 @@ while line_numbers < len(code_lines):
                 else:
                     var_type = 'str'
                 line = line.replace(":"+var_type, "", 1)
-            line = line.replace(" ", "", 1)
+            if line.startswith(" "):
+                line = line.replace(" ", "", 1)
+
+            if line.startswith("--"):
+                if line.startswith("--lowercase"):
+                    var_action = "lowercase"
+                elif line.startswith("--uppercase"):
+                    var_action = "uppercase"
+                elif line.startswith("--round:"):
+                    var_action = "round"
+                    var_parameters = [re.search('\-\-round\:\d*', line).group(0)]
+                elif line.startswith("--ceil"):
+                    var_action = "ceil"
+                if var_parameters is None:
+                    line = line.replace("--"+var_action, "", 1)
+                else:
+                    var_parameters_to_str = ""
+                    for param in var_parameters:
+                        var_parameters_to_str += param
+                    line = line.replace("--" + var_action + ":" + var_parameters_to_str, "", 1)
+                if line.startswith(" "):
+                    line = line.replace(" ", "", 1)
 
             line = line.split(" ")  # Result : [name, "=", content]
+
+            if var_parameters is not None:
+                line.pop(0)
+                if line[2].endswith("\n"):
+                    line[2] = line[2][:-1]
 
             if str(line[2]).startswith("input"):
                 line[2] = line[2].replace("input", "", 1)
@@ -280,13 +299,15 @@ while line_numbers < len(code_lines):
 
             else:
                 try:
-                    line[2] = eval(line[2])
-                except SyntaxError:
-                    print(line[2])
-                    pass
-                except NameError:
-                    print(line[2])
-                    pass
+                    if "." not in str(line[2]):
+                        line[2] = int(line[2])
+                    elif re.search("\d*", str(line[2]).replace(".", "")).group(0) == str(line[2]):
+                        line[2] = float(line[2])
+                except ValueError:
+                    try:
+                        line[2] = float(line[2])
+                    except ValueError:
+                        line[2] = str(line[2])
 
             if do_regroup:
                 for i in range(3, len(line)):
@@ -310,6 +331,15 @@ while line_numbers < len(code_lines):
                 line[2] = True
             elif str(line[2]).lower() == "f\"false\"":
                 line[2] = False
+
+            if var_action == "lowercase":
+                line[2] = str(line[2]) + ".lower()"
+            elif var_action == "uppercase":
+                line[2] = str(line[2]) + ".upper()"
+            elif var_action == "round":
+                line[2] = f"round(float({line[2]}), {int(var_parameters[0].replace('--round:', ''))})"
+            elif var_action == "ceil":
+                line[2] = f"ceil({line[2]})"
 
             if var_type is not None:
                 line = line[0] + " = " + var_type + "(" + str(line[2]) + ")"
