@@ -70,7 +70,7 @@ With a variable `number` equals to ten, that we want to multiply by two :
 
 #### variables ####
 Variables have to be defined clearly.
-It follows the form `var[:var_type] <var_name> = <value>`.
+It follows the form `var[:var_type][--var_action] <var_name> = <value>`.
 
 <var_name>
 The variable name. Note that two variables with different types can have the same name, even if not recommended.
@@ -92,6 +92,16 @@ It depends :
  - and `str`
  
 **This is required if you want to use the compiler.**
+
+`[--var_action]`
+These are small functions that can modify a variable's content.
+
+They can be :
+- Syntax : `var[:type][--var_action]`
+- `lowercase` : Sets the variable string to lower case
+- `uppercase` : Sets the variable string to upper case
+- `round:<number_after_dot:int>` : Puts the float variable to a round number, with `number_after_dot` numbers after the dot.
+- `ceil` : Converts the float variable to the integer just above it.
 
 **SPECIAL VALUES :**
  - It can also be special values :  you can meet the `input` method.
@@ -272,6 +282,15 @@ To use one, declare at the beginning of your program `$use: <lib>`.
 - Os : allow you to run a system command.
 - Colors : Allows you to put colors in your prints or variables ONLY IF the `use-colors` in the `startup.acpl-ini` is set to `True`.
 - Files : Basic file manipulations. *Does not work very well*
+
+### 3.6.0
+- `var_actions` : small functions added to variables
+  - Syntax : `var[:type][--var_action]`
+  - `lowercase` : Sets the variable string to lower case
+  - `uppercase` : Sets the variable string to upper case
+  - `round:<number_after_dot:int>` : Puts the float variable to a round number, with `number_after_dot` numbers after the dot.
+  - `ceil` : Converts the float variable to the integer just above it.
+- **MASSIVE BUGFIXES**
 
 ### Changelog for 3.5.0
 - Instruction "continue"
