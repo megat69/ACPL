@@ -213,6 +213,10 @@ while running is True:
             except IndexError:
                 temp_line = [""]
             temp_line.insert(current_cursor_position, pressed_key)
+            if pressed_key == "{":
+                temp_line.insert(current_cursor_position+1, "}")
+            elif pressed_key == "<":
+                temp_line.insert(current_cursor_position+1, ">")
             try:
                 lines[current_line] = ""
             except IndexError:
