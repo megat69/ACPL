@@ -2,7 +2,7 @@ import inspect
 import string
 import re
 from time import sleep
-from random import randrange
+from random import randint
 import sys
 import json
 from recurrent_classes import *
@@ -115,6 +115,8 @@ while line_numbers < len(code_lines):
     if not is_in_comment:
         line = line.replace("\t", "")
 
+        errors_count = 0
+
         while "{" in line and "}" in line:
             variable = line[line.find("{") + 1:line.find("}")]
             debug("other", lineno(), f"Variable {variable} found.")
@@ -123,6 +125,10 @@ while line_numbers < len(code_lines):
             except KeyError:
                 error(line_numbers, "ArgumentError",
                       f"The variable \"{variable}\" is not existing or has been declared later in the code.")
+                errors_count += 1
+            if errors_count >= 100:
+                print(f"\n\n{bcolors.FAIL}Debug has chosen to stop this program due to too many errors. Sorry for the inconvenicence.{bcolors.ENDC}")
+                break
 
         while "<" in line and ">" in line:
             equation = line[line.find("<") + 1:line.find(">")]
@@ -132,6 +138,10 @@ while line_numbers < len(code_lines):
             except KeyError:
                 error(line_numbers, "ArgumentError",
                       f"The equation \"{equation}\" is not existing or has been declared later in the code.")
+                errors_count += 1
+            if errors_count >= 100:
+                print(f"\n\n{bcolors.FAIL}Debug has chosen to stop this program due to too many errors. Sorry for the inconvenicence.{bcolors.ENDC}")
+                break
 
         #debug("other", line_numbers, f"line : {line}")
 
@@ -154,8 +164,7 @@ while line_numbers < len(code_lines):
 
         if line.startswith("while"):
             line = line.replace("while ", "", 1)
-            if line.endswith("\n"):
-                line = line[:-1]
+            line = remove_suffix(line, line.endswith("\n"))
             while_condition = line
             in_while = True
             while_line = line_numbers
@@ -222,8 +231,7 @@ while line_numbers < len(code_lines):
         if execute_until_endif is False and is_breaking is False and wait_next_loop is False and skip_while is False:
             if line.startswith("print"):
                 line = line.replace("print ", "", 1)
-                if line.endswith("\n"):
-                    line = line[:-1]  # Removing the \n
+                line = remove_suffix(line, line.endswith("\n"))
                 print(line)
             elif line.startswith("var"):
                 line = line.replace("var", "", 1)
@@ -238,7 +246,7 @@ while line_numbers < len(code_lines):
                         var_type = "float"
                     else:
                         var_type = "str"
-                    line = line.replace(":"+var_type, "", 1) # ERROR HERE !
+                    line = line.replace(":"+var_type, "", 1)  # ERROR HERE !
                 if line.startswith(" "):
                     line = line.replace(" ", "", 1)
 
@@ -249,7 +257,7 @@ while line_numbers < len(code_lines):
                         var_action = "uppercase"
                     elif line.startswith("--round:"):
                         var_action = "round"
-                        var_parameters = [re.search('\-\-round\:\d*', line).group(0).replace("--round:", "")]
+                        var_parameters = [re.search('--round:\d*', line).group(0).replace("--round:", "")]
                     elif line.startswith("--ceil"):
                         var_action = "ceil"
                     if var_parameters is None:
@@ -262,8 +270,7 @@ while line_numbers < len(code_lines):
                     if line.startswith(" "):
                         line = line.replace(" ", "", 1)
 
-                if line.endswith("\n"):
-                    line = line[:-1]
+                line = remove_suffix(line, line.endswith("\n"))
                 line = line.replace("\\n", "\n")
 
                 line = line.split(" ")  # Result : [name, "=", content]
@@ -301,7 +308,7 @@ while line_numbers < len(code_lines):
                     else:
                         rand_min = line[3].replace(",", "")
                         rand_max = line[4]
-                    line[2] = randrange(int(rand_min), int(rand_max))
+                    line[2] = randint(int(rand_min), int(rand_max))
                     recombine = False
 
                 if recombine:
@@ -315,7 +322,8 @@ while line_numbers < len(code_lines):
                 except TypeError:
                     pass
                 except NameError:
-                    line[2] = "\""+line[2]+"\""
+                    # line[2] = "\""+line[2]+"\""
+                    pass
 
                 try:
                     if "." not in str(line[2]):

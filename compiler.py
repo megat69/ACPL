@@ -2,7 +2,7 @@ import inspect
 import string
 import re
 from time import sleep
-from random import randrange
+from random import randint
 import sys
 import json
 from recurrent_classes import *
@@ -97,7 +97,7 @@ execute_until_endif = False
 indentation_required = 0
 
 compiled_file = open(compiled_file_filename, "w", encoding="utf-8")
-compiled_file.write("# Compiled from ACPL programming language\n# Download from github : https://www.github.com/megat69/ACPL\n\nfrom time import sleep\nfrom random import randrange\nfrom math import *\n\n")
+compiled_file.write("# Compiled from ACPL programming language\n# Download from github : https://www.github.com/megat69/ACPL\n\nfrom time import sleep\nfrom random import randint\nfrom math import *\n\n")
 
 while line_numbers < len(code_lines):
     line = code_lines[line_numbers]
@@ -117,7 +117,7 @@ while line_numbers < len(code_lines):
                 return_to_line = ""
             else:
                 return_to_line = "\n"
-            compiled_file.write(return_to_line+("\t"*indentation_required)+line[:-1])
+            compiled_file.write(return_to_line+("\t"*indentation_required)+remove_suffix(line))
         else:
             line = re.sub("( )*//.*", "", line)
             line = re.sub("( )*#.*", "", line)
@@ -143,8 +143,9 @@ while line_numbers < len(code_lines):
 
         if line.startswith("for"):
             indentation_required += 1
+            line = remove_from_string(line, ["{", "}"])
             line = line.split(" ")
-            line = f"for {line[1]} in range({line[2]}, {line[3][:-1]}):"
+            line = f"for {line[1]} in range({line[2]}, {remove_suffix(line[3])}):"
             compiled_file.write(line + "\n")
             line_numbers += 1
             continue
@@ -154,8 +155,7 @@ while line_numbers < len(code_lines):
 
         if line.startswith("while"):
             indentation_required += 1
-            if line.endswith("\n"):
-                line = line[:-1]
+            line = remove_suffix(line, condition=line.endswith("\n"))
             line += ":"
             while "{" in line and "}" in line:
                 variable = line[line.find("{") + 1:line.find("}")]
@@ -197,7 +197,7 @@ while line_numbers < len(code_lines):
                 except KeyError:
                     error(line_numbers, "ArgumentError", f"The variable \"{variable}\" is not existing")
 
-            line = line[:-1] + ":"
+            line = remove_suffix(line) + ":"
             indentation_required += 1
             line_numbers += 1
             compiled_file.write(("\t"*(indentation_required-1)) + line + "\n")
@@ -214,8 +214,7 @@ while line_numbers < len(code_lines):
 
         if line.startswith("print "):
             line = line.replace("print ", "", 1)
-            if line.endswith("\n"):
-                line = line[:-1]
+            line = remove_suffix(line, condition=line.endswith("\n"))
             line = "print(f\""+line+"\")"
 
         elif line.startswith("var"):
@@ -261,15 +260,13 @@ while line_numbers < len(code_lines):
 
             if var_parameters is not None:
                 line.pop(0)
-                if line[2].endswith("\n"):
-                    line[2] = line[2][:-1]
+                line[2] = remove_suffix(line[2], line[2].endswith("\n"))
 
             if str(line[2]).startswith("input"):
                 line[2] = line[2].replace("input", "", 1)
                 for i in range(3, len(line)):
                     line[2] = line[2] + " " + line[i]
-                if line[2].endswith("\n"):
-                    line[2] = line[2][:-1]
+                line[2] = remove_suffix(line[2], line[2].endswith("\n"))
                 line[2] = "input(f\""+line[2].replace(" ", "", 1)+"\")"
                 do_regroup = False
 
@@ -285,7 +282,7 @@ while line_numbers < len(code_lines):
                     rand_min = line[3].replace(",", "")
                     rand_max = line[4]
 
-                line[2] = "randrange(int("+rand_min+"), int("+rand_max[:-1]+"))"
+                line[2] = "randint(int("+rand_min+"), int("+remove_suffix(rand_max)+"))"
 
                 while "{" in line[2] and "}" in line[2]:
                     variable = line[2][line[2].find("{") + 1:line[2].find("}")]
@@ -322,9 +319,8 @@ while line_numbers < len(code_lines):
                     except ValueError:
                         pass
 
-            if isinstance(line[2], str) and not line[2].startswith("input") and not line[2].startswith("randrange"):
-                if line[2].endswith("\n"):
-                    line[2] = line[2][:-1]
+            if isinstance(line[2], str) and not line[2].startswith("input") and not line[2].startswith("randint"):
+                line[2] = remove_suffix(line[2], line[2].endswith("\n"))
                 line[2] = "f\""+line[2]+"\""
 
             if str(line[2]).lower() == "f\"true\"":
@@ -360,7 +356,7 @@ while line_numbers < len(code_lines):
 
         elif line.startswith("deletevar "):
             line = line.replace("deletevar ", "", 1)
-            line = line[:-1] + " = None"
+            line = remove_suffix(line) + " = None"
 
         elif line.startswith("break"):
             line = "break"
@@ -374,12 +370,12 @@ while line_numbers < len(code_lines):
         for i in range(0, indentation_required):
             line = "\t"+line
 
-        if compiling_style.lower() == "compacted" or compiling_style.lower() == "collapsed":
-            if line.replace("\t", "") != "":
-                compiled_file.write(line + "\n")
-        else:
+    compiling_style = "FORCED ATM. DUH"
+    if compiling_style.lower() == "compacted" or compiling_style.lower() == "collapsed":
+        if line.replace("\t", "") != "":
             compiled_file.write(line + "\n")
-
+    else:
+        compiled_file.write(line + "\n")
     line_numbers += 1
 
 print(f"{bcolors.OKBLUE}Compiling time : {round((timeit.default_timer()-time_launch), process_time_round_numbers)}s{bcolors.ENDC}")

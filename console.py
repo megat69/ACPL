@@ -56,14 +56,18 @@ for lines in startup:
         except NameError:
             raise CriticError(texts.critic_errors["NameError_LanguageFile"])
 
-    if lines.startswith("console-reloaded: True"):
+    if lines.startswith("console-reloaded:"):
         lines = lines.replace("console-reloaded: ", "")
+        if lines.startswith("True"):
+            console_reloaded = True
+        else:
+            console_reloaded = False
         print(f"{bcolors.OKGREEN}{texts.console['console-correctly-reloaded']}\n{bcolors.ENDC}")
         replace_line(ini_file, 5, "console-reloaded: False\n")
 
 print(bcolors.BOLD + texts.console['bootup-message'].format(final_version, current_version) + bcolors.ENDC)
 startup_file.close()
-if check_update == "True":
+if check_update == "True" and console_reloaded is False:
     os.system("python update_checker.py")
 startup_file = open(ini_file, "r", encoding="utf-8").readlines()
 
@@ -83,6 +87,11 @@ while running:
         if not user_input.endswith(".acpl"):
             user_input += ".acpl"
         print(f"{bcolors.OKBLUE}{texts.console['launch-code-file'].format(user_input)}{bcolors.ENDC}")
+        sleep(1.7)
+        os.system("python main.py")
+
+    elif user_input.startswith("rerun"):
+        print(f"{bcolors.OKBLUE}Running last file again...{bcolors.ENDC}")
         sleep(1.7)
         os.system("python main.py")
 
@@ -229,17 +238,22 @@ while running:
 
     elif user_input.startswith("pyrun"):
         user_input = user_input.replace("pyrun ", "", 1)
-        if user_input.endswith("\n"):
-            user_input = user_input[:-1]
+        user_input = remove_suffix(user_input, condition=user_input.endswith("\n"))
         if not user_input.endswith(".py"):
             user_input += ".py"
         print(f"{bcolors.OKBLUE}Launching {user_input}.{bcolors.ENDC}")
         os.system(f"python {user_input}")
+        print(f"{bcolors.OKBLUE}End of the file.{bcolors.ENDC}")
+
+    elif user_input.lower().startswith("ide"):
+        # Opens IDE
+        print(f"{bcolors.OKBLUE}Opening ACPL IDE...{bcolors.ENDC}")
+        os.system("python ide.py")
+        print(f"{bcolors.OKBLUE}IDE closed.{bcolors.ENDC}")
 
     elif user_input.startswith("open"):
         user_input = user_input.replace("open ", "", 1)
-        if user_input.endswith("\n"):
-            user_input = user_input[:-1]
+        user_input = remove_suffix(user_input, condition=user_input.endswith("\n"))
         print(f"{bcolors.OKBLUE}Opening {user_input}.{bcolors.ENDC}")
         if platform.system() == "Windows":
             os.system("start " + user_input)
@@ -255,13 +269,15 @@ while running:
 
     elif user_input.startswith("display"):
         user_input = user_input.replace("display ", "", 1)
-        if user_input.endswith("\n"):
-            user_input = user_input[:-1]
-        file = open(user_input, "r", encoding="utf-8")
-        for file_line in file.readlines():
-            print(file_line, end="")
-        file.close()
-        print(f"{bcolors.OKBLUE}File content ends here.{bcolors.ENDC}")
+        user_input = remove_suffix(user_input, condition=user_input.endswith("\n"))
+        try:
+            file = open(user_input, "r", encoding="utf-8")
+            for file_line in file.readlines():
+                print(file_line, end="")
+            file.close()
+            print(f"{bcolors.OKBLUE}File content ends here.{bcolors.ENDC}")
+        except FileNotFoundError:
+            print(f"{bcolors.FAIL}File not found.{bcolors.ENDC}")
 
     elif user_input.startswith("creator"): # Easter egg ?
         ascii_art = open("ascii-art.txt", "r")
