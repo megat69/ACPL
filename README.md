@@ -283,6 +283,25 @@ To use one, declare at the beginning of your program `$use: <lib>`.
 - Colors : Allows you to put colors in your prints or variables ONLY IF the `use-colors` in the `startup.acpl-ini` is set to `True`.
 - Files : Basic file manipulations. *Does not work very well*
 
+### 3.7.0
+This update features a brand new IDE, accessible from the `ide` console command.
+- IDE from `ide` console command :
+  - Use the arrow keys to move in the text
+  - Type text for the IDE to add the text
+  - Auto-save functionality
+  - Type `ACPL_IDE_NEW <filename>` to create a brand-new file, or just `<filename>` to open an existing one.
+  - Press escape to access a few console commands :
+    - `quit` / `end` : Closes the IDE
+    - `run` : Runs the file **IF THE CURRENT FILE IS AN ACPL OR A PYTHON FILE**
+    - `compile` : Compiles the file if the file is an ACPL file
+    - `open` : Lets you open an existing file
+    - `new <filename>` : Creates a new file and opens it.
+- Also compiler bugfixes
+
+Showcase videos : 
+[Showcase part 1](https://streamable.com/3r2ubk)
+[Showcase part 2](https://streamable.com/q58yqt)
+
 ### 3.6.0
 - `var_actions` : small functions added to variables
   - Syntax : `var[:type][--var_action]`
