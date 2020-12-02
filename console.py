@@ -6,6 +6,7 @@ from recurrent_classes import *
 import requests
 import platform
 import shlex
+import webbrowser
 
 running = True
 ini_file = "startup.acpl-ini"
@@ -77,18 +78,33 @@ while running:
 
     debug("in", lineno(), user_input)
 
+    og_user_input = user_input
+
+    if user_input == "redo":
+        user_input = last_user_input
+
     if user_input.lower() == "end":
         print(f"{bcolors.OKBLUE}{texts.console['process-ended']}{bcolors.ENDC}")
         break
 
     elif user_input.startswith("run"):
-        user_input = user_input.replace("run ", "")
-        replace_line('startup.acpl-ini', 0, 'filename: ' + user_input + "\n")
-        if not user_input.endswith(".acpl"):
-            user_input += ".acpl"
+        if user_input == "run":
+            user_input = open_file_dialog(extensions="acpl")
+            if user_input is not None:
+                replace_line('startup.acpl-ini', 0, 'filename: ' + user_input + "\n")
+            else:
+                print(f"{bcolors.FAIL}Cannot run this file.{bcolors.ENDC}")
+                continue
+        else:
+            user_input = user_input.replace("run ", "")
+            replace_line('startup.acpl-ini', 0, 'filename: ' + user_input + "\n")
+            if not user_input.endswith(".acpl"):
+                user_input += ".acpl"
+
         print(f"{bcolors.OKBLUE}{texts.console['launch-code-file'].format(user_input)}{bcolors.ENDC}")
         sleep(1.7)
         os.system("python main.py")
+
 
     elif user_input.startswith("rerun"):
         print(f"{bcolors.OKBLUE}Running last file again...{bcolors.ENDC}")
@@ -163,6 +179,9 @@ while running:
         else:
             output = texts.console_modify_ini["unable-to-modify-option"]
 
+    elif user_input.lower().startswith("doc"):
+        webbrowser.open("https://github.com/megat69/ACPL/blob/master/README.md")
+
     elif user_input.lower() == "help":
         print(texts.console_help["available-commands"] + " :")
         print(f"\t- 'end' : {texts.console_help['end']}\n"
@@ -226,12 +245,22 @@ while running:
             raise CriticError
 
     elif user_input.startswith("compile"):
-        user_input = user_input.replace("compile ", "", 1)
-        user_input = user_input.split(" ")
-        if len(user_input) == 1:
-            user_input.append(user_input[0]+".py")
-        if not user_input[0].endswith(".acpl"):
-            user_input[0] += ".acpl"
+        if user_input == "compile":
+            user_input = open_file_dialog(extensions="acpl")
+            if user_input is not None:
+                user_input = [user_input, user_input]
+            else:
+                continue
+        else:
+            user_input = user_input.replace("compile ", "", 1)
+            user_input = user_input.split(" ")
+            if len(user_input) == 1:
+                user_input = [user_input[0], user_input[0]]
+            if not user_input[0].endswith(".acpl"):
+                user_input[0] += ".acpl"
+            if ("." in user_input[0] and not user_input[0].endswith(".acpl")) or ("." in user_input[1] and not user_input[1].endswith(".acpl")):
+                print(f"{bcolors.FAIL}Unable to compile that kind of file (extension '.{user_input[0].split('.')[1]}').")
+                continue
         replace_line('startup.acpl-ini', 0, 'filename: '+user_input[0]+"\n")
         replace_line("startup.acpl-ini", 8, "compiled-file-filename: "+user_input[1]+"\n")
         os.system("python compiler.py")
@@ -300,6 +329,7 @@ while running:
 
     else:
         output = texts.console["unknown-command"]
+    last_user_input = og_user_input
 
     if output is not None:
         print(f"{bcolors.WARNING}{texts.console['output'].upper()} :{bcolors.ENDC}\n{output}")

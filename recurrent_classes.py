@@ -1,6 +1,8 @@
 import inspect
 import sys
 import json
+import tkinter
+from tkinter import filedialog
 
 class bcolors:
     with open("startup.acpl-ini", "r", encoding="utf-8") as startup_file:
@@ -213,6 +215,35 @@ def remove_from_string(variable:str, strs_to_remove:(list, tuple), condition:boo
         for element in strs_to_remove:
             variable = variable.replace(str(element), "")
     return variable
+
+def open_file_dialog(extensions:(list, tuple, str)=""):
+    """
+    Opens a "open file dialog".
+    :extensions: If left empty, any extensions are accepted. If not, if the extension is not in the list,
+    the function will return None.
+    :return: The filename.
+    """
+    root = tkinter.Tk()
+    root.geometry("1x1")
+    root.title("Open")
+
+    filename = filedialog.askopenfilename()
+
+    root.withdraw()
+
+    if extensions != "":
+        if isinstance(extensions, str):
+            if not filename.endswith("."+extensions):
+                return None
+        else:
+            correct_extension = False
+            for element in extensions:
+                if filename.endswith("."+element):
+                    correct_extension = True
+                    break
+            if correct_extension is False:
+                return None
+    return filename
 
 try:
     startup_file = open("startup.acpl-ini", "r+", encoding="utf-8")

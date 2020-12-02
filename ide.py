@@ -80,9 +80,14 @@ def trigger_autocomplete():
 
 print(f"{bcolors.OKBLUE}ACPL IDE successfully opened.{bcolors.ENDC}")
 
+# Part removed on 29/11/2020
+# Action : File opening in command line.
+# Replaced by dialog box.
+"""
 code_file_filename = input(f"{bcolors.OKBLUE}Enter code file filename : {bcolors.ENDC}")
 if not code_file_filename.endswith(".acpl") and "." not in code_file_filename:
     code_file_filename += ".acpl"
+
 if code_file_filename.startswith("ACPL_IDE_NEW "):
     user_input = code_file_filename.replace("ACPL_IDE_NEW ", "", 1)
     if os.path.exists(user_input):
@@ -105,6 +110,8 @@ while not os.path.exists(code_file_filename) or code_file_filename in ide_forbid
     code_file_filename = input(f"{bcolors.FAIL}Sorry, this file ({code_file_filename}) doesn't exist. Can you retry ?\nEnter the code file filename : {bcolors.ENDC}")
     if not code_file_filename.endswith(".acpl"):
         code_file_filename += ".acpl"
+"""
+code_file_filename = open_file_dialog()
 
 print("\n\n")
 
@@ -197,6 +204,8 @@ while running is True:
             displayed_lines[i] += bcolors.ENDC
         print(displayed_lines[i])
 
+    if loop_times[1] > 10:
+        loop_times[1] = 10
     print(f"{bcolors.OKBLUE}{loop_times[1]} lines displayed out of {len(lines)}.{bcolors.ENDC}")
 
     # Collect events until released
@@ -213,6 +222,12 @@ while running is True:
             except IndexError:
                 temp_line = [""]
             temp_line.insert(current_cursor_position, pressed_key)
+            if pressed_key == "{":
+                temp_line.insert(current_cursor_position+1, "}")
+            elif pressed_key == "<":
+                temp_line.insert(current_cursor_position+1, ">")
+            elif pressed_key == "[":
+                temp_line.insert(current_cursor_position + 1, "]")
             try:
                 lines[current_line] = ""
             except IndexError:

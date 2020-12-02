@@ -135,11 +135,28 @@ while line_numbers < len(code_lines):
 
         while "<" in line and ">" in line:
             equation = line[line.find("<") + 1:line.find(">")]
-            new_equation = line[line.find("<") + 1:line.find(">")]
+            """new_equation = line[line.find("<") + 1:line.find(">")]
             while "{" in new_equation and "}" in new_equation:
                 variable = new_equation[new_equation.find("{") + 1:new_equation.find("}")]
                 new_equation = new_equation.replace("{"+variable+"}", variable)
+            line = line.replace("<"+equation+">", "{"+new_equation+"}")"""
+            new_equation = equation.replace("{", "")
+            new_equation = new_equation.replace("}", "")
             line = line.replace("<"+equation+">", "{"+new_equation+"}")
+
+        while len(re.findall("\{[a-zA-Z]*\[len\]\}", line)) > 0 and re.findall("\{[a-zA-Z]*\[len\]\}", line)[0] in line:
+            variable = line[line.find("{") + 1:line.find("[")]
+            full_var = re.findall("\{[a-zA-Z]*\[len\]\}", line)[0]
+            line = line.replace(str(full_var), "{len("+variable+")}")
+        while "[{" in line and "}]" in line:
+            variable = line[line.find("[") + 1:line.find("]")]
+            full_var = line[line.find("{") + 1:line.find("[")]
+            variable = variable.replace("{", "", 1)
+            variable = variable.replace("}", "", 1)
+            if variable == "len":
+                line = line.replace("{"+full_var+"[{"+variable+"}]}", "{len("+full_var+")}")
+            else:
+                line = line.replace("[{"+variable+"}]", "["+variable+"]", 1)
 
         if line.startswith("for"):
             indentation_required += 1
@@ -230,6 +247,8 @@ while line_numbers < len(code_lines):
                     var_type = 'int'
                 elif line.startswith(":float"):
                     var_type = 'float'
+                elif line.startswith(":list"):
+                    var_type = 'list'
                 else:
                     var_type = 'str'
                 line = line.replace(":"+var_type, "", 1)
@@ -256,7 +275,7 @@ while line_numbers < len(code_lines):
                 if line.startswith(" "):
                     line = line.replace(" ", "", 1)
 
-            line = line.split(" ")  # Result : [name, "=", content]
+            line = line.split(" ")  # Result : [name, var_operator, content]
 
             if var_parameters is not None:
                 line.pop(0)
@@ -294,6 +313,54 @@ while line_numbers < len(code_lines):
                               f"The variable \"{variable}\" is not existing or has been declared later in the code.")
                 do_regroup = False
 
+            elif var_type == "list":
+                # Recombination of line vars in a single line
+                for i in range(3, len(line)):
+                    line[2] = line[2] + " " + line[i]
+
+                # Initializing list elements
+                list_elements = []
+                if "list." not in line[2]:
+                    while "[" in line[2] and "]" in line[2]:
+                        errors_count = 0
+                        variable = line[2][line[2].find("[") + 1:line[2].find("]")]
+                        debug("other", lineno(), f"List element {variable} found.")
+                        try:
+                            line[2] = line[2].replace("[" + variable + "]", "")
+                        except KeyError:
+                            error(line_numbers, "ArgumentError",
+                                  f"An error occured while trying to parse the list \"{line[0]}\".")
+                            errors_count += 1
+                        if errors_count >= 10:
+                            print(
+                                f"\n\n{bcolors.FAIL}Debug has chosen to stop this program due to too many errors. Sorry for the inconvenicence.{bcolors.ENDC}")
+                            line_numbers = len(code_lines)
+                            break
+                        list_elements.append(variable)
+                    # Dememorizing 'variable'
+                    variable = None
+
+                    line[2] = list_elements
+                    var_type = "list"
+                    do_regroup = False
+                elif line[2].startswith("list.add"):
+                    line[2] = line[2].replace("list.add ", "", 1)
+                    line[2] = remove_suffix(line[2], line[2].endswith("\n"))
+                    line = line[0]+".append(f\""+line[2]+"\")"
+                    do_regroup = False
+                elif line[2].startswith("list.insert"):
+                    line[2] = line[2].replace("list.insert ", "", 1)
+                    index = re.findall("\d*", str(line[2]))[0]
+                    line[2] = line[2].replace(index+" ", "", 1)
+                    line[2] = remove_suffix(line[2], line[2].endswith("\n"))
+                    line = line[0]+".insert("+index+", f\""+line[2]+"\")"
+                    do_regroup = False
+                elif line[2].startswith("list.remove"):
+                    line[2] = line[2].replace("list.remove ", "", 1)
+                    index = re.findall("\d*", str(line[2]))[0]
+                    line = line[0]+".pop("+index+")"
+                    do_regroup = False
+
             else:
                 try:
                     if "." not in str(line[2]):
@@ -306,11 +373,13 @@ while line_numbers < len(code_lines):
                     except ValueError:
                         line[2] = str(line[2])
 
+
             if do_regroup:
                 for i in range(3, len(line)):
                     line[2] += " "+line[i]
 
-            if not isinstance(line[2], bool):
+
+            if not isinstance(line[2], bool) and not isinstance(line[2], list):
                 try:
                     line[2] = int(line[2])
                 except ValueError:
@@ -319,7 +388,8 @@ while line_numbers < len(code_lines):
                     except ValueError:
                         pass
 
-            if isinstance(line[2], str) and not line[2].startswith("input") and not line[2].startswith("randint"):
+
+            if isinstance(line[2], str) and not line[2].startswith("input") and not line[2].startswith("randint") and not isinstance(line, str):
                 line[2] = remove_suffix(line[2], line[2].endswith("\n"))
                 line[2] = "f\""+line[2]+"\""
 
@@ -337,10 +407,14 @@ while line_numbers < len(code_lines):
             elif var_action == "ceil":
                 line[2] = f"ceil({line[2]})"
 
-            if var_type is not None:
-                line = line[0] + " = " + var_type + "(" + str(line[2]) + ")"
+            if ("append" in line or "insert" in line or "pop" in line) and var_type == "list":
+                line = line
+            elif var_type == "list":
+                line = line[0] + " " + line[1] + " " + str(line[2])
+            elif var_type is not None:
+                line = line[0] + " " + line[1] + " " + var_type + "(" + str(line[2]) + ")"
             else:
-                line = line[0] + " = " + str(line[2])
+                line = line[0] + " " + line[1] + " " + str(line[2])
 
         elif line.startswith("pause"):
             line = line.replace("pause ", "", 1)

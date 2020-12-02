@@ -121,12 +121,66 @@ while line_numbers < len(code_lines):
             variable = line[line.find("{") + 1:line.find("}")]
             debug("other", lineno(), f"Variable {variable} found.")
             try:
-                line = line.replace("{" + variable + "}", str(variables_container[variable]))
+                if "[" in variable:
+                    variable = re.findall("\{.*\}", line)[0]
+                    variable = variable.replace("{", "", 1)
+                    variable = remove_suffix(variable, variable.endswith("}"))
+                    debug("other", lineno(), f"Correction : it is variable '{variable}'.")
+
+                    list_index = variable[variable.find("[") + 1:variable.find("]")]
+                    variable = variable.replace(f"[{list_index}]", "")  # Allows to store ONLY the var name, and not the index
+
+                    if not list_index.startswith("<"):
+                        line = line.replace(list_index, "<"+list_index+">")
+                        list_index = "<"+list_index+">"
+
+                    while "<" in list_index and ">" in list_index:
+                        equation = list_index[list_index.find("<") + 1:list_index.find(">")]
+                        starting_equation = equation
+
+                        while "{" in equation and "}" in equation:  # Inner vars
+                            inner_var = equation[equation.find("{") + 1:equation.find("}")]
+                            try:
+                                equation = equation.replace("{"+inner_var+"}", str(variables_container[inner_var]))
+                            except KeyError:
+                                errors_count += 1
+                            if errors_count >= 10:
+                                print(f"\n\n{bcolors.FAIL}Debug has chosen to stop this program due to too many errors. Sorry for the inconvenicence.{bcolors.ENDC}")
+                                break
+
+                        debug("other", lineno(), f"Equation {equation} found in the list index.")
+                        try:
+                            list_index = list_index.replace(f"<{str(starting_equation)}>", str(eval(str(equation))))
+                            line = line.replace("{"+variable+"[<"+starting_equation+">]}", variables_container[variable][int(list_index)], 1)
+                        except KeyError:
+                            error(line_numbers, "ArgumentError", f"The equation \"{equation}\" is not existing or has been declared later in the code.")
+                            errors_count += 1
+                        except IndexError:
+                            error(line_numbers, "ArgumentError", f"The index is out of the list.")
+                            errors_count += 1
+                        if errors_count >= 10:
+                            print(f"\n\n{bcolors.FAIL}Debug has chosen to stop this program due to too many errors. Sorry for the inconvenicence.{bcolors.ENDC}")
+                            break
+
+                    if list_index == "len" or list_index == "length":
+                        line = line.replace("{" + variable + "[" + list_index + "]}", str(len(variables_container[list_index])))
+                    else:
+                        try:
+                            line = line.replace("{" + variable + "[" + str(list_index) + "]}", str(variables_container[variable][int(list_index)]))
+                        except ValueError:
+                            line = line.replace("{" + variable + "[" + str(list_index) + "]}", "VALUEERROR: List index is not integer.")
+                            error(line_numbers, "ValueError", f"The index '{list_index}' is not an integer.")
+                            errors_count += 1
+                        except IndexError:
+                            error(line_numbers, "ArgumentError", f"The index is out of the list.")
+                            errors_count += 1
+                else:
+                    line = line.replace("{" + variable + "}", str(variables_container[variable]))
             except KeyError:
                 error(line_numbers, "ArgumentError",
                       f"The variable \"{variable}\" is not existing or has been declared later in the code.")
                 errors_count += 1
-            if errors_count >= 100:
+            if errors_count >= 10:
                 print(f"\n\n{bcolors.FAIL}Debug has chosen to stop this program due to too many errors. Sorry for the inconvenicence.{bcolors.ENDC}")
                 break
 
@@ -143,7 +197,7 @@ while line_numbers < len(code_lines):
                 print(f"\n\n{bcolors.FAIL}Debug has chosen to stop this program due to too many errors. Sorry for the inconvenicence.{bcolors.ENDC}")
                 break
 
-        #debug("other", line_numbers, f"line : {line}")
+        debug("other", line_numbers, f"line : {line}")
 
         if line.startswith("if "):
             line = line.replace("if ", "", 1)
@@ -244,6 +298,8 @@ while line_numbers < len(code_lines):
                         var_type = "int"
                     elif line.startswith(":float"):
                         var_type = "float"
+                    elif line.startswith(":list"):
+                        var_type = "list"
                     else:
                         var_type = "str"
                     line = line.replace(":"+var_type, "", 1)  # ERROR HERE !
@@ -273,7 +329,7 @@ while line_numbers < len(code_lines):
                 line = remove_suffix(line, line.endswith("\n"))
                 line = line.replace("\\n", "\n")
 
-                line = line.split(" ")  # Result : [name, "=", content]
+                line = line.split(" ")  # Result : [name, operator, content]
 
                 if str(line[2]).lower() == "true":
                     line[2] = True
@@ -299,7 +355,7 @@ while line_numbers < len(code_lines):
 
                 if str(line[2]).startswith("random"):
                     line[2] = line[2].replace("random", "", 1)
-                    for i in range(3, len(line) - 1):
+                    for i in range(3, len(line)):
                         line[2] = line[2] + " " + line[i]
 
                     if len(line) == 4:
@@ -311,19 +367,89 @@ while line_numbers < len(code_lines):
                     line[2] = randint(int(rand_min), int(rand_max))
                     recombine = False
 
+                if str(line[2]).startswith("list"):
+                    line[2] = line[2].replace("list", "", 1)
+
+                    # Recombination of line vars in a single line
+                    for i in range(3, len(line)):
+                        line[2] = line[2] + " " + line[i]
+
+                    # Initializing list elements
+                    list_elements = []
+
+                    if not line[2].startswith("."):
+                        while "[" in line[2] and "]" in line[2]:
+                            variable = line[2][line[2].find("[") + 1:line[2].find("]")]
+                            debug("other", lineno(), f"List element {variable} found.")
+                            try:
+                                line[2] = line[2].replace("[" + variable + "]", "")
+                            except KeyError:
+                                error(line_numbers, "ArgumentError", f"An error occured while trying to parse the list \"{line[0]}\".")
+                                errors_count += 1
+                            if errors_count >= 100:
+                                print(f"\n\n{bcolors.FAIL}Debug has chosen to stop this program due to too many errors. Sorry for the inconvenicence.{bcolors.ENDC}")
+                                line_numbers = len(code_lines)
+                                break
+                            list_elements.append(variable)
+                        # Dememorizing 'variable'
+                        variable = None
+
+                        line[2] = list_elements
+                        var_type = "list"
+                    elif line[2].startswith(".add"):
+                        line[2] = line[2].replace(".add ", "", 1)
+                        # We should append the variable here to the list
+                        variables_container[line[0]].append(line[2])
+                        var_type = "list"
+                        # Then just 'continue' to avoid variables code.
+                        line_numbers += 1
+                        continue
+                    elif line[2].startswith(".insert"):
+                        line[2] = line[2].replace(".insert ", "", 1)
+                        index = int(re.findall("\d*", line[2])[0])
+                        line[2] = line[2].replace(str(index)+" ", "", 1)
+                        # Inserting at the right index
+                        try:
+                            variables_container[line[0]].insert(index, line[2])
+                        except IndexError:
+                            error(line_numbers, "IndexError", "The index is not existing.")
+                            sys.exit()
+                        var_type = "list"
+                        # Continue to avoid variables code
+                        line_numbers += 1
+                        continue
+                    elif line[2].startswith(".remove"):
+                        line[2] = line[2].replace(".remove ", "", 1)
+                        index = int(re.findall("\d*", line[2])[0])
+                        # Removing correct index
+                        try:
+                            variables_container[line[0]].pop(index)
+                        except IndexError:
+                            error(line_numbers, "IndexError", "The index is not existing.")
+                            sys.exit()
+                        line_numbers += 1
+                        continue
+
+                    recombine = False
+
                 if recombine:
                     for i in range(3, len(line)):
                         line[2] += " "+line[i]
 
-                try:
-                    line[2] = eval(line[2])
-                except SyntaxError:
-                    pass
-                except TypeError:
-                    pass
-                except NameError:
-                    # line[2] = "\""+line[2]+"\""
-                    pass
+                if line[1] != "=":
+                    operator = line[1].split("=")[0]
+                    line[2] = eval(str(variables_container[line[0]]) + operator + str(line[2]))
+
+                if var_type != "list":
+                    try:
+                        line[2] = eval(line[2])
+                    except SyntaxError:
+                        pass
+                    except TypeError:
+                        pass
+                    except NameError:
+                        # line[2] = "\""+line[2]+"\""
+                        pass
 
                 try:
                     if "." not in str(line[2]):
@@ -335,6 +461,8 @@ while line_numbers < len(code_lines):
                         line[2] = float(line[2])
                     except ValueError:
                         line[2] = str(line[2])
+                except TypeError:
+                    pass
 
                 if var_action == "lowercase":
                     line[2] = str(line[2]).lower()
@@ -350,6 +478,8 @@ while line_numbers < len(code_lines):
                         variables_container[line[0]] = int(line[2])
                     elif var_type == "float":
                         variables_container[line[0]] = float(line[2])
+                    elif var_type == "list":
+                        variables_container[line[0]] = line[2]
                     else:
                         variables_container[line[0]] = str(line[2])
                 else:
@@ -361,6 +491,7 @@ while line_numbers < len(code_lines):
 
             elif line.startswith("deletevar"):
                 line = line.replace("deletevar ", "", 1)
+                line = remove_suffix(line, line.endswith("\n"))
                 variables_container.pop(line)
 
             elif line.startswith("$use: "):
