@@ -3,7 +3,7 @@
 # ACPL
 My own programming language (interpreted in Python).
 
-This project has just been made for fun, and is completely useless ;)
+This project has just been made for fun, ~~and is completely useless~~ *not anymore xD* ;)
 
 But still, if you want to use it, please credit me xD !
 
@@ -70,10 +70,33 @@ With a variable `number` equals to ten, that we want to multiply by two :
 
 #### variables ####
 Variables have to be defined clearly.
-It follows the form `var[:var_type][--var_action] <var_name> = <value>`.
+It follows the form `var[:var_type][--var_action] <var_name> <var_operator> <value>`.
 
 <var_name>
 The variable name. Note that two variables with different types can have the same name, even if not recommended.
+
+<var_operator>
+Can be :
+- `=`
+  - Default operator, assigns a brand new value to the variable.
+- `+=`
+  - *Addition/Concatenation* operator.
+  - Adds the old variable value with the new one, or concatenates if the old and new variables are strings.
+- `-=`
+  - Substract operator
+  - Substratcs the old variable to the new one.
+- `*=`
+  - Multiply operator
+  - Multiplies the old variable with the new one.
+- `/=`
+  - Division operator
+  - Divides the old variable with the new one.
+- `//=`
+  - **EUCLIDIAN** division operator.
+  - Divides the old variable with the new, but only keeps the integer part.
+- `%=`
+  - Modulo operator
+  - Keeps the rest of the euclidian division of the old and new variable.
 
 <value>
 It depends :
@@ -89,6 +112,7 @@ It depends :
  The current variable types are :
  - `int`
  - `float`
+ - `list` **(see down there)**
  - and `str`
  
 **This is required if you want to use the compiler.**
@@ -114,7 +138,7 @@ They can be :
    They can also contain variables.
    Syntax : `<equation>`
  - You can also define them as random.
-   Therefore, type `random <first_number>, [second_number]`.
+   Therefore, type `random <first_number> [second_number]`.
    If both numbers are given, the result will be a random number between them.
    Else, it will be a random number between 0 and <first_number>.
    You can also replace numbers by variables.
@@ -134,19 +158,19 @@ We want to ask the user for his pseudo :
 **EXAMPLE 3 :**
 We want to calculate `3*(6**2)` and store it into a variable "operation".
 *Input :*
-`var operation = 3*(6**2)`
+`var operation = <3*(6**2)>`
 
 **EXAMPLE 4 :**
 We have a variable "age" containing the value `18`. We want to multiply it by 2 *(don't ask why xD)*
 And then store it into "double"
 *Input :*
-`var double = 2*{age}`
+`var double *= 2`
 
 **EXAMPLE 5 :**
 We ask the user for his age and we multiply it by 5.
 *Input :*
 `int age = input What is your age ? 
-int new_age = 2*{age}
+int new_age = <2*{age}>
 print Your new age is now {age} xD !`
 *Output (for this example, age equals 18) :*
 `Your new age is now 90 xD !`
@@ -154,7 +178,49 @@ print Your new age is now {age} xD !`
 **EXAMPLE 6 :**
 You want a random number between 1 and 50 for the Lotto.
 *Input :*
-`var Lotto = random 1, 50`
+`var Lotto = random 1 50`
+
+#### lists ####
+Lists are a special type of variable introduced in version 3.8, allowing to store multiple variables in a single one.
+If you use C, it's some sort of dynamically changing array.
+
+**How to declare a list :**
+Type like the following ;
+```
+var:list <name> = list [ELEMENT 0] [ELEMENT 1] [ELEMENT 2]
+```
+Every element of the list has to be between brackets when you initialize it.
+Also, in the example, I created a list containing only 3 elements ; but a list can contain as many as you want.
+
+**How to add an element at the end of a list :**
+Type like the following : 
+```
+var:list <name> = list.add <content>
+```
+The <content> will be appended at the end of the list.
+
+**How to insert an element at a specific index of the list :**
+Type like the following : 
+```
+var:list <name> = list.insert <index> <content>
+```
+*Keep in mind indexes start at 0.*
+
+**How to remove an element from a list :**
+Type like the following : 
+```
+var:list <name> = list.remove <index>
+```
+*Keep in mind indexes start at 0.*
+
+**How to get a specific element from a list ?**
+Just use it as a normal variable, this way : `{my_list[<index>]}`
+
+You can also use a variable in place of the index, but **equations won't work**.
+
+**How can I get the length of the list ?**
+Simply by typing `{my_list[len]}` or `{my_list[length]}`.
+
 
 #### if ####
 
@@ -282,6 +348,33 @@ To use one, declare at the beginning of your program `$use: <lib>`.
 - Os : allow you to run a system command.
 - Colors : Allows you to put colors in your prints or variables ONLY IF the `use-colors` in the `startup.acpl-ini` is set to `True`.
 - Files : Basic file manipulations. *Does not work very well*
+
+### 3.8.0
+- Lists
+  - New `list` variable type
+  - New `list.add`, `list.insert`, and `list.remove` methods
+  - Refer to the documentation.
+- New setup
+  - Now installs requirements correctly
+  - Now allows you to tweak your settings at first launch
+- Variables operators
+  - Variables operators have been added.
+  - Variable operators include : 
+    - `+=`
+    - `-=`
+    - `*=`
+    - `/=`
+    - `//=`
+    - `%=`
+  - Variable operators act as if you were using the operation before the `=` on the variable value.
+  - Syntax example : `var:int score += 5`
+- Dialog boxes
+  - Typing only `run` in the console will open a dialog box that will let you select a file to run.
+  - The same goes on for the IDE, but this time, the dialog box opens anyway.
+
+### 3.8.1
+- Disabled the `update` console command and automatic updates in general. This feature needs a rework.
+- Created the `changelog` console command. This command allows you to see the latest changelog.
 
 ### 3.7.0
 This update features a brand new IDE, accessible from the `ide` console command.
