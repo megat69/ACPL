@@ -215,7 +215,8 @@ while running:
         break
 
     elif user_input.lower() == "update":
-        os.system("python update_checker.py")
+        #os.system("python update_checker.py")
+        print(f"{bcolors.FAIL}Update checking has been temporarily disabled.\nThanks for your understanding.{bcolors.ENDC}")
 
     elif user_input.startswith("lib"):
         user_input = user_input.replace("lib ", "")
@@ -325,6 +326,36 @@ while running:
             user_input.pop(3)
         replace_line(user_input[0], user_input[1], user_input[2])
         print(f"Line {user_input[1]} modified in {user_input[0]} with value :\n{user_input[2]}")
+
+    elif user_input.startswith("changelog"):
+        changelog_file = open("changelog.md", "r")
+        changelog = changelog_file.readlines()
+        changelog_file.close()
+
+        changelog = recreate_string(changelog)
+
+        while "**" in changelog:
+            changelog = changelog.replace("**", bcolors.BOLD, 1)
+            changelog = changelog.replace("**", bcolors.ENDC, 1)
+
+        while "*" in changelog:
+            changelog = changelog.replace("*", bcolors.ITALICS, 1)
+            changelog = changelog.replace("*", bcolors.ENDC, 1)
+
+        while "```" in changelog:
+            changelog = changelog.replace("```", bcolors.WARNING, 1)
+            changelog = changelog.replace("```", bcolors.ENDC, 1)
+
+        while "`" in changelog:
+            changelog = changelog.replace("`", bcolors.WARNING, 1)
+            changelog = changelog.replace("`", bcolors.ENDC, 1)
+
+        while "###" in changelog:
+            header = changelog[changelog.find("###") + 1:changelog.find("\n")]
+            changelog = changelog.replace(f"#{header}\n", f"{bcolors.HEADER}{bcolors.BOLD}{header.replace('#', '')}{bcolors.ENDC}\n")
+        # TODO : Programme ACPL qui fait la division euclidienne d'un nombre et qui stocke le résultat et le reste dans une liste
+        print(changelog)
+
 
 
     else:
