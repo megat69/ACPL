@@ -331,23 +331,24 @@ Simply type `deletevar <variable_name>` to do so.
 *Example :*
 `deletevar Test` will delete var `Test`.
  
-#### libraries ####
-For further detail, go to the wiki page.
+#### ~~libraries~~ ####
+**DISABLED AT THE MOMENT, WILL BE REIMPLEMENTED SOON**
+~~For further detail, go to the wiki page.~~
 
-You can download and install libs through the console commands.
+~~You can download and install libs through the console commands.~~
 
-Type `lib install <lib>` to install one and `lib update <lib>` to update one.
+~~Type `lib install <lib>` to install one and `lib update <lib>` to update one.~~
 
-To use one, declare at the beginning of your program `$use: <lib>`.
+~~To use one, declare at the beginning of your program `$use: <lib>`.~~
 
-**Actual disponble libs :**
+~~**Actual disponble libs :**~~
 
-- String : basic string manipulations
-- Wait_until_user_input : gives a new funtion to wait until user input.
-- Run_file : allows you to run another ACPL code file.
-- Os : allow you to run a system command.
-- Colors : Allows you to put colors in your prints or variables ONLY IF the `use-colors` in the `startup.acpl-ini` is set to `True`.
-- Files : Basic file manipulations. *Does not work very well*
+~~- String : basic string manipulations~~
+~~- Wait_until_user_input : gives a new funtion to wait until user input.~~
+~~- Run_file : allows you to run another ACPL code file.~~
+~~- Os : allow you to run a system command.~~
+~~- Colors : Allows you to put colors in your prints or variables ONLY IF the `use-colors` in the `startup.acpl-ini` is set to `True`.~~
+~~- Files : Basic file manipulations. *Does not work very well*~~
 
 ### 3.8.0
 - Lists
