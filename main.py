@@ -7,7 +7,6 @@ import sys
 import json
 from recurrent_classes import *
 import os
-import msvcrt
 import timeit
 from math import *
 import importlib
@@ -95,28 +94,25 @@ skip_while = False
 in_function = False
 
 # TODO : Automatic updates, functions, libs, try/except
-# DONE : 
-# - IDE '.acpl_ide', 
-# - 'redo' command, 
-# - var_action '--replace',
-# - functions
-# - --split:<char>
-# - Bugfix on while setting a list specific list element
-# - Libs
+# DONE :
 # Order :
+# 1) Bug : Ares variables O_o
+
 # 3.10
 # 0) Automatic updates
 # 1) try/except
 # 2) return
 # 3) Conditions and loops inside each other
+
+# MAYBE IN THE FUTURE
+# 1) 'os.acpl-ini', avec des variables différentes selon les os
+
 # SCRAPPED AT THE MOMENT
 # Automatic quotes
 
 while line_numbers < len(code_lines):
     line = code_lines[line_numbers]
     debug("other", lineno(), 2, "Line number : ", line_numbers)
-    if msvcrt.kbhit() and msvcrt.getch() == chr(27).encode():
-        sys.exit()
     if "/*" in line:
         is_in_comment = True
     if "*/" in line:

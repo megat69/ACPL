@@ -318,6 +318,12 @@ def md_format(lines:(str, list)):
 
     return lines
 
+def launch_py_file(filename:str):
+    if not filename.endswith(".py"):
+        filename += ".py"
+    file_to_launch = open(filename, "r")
+    exec(file_to_launch.read())
+    file_to_launch.close()
 
 try:
     startup_file = open("startup.acpl-ini", "r+", encoding="utf-8")

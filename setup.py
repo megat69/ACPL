@@ -1,4 +1,5 @@
 import os
+from recurrent_classes import launch_py_file
 os.system("pip install -r requirements.txt")
 
 startup_file = open("startup.acpl-ini", "r", encoding="utf-8")
@@ -15,6 +16,8 @@ language = input("What language do you speak, from this list ? Type in the count
                  "- Dutch (nl)\n"
                  "- Turkish (tr)\n"
                  "Type here : ")
+if language not in ("az", "de", "en", "fr", "nl", "it", "tr"):
+    language = "en"
 
 print(f"Ok, I configured your language to '{language}'.\nBut for now, the setup has to be in English (sorry).")
 
@@ -46,5 +49,7 @@ startup_file = open("startup.acpl-ini", "w", encoding="utf-8")
 startup_file.writelines(startup_options)
 startup_file.close()
 
+os.mkdir("acpl_libs")
+
 print("I open you the console :)")
-os.system("python console.py")
+launch_py_file("console")

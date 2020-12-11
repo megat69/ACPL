@@ -69,7 +69,7 @@ for lines in startup:
 print(bcolors.BOLD + texts.console['bootup-message'].format(final_version, current_version) + bcolors.ENDC)
 startup_file.close()
 if check_update == "True" and console_reloaded is False:
-    os.system("python update_checker.py")
+    launch_py_file("update_checker")
 startup_file = open(ini_file, "r", encoding="utf-8").readlines()
 
 while running:
@@ -104,13 +104,13 @@ while running:
 
         print(f"{bcolors.OKBLUE}{texts.console['launch-code-file'].format(user_input)}{bcolors.ENDC}")
         sleep(1.7)
-        os.system("python main.py")
+        launch_py_file("main")
 
 
     elif user_input.startswith("rerun"):
         print(f"{bcolors.OKBLUE}Running last file again...{bcolors.ENDC}")
         sleep(1.7)
-        os.system("python main.py")
+        launch_py_file("main")
 
     elif user_input.startswith("version"):
         output = f"{texts.console['last-stable-release']} : {final_version}\n{texts.console['current-dev-build']} : " + current_version
@@ -122,7 +122,7 @@ while running:
         replace_line('startup.ini', 0, "filename: temp.acpl\n")
         temp_file = open("temp.acpl", "w+", encoding="utf-8")
         temp_file.write(user_input)
-        os.system("python main.py")
+        launch_py_file("main")
         sleep(3)
         replace_line('startup.ini', 0, "filename: "+old_run_file+"\n")
         temp_file.close()
@@ -214,11 +214,11 @@ while running:
         print(texts.console["reloading"])
         replace_line(ini_file, 5, "console-reloaded: True\n")
         sleep(2)
-        os.system("python console.py")
+        launch_py_file("console")
         break
 
     elif user_input.lower() == "update":
-        #os.system("python update_checker.py")
+        #launch_py_file("console")
         print(f"{bcolors.FAIL}Update checking has been temporarily disabled.\nThanks for your understanding.{bcolors.ENDC}")
 
     elif user_input.startswith("lib"):
@@ -254,7 +254,7 @@ while running:
                     continue
                 with open(f"acpl_libs/doc_{user_input}.md", "wb") as code:
                     code.write(r.content)
-                    
+
             documentation = open(f"acpl_libs/doc_{user_input}.md")
             documentation_content = md_format(documentation.readlines())
             documentation.close()
@@ -282,7 +282,7 @@ while running:
                 continue
         replace_line('startup.acpl-ini', 0, 'filename: '+user_input[0]+"\n")
         replace_line("startup.acpl-ini", 8, "compiled-file-filename: "+user_input[1]+"\n")
-        os.system("python compiler.py")
+        launch_py_file("compiler")
 
     elif user_input.startswith("pyrun"):
         user_input = user_input.replace("pyrun ", "", 1)
@@ -296,7 +296,7 @@ while running:
     elif user_input.lower().startswith("ide"):
         # Opens IDE
         print(f"{bcolors.OKBLUE}Opening ACPL IDE...{bcolors.ENDC}")
-        os.system("python ide.py")
+        launch_py_file("ide")
         print(f"{bcolors.OKBLUE}IDE closed.{bcolors.ENDC}")
 
     elif user_input.startswith("open"):

@@ -6,13 +6,12 @@ from recurrent_classes import *
 import requests
 import platform
 import shlex
-import msvcrt
 from pynput.keyboard import Key, Listener
 
 
 def on_press(key):
     global pressed_key
-    if debug_state is True:
+    if debug_state > 0:
         print('{0} pressed'.format(key))
     pressed_key = key
     try:
@@ -143,10 +142,6 @@ except KeyError:
 pressed_key = None
 
 while running is True:
-    if msvcrt.kbhit() and msvcrt.getch() == chr(27).encode():
-        running = False
-        sys.exit()
-
     # Read lines again
     code_file = open(code_file_filename, "r", encoding="utf-8")
     lines = code_file.readlines()
@@ -315,12 +310,12 @@ while running is True:
                 user_input = None
                 continue
             elif user_input == "open_file":
-                os.system("python ide.py")
+                launch_py_file("ide")
                 sys.exit()
             elif user_input == "run":
                 if code_file_filename.endswith(".acpl"):
                     replace_line("startup.acpl-ini", 0, f"filename: {code_file_filename}\n")
-                    os.system("python main.py")
+                    launch_py_file("main")
                     sleep(2)
                 elif code_file_filename.endswith(".py"):
                     os.system(f"python {code_file_filename}")
@@ -338,7 +333,7 @@ while running is True:
                     replace_line("startup.acpl-ini", 0, f"filename: {code_file_filename}\n")
                     replace_line("startup.acpl-ini", 8,
                                  f"compiled-file-filename: {code_file_filename.replace('.acpl', '')}\n")
-                    os.system("python compiler.py")
+                    launch_py_file("compiler")
                     new_file = open(code_file_filename.replace('.acpl', '') + ".py", "r")
                     for line in new_file.readlines():
                         print(line, end="")

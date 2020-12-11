@@ -7,7 +7,6 @@ import sys
 import json
 from recurrent_classes import *
 import os
-import msvcrt
 import timeit
 import platform
 import shlex

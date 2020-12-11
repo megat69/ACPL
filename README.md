@@ -376,6 +376,16 @@ Every library can be seen at this link : [https://github.com/megat69/ACPL/tree/m
 
 To use one, declare at the beginning of your program `$use: <lib>`.
 
+### 3.9.1
+Bugfixes *(thanks to PancakesLord)* :
+- `setup.py`, if you entered a wrong country code, you couldn't launch the console or anything.
+- On Linux systems or systems with multiple Python versions installed, you couldn't launch any file from any file. This is now fixed, using a more responsive technique than the older one.
+- `msvcrt` lib was used, and kinda useless. It's been there for 7 months, without proper use, and it made the program crash on Linux systems. Now fixed.
+Bug discovered, not fixed yet :
+- If you create a variable, typed `int`, and you ask the user to input a value, if the user enters `e`, the variable will be equal to `2`, and if he enters `i`, it will be equal to `5`.
+I have no idea of why this bug exists, and it probably won't be fixed for now.
+  
+Anyway, quick changes, just wanted to let you know.
 
 ### 3.9
 - IDE
