@@ -76,9 +76,10 @@ while running:
     output = None
     user_input = input("\n>>> ")
 
-    debug("in", lineno(), user_input)
+    debug("in", lineno(), 1, user_input)
 
-    og_user_input = user_input
+    if user_input != "redo":
+        og_user_input = user_input
 
     if user_input == "redo":
         user_input = last_user_input
@@ -195,7 +196,9 @@ while running:
               f"\t- 'ini-content' : Displays the content of the ini file\n"
               f"\t- 'open' : Opens a specific file in its default program\n"
               f"\t- 'display' : Prints the content of a specified file.\n"
-              f"\t- 'change-line'/'modify-line' : Modifies a specific line in a plain text file.\n")
+              f"\t- 'change-line'/'modify-line' : Modifies a specific line in a plain text file.\n"
+              f"\t- 'redo' : Reuses the last command.\n"
+              f"\t- 'lib <install:delete:doc> <lib_name>' : Respectively installs, delete, or gives the documentation of the specified lib.\n")
 
     elif user_input.lower() == "about":
         if language == "fr":
@@ -222,28 +225,43 @@ while running:
         user_input = user_input.replace("lib ", "")
         if user_input.startswith("install"):
             user_input = user_input.replace("install ", "")
-            url = "https://raw.githubusercontent.com/megat69/ACPL/master/libs/lib_" + user_input + ".py"
+            url = "https://raw.githubusercontent.com/megat69/ACPL/master/acpl_libs/fx_" + user_input + ".py"
             r = requests.get(url)
             existing = r.status_code == 200
             if not existing:
                 print("Error : Lib does not exist !")
                 continue
-            with open(f"libs/lib_{user_input}.py", "wb") as code:
+            with open(f"acpl_libs/fx_{user_input}.py", "wb") as code:
                 code.write(r.content)
             print(f"Library {user_input} installed !")
-        elif user_input.startswith("update"):
-            user_input = user_input.replace("update ", "")
-            url = "https://raw.githubusercontent.com/megat69/ACPL/master/libs/lib_" + user_input + ".py"
-            r = requests.get(url)
-            existing = r.status_code == 200
-            if not existing:
-                print("Error : Lib does not exist !")
-                continue
-            with open(f"libs/lib_{user_input}.py", "wb") as code:
-                code.write(r.content)
-            print(f"Library {user_input} updated !")
+        elif user_input.startswith("delete"):
+            user_input = user_input.replace("delete ", "", 1)
+            try:
+                os.remove(f"acpl_libs/fx_{user_input}.py")
+                print(f"Deleted lib {user_input}.")
+            except FileNotFoundError:
+                print("Lib not installed, unable to uninstall.")
+        elif user_input.startswith("doc"):
+            user_input = user_input.replace("documentation", "", 1)
+            user_input = user_input.replace("doc", "", 1)
+            user_input = remove_prefix(user_input, user_input.startswith(" "))
+            if not os.path.exists(f"acpl_libs/doc_{user_input}.md"):
+                url = "https://raw.githubusercontent.com/megat69/ACPL/master/acpl_libs/doc_" + user_input + ".md"
+                r = requests.get(url)
+                existing = r.status_code == 200
+                if not existing:
+                    print("Error : Lib does not exist !")
+                    continue
+                with open(f"acpl_libs/doc_{user_input}.md", "wb") as code:
+                    code.write(r.content)
+                    
+            documentation = open(f"acpl_libs/doc_{user_input}.md")
+            documentation_content = md_format(documentation.readlines())
+            documentation.close()
+            print(documentation_content)
+            del documentation_content
         else:
-            raise CriticError
+            output = "Wrong amount of arguments."
 
     elif user_input.startswith("compile"):
         if user_input == "compile":
@@ -331,32 +349,8 @@ while running:
         changelog_file = open("changelog.md", "r")
         changelog = changelog_file.readlines()
         changelog_file.close()
-
-        changelog = recreate_string(changelog)
-
-        while "**" in changelog:
-            changelog = changelog.replace("**", bcolors.BOLD, 1)
-            changelog = changelog.replace("**", bcolors.ENDC, 1)
-
-        while "*" in changelog:
-            changelog = changelog.replace("*", bcolors.ITALICS, 1)
-            changelog = changelog.replace("*", bcolors.ENDC, 1)
-
-        while "```" in changelog:
-            changelog = changelog.replace("```", bcolors.WARNING, 1)
-            changelog = changelog.replace("```", bcolors.ENDC, 1)
-
-        while "`" in changelog:
-            changelog = changelog.replace("`", bcolors.WARNING, 1)
-            changelog = changelog.replace("`", bcolors.ENDC, 1)
-
-        while "###" in changelog:
-            header = changelog[changelog.find("###") + 1:changelog.find("\n")]
-            changelog = changelog.replace(f"#{header}\n", f"{bcolors.HEADER}{bcolors.BOLD}{header.replace('#', '')}{bcolors.ENDC}\n")
-        # TODO : Programme ACPL qui fait la division euclidienne d'un nombre et qui stocke le résultat et le reste dans une liste
+        changelog = md_format(changelog)
         print(changelog)
-
-
 
     else:
         output = texts.console["unknown-command"]

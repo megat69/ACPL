@@ -1,8 +1,10 @@
 import inspect
+import os
 import sys
 import json
 import tkinter
 from tkinter import filedialog
+from datetime import datetime
 
 class bcolors:
     with open("startup.acpl-ini", "r", encoding="utf-8") as startup_file:
@@ -67,6 +69,7 @@ def error(line_number, error_type, message=None, *args):
         print(f"{bcolors.FAIL}{error_type} {texts.statement_errors['on-line']} {line_number} : {message}{bcolors.ENDC}")
     else:
         print(f"{bcolors.FAIL}{error_type} {texts.statement_errors['has-been-raised']} {line_number}{bcolors.ENDC}")
+    sys.exit()
 
 def lineno():
     """
@@ -81,14 +84,17 @@ def split(word:str):
     """
     return list(word)
 
-def debug(entry_type, line, message, *args):
+def debug(entry_type, line, level, message, *args):
     """
     Debug function.
     Parameter 'entry_type' (str) : in, out, or other.
     Parameter 'line' (int) : The line where the debug is placed.
     Parameter 'message' (str) and '*args' : The message to display.
+    Parameter 'level' (int) : corresponds to the level of importance of the debug message
     """
-    if debug_const:
+    global debug_const
+    global date_format
+    if debug_const >= level:
         if entry_type.lower() == "in":
             entry = "\n>>>"
         elif entry_type.lower() == "out":
@@ -98,13 +104,24 @@ def debug(entry_type, line, message, *args):
         if args:
             for arg in args:
                 message += str(arg)
+        debug_msg_plain_text = entry + "\t" + "(" + str(line) + ")\t" + str(message) + "\n"
         debug_msg = bcolors.ITALICS + bcolors.OKBLUE + entry + "\t" + "(" + str(line) + ")\t" + str(message) + bcolors.ENDC + "\n"
-        with open("debug.log", "w", encoding="utf-8") as debug_file:
-            debug_file.write(debug_msg)
+
+        if not os.path.exists("/DEBUG/"):
+            try:
+                os.mkdir(os.getcwd()+"/DEBUG/")
+            except FileExistsError:
+                pass
+        with open(f"DEBUG/debug_{date_format}.log", "a", encoding="utf-8") as debug_file:
+            debug_file.write(debug_msg_plain_text)
+            if entry == "<<<":
+                debug_file.write("\n")
             debug_file.close()
         print(debug_msg)
-        if entry == "<<<":
-            debug_file.write("\n")
+        if len([name for name in os.listdir(os.getcwd()+"/DEBUG/")]) > 5:
+            for file in os.listdir(os.getcwd()+"/DEBUG")[:5]:
+                os.remove(os.getcwd()+'/DEBUG/'+file)
+
 
 class StatementError(Exception):
     def __init__(self, *args):
@@ -181,6 +198,17 @@ def remove_suffix(variable:str, condition:bool=True, chars_amount:int=1):
         variable = variable[:-chars_amount]  # Suffix gets removed
     return variable
 
+def remove_prefix(variable:str, condition:bool=True, chars_amount:int=1):
+    """
+        Removes the prefix of a string.
+        Parameter 'variable' (str) : The text where the prefix has to be removed.
+        Parameter 'chars_amount' (int) : Default : 1. Number of chars to remove.
+        Parameter 'condition' (bool) : Default : True. Will only remove if the condition is True.
+        """
+    if condition is True:  # If the condition is respected
+        variable = variable[chars_amount:len(variable)]  # Prefix gets removed
+    return variable
+
 def add_suffix(variable:str, suffix:str, condition:bool=True):
     """
     Removes the suffix of a string.
@@ -192,14 +220,15 @@ def add_suffix(variable:str, suffix:str, condition:bool=True):
         variable += suffix
     return variable
 
-def recreate_string(variable:list):
+def recreate_string(variable:list, char_in_between:str=""):
     """
     Recreates a string from a list.
     Parameter 'variable' (list) : The list to put together to a string.
+    Parameter 'char_in_between' (str) : The char to put between the elements to recompose. Nothing by default.
     """
     temp_str = ""
     for element in variable:
-        temp_str += str(element)
+        temp_str += str(element) + char_in_between
     return temp_str
 
 #def increment_variable(variable:(int, float), count:(int, float)=1, condition:bool=True, condition_is_false:function=None)
@@ -245,6 +274,51 @@ def open_file_dialog(extensions:(list, tuple, str)=""):
                 return None
     return filename
 
+def md_format(lines:(str, list)):
+    """
+    Formats markdown text or list.
+    :param lines: The lines to format.
+    :return: The formatted text, as string.
+    """
+
+    if isinstance(lines, list):
+        lines = recreate_string(lines)
+
+    while "**" in lines:
+        lines = lines.replace("**", bcolors.BOLD, 1)
+        lines = lines.replace("**", bcolors.ENDC, 1)
+
+    while "*" in lines:
+        lines = lines.replace("*", bcolors.ITALICS, 1)
+        lines = lines.replace("*", bcolors.ENDC, 1)
+
+    while "```" in lines:
+        lines = lines.replace("```", bcolors.WARNING, 1)
+        lines = lines.replace("```", bcolors.ENDC, 1)
+
+    while "`" in lines:
+        lines = lines.replace("`", bcolors.WARNING, 1)
+        lines = lines.replace("`", bcolors.ENDC, 1)
+
+    """"while "####" in lines:
+        header = lines[lines.find("####") + 1:lines.find("\n")]
+        print(header)
+        lines = lines.replace(f"#{header}\n", f"{bcolors.HEADER}{bcolors.ITALICS}{header.replace('#', '')}{bcolors.ENDC}\n")
+
+    while "###" in lines:
+        header = lines[lines.find("###") + 1:lines.find("\n")]
+        print(header)
+        lines = lines.replace(f"#{header}\n", f"{bcolors.HEADER}{bcolors.BOLD}{header.replace('#', '')}{bcolors.ENDC}\n")
+
+    while "##" in lines:
+        header = lines[lines.find("##") + 1:lines.find("\n")]
+        print(header)
+        lines = lines.replace(f"#{header}\n", f"{bcolors.HEADER}{bcolors.BOLD}{bcolors.UNDERLINE}{header.replace('#', '')}{bcolors.ENDC}\n")
+    """
+
+    return lines
+
+
 try:
     startup_file = open("startup.acpl-ini", "r+", encoding="utf-8")
 except FileNotFoundError:
@@ -252,16 +326,14 @@ except FileNotFoundError:
     sys.exit()
 startup = startup_file.readlines()
 
+date_format = datetime.now().strftime("%Y_%m_%d__%H_%M_%S")
+
 for lines in startup:
     if lines.endswith("\n"):
         lines = lines.replace("\n", "")
     if lines.startswith("debug-state: "):
         lines = lines.replace("debug-state: ", "")
-        debug_state = lines
-        if debug_state.lower() == "false":
-            debug_const = False
-        else:
-            debug_const = True
+        debug_const = int(lines)
 
     if str(lines).startswith("lang: "):
         with open("startup.acpl-ini", "r", encoding="utf-8") as startup_file:

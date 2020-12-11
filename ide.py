@@ -112,13 +112,32 @@ while not os.path.exists(code_file_filename) or code_file_filename in ide_forbid
         code_file_filename += ".acpl"
 """
 code_file_filename = open_file_dialog()
+current_folder = os.path.dirname(code_file_filename)
+current_filename = os.path.basename(code_file_filename)
+
+acpl_ide_metadata = {}
+if not os.path.exists(current_folder+"/.acpl_ide"):
+    acpl_ide_metadata_file = open(current_folder+"/.acpl_ide", "w")
+    acpl_ide_metadata_file.writelines(json.dumps(acpl_ide_metadata))
+    acpl_ide_metadata_file.close()
+
+with open(current_folder+"/.acpl_ide", "r") as f:
+    acpl_ide_metadata = json.load(f)
+    f.close()
 
 print("\n\n")
 
 # VARIABLES
-current_line = 0
 running = True
-current_cursor_position = 0
+try:
+    current_line = acpl_ide_metadata[current_filename]["line"]
+except KeyError:
+    current_line = 0
+
+try:
+    current_cursor_position = acpl_ide_metadata[current_filename]["cursor_position"]
+except KeyError:
+    current_cursor_position = 0
 
 # UNDEFINED VARIABLES
 pressed_key = None
@@ -165,10 +184,10 @@ while running is True:
             displayed_lines[current_line] = ""
             for char in temp_line:
                 displayed_lines[current_line] += char
-            temp_line = None
+            del temp_line
         else:
             print(f"({actual_line})     ", end="")
-        actual_line = None
+        del actual_line
 
         # SYNTAX HIGHLIGHTING
         if code_file_filename.endswith(".acpl"):
@@ -186,6 +205,18 @@ while running is True:
             displayed_lines[i] = displayed_lines[i].replace("end if", f"{bcolors.OKGREEN}{bcolors.ITALICS}end if{bcolors.ENDC}{bcolors.WARNING}", 1)
             displayed_lines[i] = displayed_lines[i].replace("end for", f"{bcolors.OKGREEN}{bcolors.ITALICS}end for{bcolors.ENDC}{bcolors.WARNING}", 1)
             displayed_lines[i] = displayed_lines[i].replace("end while", f"{bcolors.OKGREEN}{bcolors.ITALICS}end while{bcolors.ENDC}{bcolors.WARNING}", 1)
+            if displayed_lines[i].startswith("function"):
+                displayed_lines[i] = displayed_lines[i].split(" ")
+                displayed_lines[i][0] = displayed_lines[i][0].replace("function", f"{bcolors.OKGREEN}{bcolors.ITALICS}function{bcolors.ENDC}", 1)
+                displayed_lines[i][1] = bcolors.WARNING + displayed_lines[i][1] + bcolors.ENDC + bcolors.FAIL
+                displayed_lines[i] = recreate_string(displayed_lines[i], " ")
+                displayed_lines[i] += bcolors.ENDC
+            if displayed_lines[i].startswith("use_function"):
+                displayed_lines[i] = displayed_lines[i].split(" ")
+                displayed_lines[i][0] = displayed_lines[i][0].replace("use_function", f"{bcolors.OKGREEN}{bcolors.ITALICS}use_function{bcolors.ENDC}",1)
+                displayed_lines[i][1] = bcolors.WARNING + displayed_lines[i][1] + bcolors.ENDC + bcolors.FAIL
+                displayed_lines[i] = recreate_string(displayed_lines[i], " ")
+                displayed_lines[i] += bcolors.ENDC
             # red
             displayed_lines[i] = displayed_lines[i].replace("<", f"{bcolors.FAIL}<")
             displayed_lines[i] = displayed_lines[i].replace(">", f">{bcolors.ENDC}")
@@ -194,6 +225,7 @@ while running is True:
             displayed_lines[i] = displayed_lines[i].replace(":int", f"{bcolors.FAIL}:int{bcolors.WARNING}")
             displayed_lines[i] = displayed_lines[i].replace(":float", f"{bcolors.FAIL}:float{bcolors.WARNING}")
             displayed_lines[i] = displayed_lines[i].replace(":str", f"{bcolors.FAIL}:str{bcolors.WARNING}")
+            displayed_lines[i] = displayed_lines[i].replace(":list", f"{bcolors.FAIL}:str{bcolors.WARNING}")
             # italics
             displayed_lines[i] = displayed_lines[i].replace("//", f"{bcolors.ITALICS}//", 1)
             displayed_lines[i] = displayed_lines[i].replace("#", f"{bcolors.ITALICS}#")
@@ -238,7 +270,7 @@ while running is True:
                     lines[current_line] += char
                 except TypeError:
                     pass
-            temp_line = None
+            del temp_line
             current_cursor_position += len(pressed_key)
             replace_line(code_file_filename, current_line, lines[current_line] + "\n")
             if pressed_key == "\n":
@@ -252,6 +284,13 @@ while running is True:
         if pressed_key == Key.esc:
             user_input = input(f"{bcolors.OKBLUE}What do you want to do ?\nType 'quit' or 'end' to leave, 'new_file <filename>' to create a new_file, or 'open_file' to open an existing file, 'run' to run if it is a Python or ACPL file, or 'compile' in case of an ACPL file.\n{bcolors.ENDC}")
             if user_input == "quit" or user_input == "end":
+                acpl_ide_metadata[current_filename] = {
+                    "line": current_line,
+                    "cursor_position": current_cursor_position
+                }
+                with open(current_folder + "/.acpl_ide", "w") as f:
+                    json.dump(acpl_ide_metadata, f)
+                    f.close()
                 sys.exit()
             elif user_input.startswith("new_file"):
                 user_input = user_input.replace("new_file ", "", 1)
@@ -265,7 +304,7 @@ while running is True:
                             new_file.writelines([""])
                             new_file.close()
                             code_file_filename = user_input
-                            confirm = None
+                            del confirm
                     else:
                         new_file = open(user_input, "w", encoding="utf-8")
                         new_file.write("")
@@ -409,5 +448,5 @@ while running is True:
                     lines[current_line] += char
                 except TypeError:
                     pass
-            temp_line = None
+            del temp_line
             replace_line(code_file_filename, current_line, lines[current_line] + "\n")

@@ -3,7 +3,7 @@
 # ACPL
 My own programming language (interpreted in Python).
 
-This project has just been made for fun, ~~and is completely useless~~ *not anymore xD* ;)
+This project has just been made for fun, and is completely useless ;)
 
 But still, if you want to use it, please credit me xD !
 
@@ -126,6 +126,18 @@ They can be :
 - `uppercase` : Sets the variable string to upper case
 - `round:<number_after_dot:int>` : Puts the float variable to a round number, with `number_after_dot` numbers after the dot.
 - `ceil` : Converts the float variable to the integer just above it.
+- `replace`
+  - Replaces elements of the string.
+  - Syntax : `--replace:"<element_to_replace>""<replace_with>"["count"]`
+  - The first `count` `element_to_replace` will be searched through the string and replaced by the `replace_with`.
+  - If `count` is undefined, all the `element_to_replace` will be replaced by `replace_with`.
+  - Example 1 *(Without `count`)* : `var:str--replace:"e""a" Test = Yeeeeeeeeeeeeeeeee` will result in `Yaaaaaaaaaaaaaaaaa`
+  - Example 2 *(With `count`)* : `var:str--replace:"e""a""3" Test = Yeeeeeeeeeeeeeeeee` will result in `Yaaaeeeeeeeeeeeeee`
+- `split`
+  - Splits the string into a string
+  - Syntax : `--split:"<separator>"`
+  - Example 1 : `var:str--split:" " Test = This is a test string.` will result in `['This', 'is', 'a', 'test', 'string.']`
+  - Example 2 : `var:str--split:"ng " Test = Testing string :D` will result in `['Testi', 'stri', ':D']`
 
 **SPECIAL VALUES :**
  - It can also be special values :  you can meet the `input` method.
@@ -233,14 +245,14 @@ If true, it will execute the following instructions block ; if false, two cases 
 No `elseif` at the moment.
 
 **Syntax :**
-
-`if <condition>`
-
+```
+if <condition>
 <instructions>
 endif
-`else`
+else
 <instructions>
 endif
+```
 
 The condition can contain as many variables as you want, and is with these operators :
 - `==` : compares if equal
@@ -274,9 +286,9 @@ This variable is going to be created for the loop, usable inside, and destroyed 
 
 It will be incremented every looping.
 
-<min> is the default value of <variable_name>
+`<min>` is the default value of `<variable_name>`
 
-<max> is the maximum value of the variable.
+`<max>` is the maximum value of the variable.
 
 Example :
 
@@ -330,25 +342,95 @@ Simply type `deletevar <variable_name>` to do so.
 
 *Example :*
 `deletevar Test` will delete var `Test`.
- 
-#### ~~libraries~~ ####
-**DISABLED AT THE MOMENT, WILL BE REIMPLEMENTED SOON**
-~~For further detail, go to the wiki page.~~
 
-~~You can download and install libs through the console commands.~~
+#### functions ####
+Functions allow to write some code once and reuse it as much as you want.
 
-~~Type `lib install <lib>` to install one and `lib update <lib>` to update one.~~
+**How to define a function *(without parameters)* ?**
+- Type `function <name>`
+- Write the code of the function under it
+- End by `endfunction` or `end function`
+**How can I call a function *(without parameters)* ?**
+- Type `use_function <function_name>`
+**How to define a function *(with parameters)* ?**
+- Add the parameter names (separated by spaces) after the  `function <name>`
+- You can then use them inside the function as normal variables. But if you modify them, they'll become global variables.
+- Example : `function hello first_name last_name`
+**How can I call a function *(with parameters)* ?**
+- Add the values of the parameters after the `use_function <function_name>`, separated by spaces.
+- They can be hardcoded values, variables, or equations.
+- Example, following the function defined above : `use_function hello TheAssassin71 {last_name}`
 
-~~To use one, declare at the beginning of your program `$use: <lib>`.~~
+#### libraries ####
+[For further detail, go to the wiki page.](https://github.com/megat69/ACPL/wiki/Libs)
 
-~~**Actual disponble libs :**~~
+[Lib creation tutorial](https://github.com/megat69/ACPL/wiki/Lib-creation)
 
-~~- String : basic string manipulations~~
-~~- Wait_until_user_input : gives a new funtion to wait until user input.~~
-~~- Run_file : allows you to run another ACPL code file.~~
-~~- Os : allow you to run a system command.~~
-~~- Colors : Allows you to put colors in your prints or variables ONLY IF the `use-colors` in the `startup.acpl-ini` is set to `True`.~~
-~~- Files : Basic file manipulations. *Does not work very well*~~
+You can download and install libs through the console commands.
+
+Type `lib install <lib>` to install one and `lib delete <lib>` to delete one.
+
+You can also do a `lib doc <lib>` to get a library documentation.
+
+Every library can be seen at this link : [https://github.com/megat69/ACPL/tree/master/acpl_libs](https://github.com/megat69/ACPL/tree/master/acpl_libs)
+
+To use one, declare at the beginning of your program `$use: <lib>`.
+
+
+### 3.9
+- IDE
+  - Added a memory system to the IDE
+  - Every time you close the IDE, it will save the last cursor position, and it will set the cursor to the correct position once you open this file again.
+- Redo
+  - New console command
+  - Re-iterates the last action you did
+ - String manipulations
+  - 2 new `var_actions` : `replace` and `split`
+    - `replace`
+      - Replaces elements of the string.
+      - Syntax : `--replace:"<element_to_replace>""<replace_with>"["count"]`
+      - The first `count` `element_to_replace` will be searched through the string and replaced by the `replace_with`.
+      - If `count` is undefined, all the `element_to_replace` will be replaced by `replace_with`.
+      - Example 1 *(Without `count`)* : `var:str--replace:"e""a" Test = Yeeeeeeeeeeeeeeeee` will result in `Yaaaaaaaaaaaaaaaaa`
+      - Example 2 *(With `count`)* : `var:str--replace:"e""a""3" Test = Yeeeeeeeeeeeeeeeee` will result in `Yaaaeeeeeeeeeeeeee`
+    - `split`
+      - Splits the string into a string
+      - Syntax : `--split:"<separator>"`
+      - Example 1 : `var:str--split:" " Test = This is a test string.` will result in `['This', 'is', 'a', 'test', 'string.']`
+      - Example 2 : `var:str--split:"ng " Test = Testing string :D` will result in `['Testi', 'stri', ':D']`
+- **FUNCTIONS**
+  - Major feature of the update
+  - Functions allow to write some code once and reuse it as much as you want.
+  - **How to define a function *(without parameters)* ?**
+    - Type `function <name>`
+    - Write the code of the function under it
+    - End by `endfunction` or `end function`
+  - **How can I call a function *(without parameters)* ?**
+    - Type `use_function <function_name>`
+  - **How to define a function *(with parameters)* ?**
+    - Add the parameter names (separated by spaces) after the  `function <name>`
+    - You can then use them inside the function as normal variables. But if you modify them, they'll become global variables.
+    - Example : `function hello first_name last_name`
+  - **How can I call a function *(with parameters)* ?**
+    - Add the values of the parameters after the `use_function <function_name>`, separated by spaces.
+    - They can be hardcoded values, variables, or equations.
+    - Example, following the function defined above : `use_function hello TheAssassin71 {last_name}`
+- Bugfix : When trying to set a specific element of a list, you just couldn't. Now fixed.
+- **LIBS**
+  - Biggest feature of the update
+  - You can download and install libs through the console commands.
+  - Type `lib install <lib>` to install one and `lib update <lib>` to update one.
+  - If you want to uninstall any of them, type `lib delete <lib>`.
+  - If you want to see a lib's documentation, type `lib doc <lib>`.
+  - To use one, declare at the beginning of your program `$use: <lib>`.
+  - Everyone can submit his lib on the [Discord](https://discord.gg/MBuKcUn), and I'll publish it every time (except some obvious exceptions (not enough optimized, dangerous, or NSFW)) ! [Tutorial here.](https://github.com/megat69/ACPL/wiki/Lib-creation)
+  - Every library has its own documentation.
+  - See them in the source code, and find `acpl_libs/doc_<lib>.md`, where `<lib>` is the library you're looking for.
+  - You can look for **How to create a lib** in the [ACPL wiki](https://github.com/megat69/ACPL/wiki/Lib-creation)
+
+### 3.8.1
+- Disabled the `update` console command and automatic updates in general. This feature needs a rework.
+- Created the `changelog` console command. This command allows you to see the latest changelog.
 
 ### 3.8.0
 - Lists
@@ -372,10 +454,6 @@ Simply type `deletevar <variable_name>` to do so.
 - Dialog boxes
   - Typing only `run` in the console will open a dialog box that will let you select a file to run.
   - The same goes on for the IDE, but this time, the dialog box opens anyway.
-
-### 3.8.1
-- Disabled the `update` console command and automatic updates in general. This feature needs a rework.
-- Created the `changelog` console command. This command allows you to see the latest changelog.
 
 ### 3.7.0
 This update features a brand new IDE, accessible from the `ide` console command.
