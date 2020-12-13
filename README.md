@@ -5,9 +5,9 @@
 # ACPL
 My own programming language (interpreted in Python).
 
-This project has just been made for fun, and is completely useless ;)
+This project has just been made for fun, for practice, and is actually useful (somehow)
 
-But still, if you want to use it, please credit me xD !
+If you want to use it, please credit me xD !
 
 Big thanks to all the translators, and if you want to meet them, just join our [Discord](https://discord.gg/MBuKcUn) !
 
