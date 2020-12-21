@@ -167,7 +167,7 @@ We want to create a variable "pseudo" containing "TheAssassin".
 **EXAMPLE 2 :**
 We want to ask the user for his pseudo :
 *Input :*
-`var pseudo = input(What is your pseudo ? )`
+`var pseudo = input What is your pseudo ? `
 
 **EXAMPLE 3 :**
 We want to calculate `3*(6**2)` and store it into a variable "operation".
@@ -183,9 +183,11 @@ And then store it into "double"
 **EXAMPLE 5 :**
 We ask the user for his age and we multiply it by 5.
 *Input :*
-`int age = input What is your age ? 
+```
+int age = input What is your age ? 
 int new_age = <2*{age}>
-print Your new age is now {age} xD !`
+print Your new age is now {age} xD !
+```
 *Output (for this example, age equals 18) :*
 `Your new age is now 90 xD !`
 
