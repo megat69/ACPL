@@ -1,5 +1,10 @@
 from recurrent_classes import *
 
+def libs_to_import():
+    # Returning all the basic imports (import <lib>) and the from imports (from <lib> import <element>)
+    # as tuple of strings
+    return (tuple(), tuple())
+
 def requirements(file):
     return tuple()
 

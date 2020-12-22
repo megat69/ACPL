@@ -1,5 +1,10 @@
 from recurrent_classes import *
 
+def libs_to_import():
+    # Returning all the basic imports (import <lib>) and the from imports (from <lib> import <element>)
+    # as tuple of strings
+    return (("sys",), tuple())
+
 def requirements(file):
     if file == "main":
         return ("code_lines", "line_numbers")
@@ -22,5 +27,5 @@ def pytranslation(line, *args):
     Allows to quit an ACPL program.
     """
     if line.startswith("quit"):
-        line = "import sys\nsys.exit()"
+        line = "sys.exit()"
     return (line,)
