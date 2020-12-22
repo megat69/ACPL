@@ -1,4 +1,5 @@
 import os
+from time import sleep
 from recurrent_classes import launch_py_file
 os.system("pip install -r requirements.txt")
 
@@ -6,7 +7,7 @@ startup_file = open("startup.acpl-ini", "r", encoding="utf-8")
 startup_options = startup_file.readlines()
 startup_file.close()
 
-print("Hello !\nLet's begin with a quick setup of your settings.")
+print("\n\n\nHello !\nLet's begin with a quick setup of your settings.")
 language = input("What language do you speak, from this list ? Type in the country code between parentheses.\n"
                  "- Azerbaijani (az)\n"
                  "- German (de)\n"
@@ -21,17 +22,25 @@ if language not in ("az", "de", "en", "fr", "nl", "it", "tr"):
 
 print(f"Ok, I configured your language to '{language}'.\nBut for now, the setup has to be in English (sorry).")
 
+sleep(1)
+
 use_colors = input("\033[93mDo you see weird characters at the beginning and the end of that sentence ? (yes/no) \033[0m")
 if use_colors.lower() == "yes":
     use_colors = "False"
 else:
     use_colors = "True"
 
+sleep(1)
+
 open_compiled_file = input("The ACPL has the ability to compile ACPL files into Python files.\nAt the end of a compilation, do you want the ACPL interpreter to automatically open the file in your favourite text editor ? (yes/no) ")
 open_compiled_file = f"{open_compiled_file.lower() == 'yes'}"
 
+sleep(1)
+
 leave_comments_at_compiling = input("During compilation, do you want the comments you wrote in the ACPL file to be transcripted in the Python file ? (yes/no) ")
 leave_comments_at_compiling = f"{leave_comments_at_compiling.lower() == 'yes'}"
+
+sleep(1)
 
 print("Okay, you completed the setup :)\n\nKeep in mind that you can modify any of them using the 'modify-ini' console command.")
 
@@ -50,6 +59,8 @@ startup_file.writelines(startup_options)
 startup_file.close()
 
 os.mkdir("acpl_libs")
+
+sleep(2)
 
 print("I open you the console :)")
 launch_py_file("console")

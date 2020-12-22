@@ -11,6 +11,9 @@ from pynput.keyboard import Key, Listener
 
 def on_press(key):
     global pressed_key
+    global debug_state
+    global Key
+
     if debug_state > 0:
         print('{0} pressed'.format(key))
     pressed_key = key
@@ -40,7 +43,9 @@ def on_press(key):
 
 
 def on_release(key):
-    if debug_state is True:
+    global debug_state
+    global Key
+    if debug_state > 0:
         print('{0} release'.format(key))
     if key == Key.esc:
         # Stop listener
@@ -110,6 +115,20 @@ while not os.path.exists(code_file_filename) or code_file_filename in ide_forbid
     if not code_file_filename.endswith(".acpl"):
         code_file_filename += ".acpl"
 """
+
+try:
+    config_file = open("startup.acpl-ini", "r")
+except FileNotFoundError:
+    print(texts.critic_errors["ImpossibleLoad_StartupIni"])
+    sys.exit()
+
+for config_line in config_file.readlines():
+    if config_line.startswith("debug-state: "):  # debug
+        config_line = config_line.replace("debug-state: ", "")
+        debug_state = int(config_line)
+
+config_file.close()
+
 code_file_filename = open_file_dialog()
 current_folder = os.path.dirname(code_file_filename)
 current_filename = os.path.basename(code_file_filename)
@@ -312,7 +331,7 @@ while running is True:
             elif user_input == "open_file":
                 launch_py_file("ide")
                 sys.exit()
-            elif user_input == "run":
+                elif user_input == "run":
                 if code_file_filename.endswith(".acpl"):
                     replace_line("startup.acpl-ini", 0, f"filename: {code_file_filename}\n")
                     launch_py_file("main")

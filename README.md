@@ -15,12 +15,19 @@ Big thanks to all the translators, and if you want to meet them, just join our [
 `psutil` and `requests` libraries needs to be installed separately.
 You can also run `setup.py`.
 
+### THINGS TO KNOW ###
+Run the script `console.py` to have access to the ACPL console.
+
+A list of the commands is available by typing `help`.
+
+You can tweak your settings using the `settings` command.
+
 ### COMPILING ###
 The language can be compiled in Python using the following process.
 
 The most interesting thing about this update is the compiler, obviously.
 It works very simply :
-After setting the corresponding `ini` options with the `modify-ini` console command, just type the following command : `compile <ACPL_file> <final_python_file_filename>`
+After setting the corresponding `ini` options with the `settings` console command, just type the following command : `compile <ACPL_file> <final_python_file_filename>`
 It will generate the corresponding python file with the name you inputted.
 
 ### DOCUMENTATION ###
@@ -167,7 +174,7 @@ We want to create a variable "pseudo" containing "TheAssassin".
 **EXAMPLE 2 :**
 We want to ask the user for his pseudo :
 *Input :*
-`var pseudo = input What is your pseudo ? `
+`var pseudo = input(What is your pseudo ? )`
 
 **EXAMPLE 3 :**
 We want to calculate `3*(6**2)` and store it into a variable "operation".
@@ -183,11 +190,9 @@ And then store it into "double"
 **EXAMPLE 5 :**
 We ask the user for his age and we multiply it by 5.
 *Input :*
-```
-int age = input What is your age ? 
+`int age = input What is your age ? 
 int new_age = <2*{age}>
-print Your new age is now {age} xD !
-```
+print Your new age is now {age} xD !`
 *Output (for this example, age equals 18) :*
 `Your new age is now 90 xD !`
 
@@ -207,6 +212,8 @@ var:list <name> = list [ELEMENT 0] [ELEMENT 1] [ELEMENT 2]
 ```
 Every element of the list has to be between brackets when you initialize it.
 Also, in the example, I created a list containing only 3 elements ; but a list can contain as many as you want.
+
+You can define the type of an element by typing `<type>:` right after the opening bracket. By default, this type will be `string`.
 
 **How to add an element at the end of a list :**
 Type like the following : 
@@ -242,18 +249,13 @@ Simply by typing `{my_list[len]}` or `{my_list[length]}`.
 
 The `if` function is made to check if a condition is true or false.
 
-If true, it will execute the following instructions block ; if false, two cases :
-- There is nothing after : the program won't run the instructions block.
-- It is an `else` : the program will run the instruction block after the else.
+If true, it will execute the following instructions block ; if false, it won't.
 
-No `elseif` at the moment.
+No `else` or `elseif` at the moment.
 
 **Syntax :**
 ```
 if <condition>
-<instructions>
-endif
-else
 <instructions>
 endif
 ```
@@ -271,7 +273,7 @@ You can join more by typing :
 - `and`, if so, it will be true only if all conditions are true.
 - `or`, if so, it will be true if at least one of the conditions is true.
 
-The `<instructions>` can be whatever, but they need to have one more **TAB** than the if.
+The `<instructions>` can be whatever.
 
 #### for ####
 You can loop for a certain amount of times using a for loop.
@@ -379,6 +381,41 @@ You can also do a `lib doc <lib>` to get a library documentation.
 Every library can be seen at this link : [https://github.com/megat69/ACPL/tree/master/acpl_libs](https://github.com/megat69/ACPL/tree/master/acpl_libs)
 
 To use one, declare at the beginning of your program `$use: <lib>`.
+
+### 3.10
+- **Automatic updates**
+  - If it upsets you to ALWAYS have to manually update your ACPL, then this release might be the last you'll download.
+  - This update brings back the automatic updates, in a revamped way.
+  - If a new release is available, it will ask you once you boot the console.
+  - If you skip the update, you can still download it by using the console command 'update', or by running `updater_main.py`.
+- Types in lists
+  - You can define the type of an element in the list when you create it.
+  - Syntax : `var:list my_list = list [int:1] [float:1.5] [bool:True] [str:Normal string] [Default is str]`
+- Command line arguments for `main.py`
+  - When invoking `main.py` from a command prompt, you can add the filename of an ACPL file at the end. It will automatically run it and override the one in the startup file.
+- Condtions inside each other
+  - **ELSE HAS BEEN REMOVED**
+  - By popular opinion, nested `if`s have been preferred to the `else` statement.
+  - You can now use multiple `if`s inside each other.
+- New libs function
+  - A new function is required for libs to get through the compiler : `libs_to_import()`
+  - This function returns all the required libs by the final python file this way :
+  - If the generated result does not require anything in order to work, just return a tuple containing to empty tuples, this way : `return (tuple(), tuple())`
+  - If it only requires to import a full lib, (*example : `sys`*), the first tuple contains that lib : `return (("sys",), tuple())`
+  - If you need more of those : `return (("sys", "math", "tkinter"), tuple())`
+  - The other tuple contains all the functions from libs. If you want `from json import load`, then : `return (tuple(), (("json", "load"),))`
+  - If you want `from json import load, dump`, then : `return (tuple(), (("json", "load, dump"),))`
+  - And if you want `from json import load` and `from math import *` : `return (tuple(), (("json", "load"), ("math", "*")))`
+- ACPL debugger
+  - New console command `debug <file>`
+  - This command will start a debugger that will tell you what happens in the ACPL program.
+  - The program will tell you what instruction is being expected, what variables are existing at the end of the line, and let you continue it step by step or stop it. This possibility is available at every single line.
+- Settings
+  - The old rusty `modify-ini` command was very complicated, with many things to remember. *As its creator, I didn't remember those myself !*
+  - This command has been changed to `settings`, and doesn't take any arguments.
+  - This will pop up a dialog box that will let you customize your settings.
+- Bugfixes
+  - Lists were buggy with functions. They still are, but less.
 
 ### 3.9.1
 Bugfixes *(thanks to PancakesLord)* :
@@ -499,7 +536,7 @@ Showcase videos :
 
 ### Changelog for 3.5.0
 - Instruction "continue"
-- Easter egg 👀 
+- Easter egg ?? 
 - Boucle "while"
   - Executes a condition as long as it is true
   - Syntax : 

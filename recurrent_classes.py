@@ -61,7 +61,7 @@ class CriticError(Exception):
         else:
             return "CriticError error has been raised."
 
-def error(line_number, error_type, message=None, *args):
+def error(line_number, error_type, message=None, *args, quit=True):
     if args:
         for arg in args:
             message += arg
@@ -69,7 +69,9 @@ def error(line_number, error_type, message=None, *args):
         print(f"{bcolors.FAIL}{error_type} {texts.statement_errors['on-line']} {line_number} : {message}{bcolors.ENDC}")
     else:
         print(f"{bcolors.FAIL}{error_type} {texts.statement_errors['has-been-raised']} {line_number}{bcolors.ENDC}")
-    sys.exit()
+
+    if quit is True:
+        sys.exit()
 
 def lineno():
     """
@@ -325,6 +327,17 @@ def launch_py_file(filename:str):
     exec(file_to_launch.read())
     file_to_launch.close()
 
+def var_type_as_str(var):
+    """
+    Returns a string containing the type of the inputted variable.
+    :param var: A variable.
+    :return: A string containing the type of the inputted variable.
+    """
+    temp = str(type(var))
+    temp = temp.replace("<class '", "")
+    temp = temp.replace("'>", "")
+    return temp
+
 try:
     startup_file = open("startup.acpl-ini", "r+", encoding="utf-8")
 except FileNotFoundError:
@@ -356,4 +369,32 @@ for lines in startup:
             except NameError:
                 raise CriticError(texts.critic_errors["NameError_LanguageFile"])
 
-ide_forbidden_files = ["main.py", "console.py", "ide.py", "compiler.py", "setup.py", "update_checker.py"]
+ide_forbidden_files = ["main.py", "console.py", "ide.py", "compiler.py", "setup.py", "updater_main.py", "updater_others.py"]
+with open("startup.acpl-ini", "r", encoding="utf-8") as startup_file:
+    for line in startup_file.readlines():
+        if line.startswith("use-colors: "):
+            line = line.replace("use-colors: ", "")
+            line = line.replace("\n", "")
+            use_colors = line.lower() != "false"
+        elif line.startswith("process-time-round-numbers: "):
+            line = line.replace("process-time-round-numbers: ", "")
+            process_time_round_numbers = int(remove_suffix(line, line.endswith("\n")))
+        elif line.startswith("open-compiled-file: "):
+            line = remove_suffix(line.replace("open-compiled-file: ", ""), line.endswith("\n"))
+            open_compiled_file = line.lower() != "false"
+        elif line.startswith("leave-comments-at-compiling: "):
+            line = line.replace("leave-comments-at-compiling: ", "")
+            line = remove_suffix(line, line.endswith("\n"))
+            leave_comments_at_compiling = line.lower() == "true"
+        elif line.startswith("startup-check-update: "):
+            line = line.replace("startup-check-update: ", "")
+            line = remove_suffix(line, line.endswith("\n"))
+            startup_check_update = line.lower() != "false"
+        elif line.startswith("compiling-style: "):
+            line = line.replace("compiling-style: ", "")
+            line = remove_suffix(line, line.endswith("\n"))
+            compiling_style = line
+        elif line.startswith("compile-ask-for-replace: "):
+            line = line.replace("compile-ask-for-replace: ", "")
+            line = remove_suffix(line, line.endswith("\n"))
+            compile_ask_for_replace = line.lower() != "false"

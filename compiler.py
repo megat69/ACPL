@@ -11,6 +11,7 @@ import timeit
 import platform
 import shlex
 import importlib
+import acpl_libs
 
 print(f"{bcolors.OKBLUE}Starting compilation.{bcolors.ENDC}")
 
@@ -166,6 +167,23 @@ while line_numbers < len(code_lines):
             while line.endswith(" "):
                 line = remove_suffix(line)
             used_libs.append("fx_"+line+".py")
+            # TODO : Do the imports trick
+            importlib.import_module("acpl_libs.fx_"+line)
+            item = getattr(acpl_libs, "fx_"+line)
+            requirements = item.libs_to_import()
+            line = ""
+            for element in requirements[0]:
+                line += "import " + element + "\n"
+            for element in requirements[1]:
+                line += "from " + element[0] + " import " + element[1] + "\n"
+            compiling_style = "FORCED ATM. DUH"
+            if compiling_style.lower() == "compacted" or compiling_style.lower() == "collapsed":
+                if line.replace("\t", "") != "":
+                    compiled_file.write(line + "\n")
+            else:
+                compiled_file.write(line + "\n")
+            line_numbers += 1
+            continue
 
         if line.startswith("function"):
             for i in range(0, indentation_required):
@@ -225,7 +243,7 @@ while line_numbers < len(code_lines):
             line = ""
 
         if line.startswith("if"):
-            for i in range(0, indentation_required):
+            for i in range(0, indentation_required-1):
                 line = "\t" + line
             while "<" in line and ">" in line:
                 equation = line[line.find("<") + 1:line.find(">")]
@@ -392,6 +410,20 @@ while line_numbers < len(code_lines):
                         list_elements.append(variable)
                     # Dememorizing 'variable'
                     del variable
+
+                    for i in range(len(list_elements)):
+                        if list_elements[i].startswith("int:"):
+                            list_elements[i] = list_elements[i].replace("int:", "", 1)
+                            list_elements[i] = int(list_elements[i])
+                        elif list_elements[i].startswith("float:"):
+                            list_elements[i] = list_elements[i].replace("float:", "", 1)
+                            list_elements[i] = float(list_elements[i])
+                        elif list_elements[i].startswith("bool:"):
+                            list_elements[i] = list_elements[i].replace("bool:", "", 1)
+                            list_elements[i] = list_elements[i].lower() == "true"
+                        elif list_elements[i].startswith("str:") or list_elements[i].startswith("string:"):
+                            list_elements[i] = list_elements[i].replace("string:", "", 1)
+                            list_elements[i] = list_elements[i].replace("str:", "", 1)
 
                     line[2] = list_elements
                     var_type = "list"
