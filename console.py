@@ -180,7 +180,8 @@ while running:
             language = grid_elements[0][1].get()
             if language not in ("az", "de", "en", "fr", "it", "nl", "tr"):
                 print(f"{bcolors.FAIL}Unknow language. Language set back to 'en'.{bcolors.ENDC}")
-                grid_elements[0][1].config(text="en")
+                grid_elements[0][1].delete(0, tk.END)
+                grid_elements[0][1].insert(0, "en")
                 language = "en"
             # Saving debug state
             debug_state = grid_elements[1][1].get()
@@ -196,14 +197,16 @@ while running:
             except ValueError:
                 print(f"{bcolors.FAIL}Debug state has to be an integer.{bcolors.ENDC}")
                 debug_state = 0
-            grid_elements[1][1].config(text=str(debug_state))
+            grid_elements[1][1].delete(0, tk.END)
+            grid_elements[1][1].insert(0, str(debug_state))
             # Saving process time round numbers
             try:
                 process_time_round_numbers = int(grid_elements[3][1].get())
             except ValueError:
                 print(f"{bcolors.FAIL}Process time round numbers has to be an integer.{bcolors.ENDC}")
                 process_time_round_numbers = 6
-            grid_elements[3][1].config(text=str(process_time_round_numbers))
+            grid_elements[3][1].delete(0, tk.END)
+            grid_elements[3][1].insert(0, str(process_time_round_numbers))
             # Saving compiling style
             compiling_style = grid_elements[7][1].get()
 
@@ -439,9 +442,11 @@ while running:
 
     elif user_input.startswith("ini-content"):
         startup_file = open(ini_file, "r")
-        data = json.load(startup_file)
+        data = {}
+        for line in startup_file.readlines():
+            data[line.split(": ")[0]] = remove_suffix(line.split(": ")[1], line.split(": ")[1].endswith("\n"))
         for element in data:
-            print(f"{element} : {element[data]}")
+            print(f"{element} : {data[element]}")
         startup_file.close()
 
     elif user_input.startswith("display"):

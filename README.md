@@ -107,7 +107,7 @@ Can be :
   - Modulo operator
   - Keeps the rest of the euclidian division of the old and new variable.
 
-<value>
+`<value>`
 It depends :
 
  - If integer, it is simply a whole number.
@@ -381,7 +381,16 @@ You can also do a `lib doc <lib>` to get a library documentation.
 Every library can be seen at this link : [https://github.com/megat69/ACPL/tree/master/acpl_libs](https://github.com/megat69/ACPL/tree/master/acpl_libs)
 
 To use one, declare at the beginning of your program `$use: <lib>`.
-
+  
+### 3.10.1
+- Bugfixes
+  - Corrected a shell from a past dev experience with command `ini-content`
+    - Using that command made the console crash
+    - Now fully fixed, with revamped version of the command
+  - Corrected a problem with the `settings` command
+    - When entering wrong values in input fields, and clicking save, the inputs weren't reset
+    - It was just a dev error, now fully fixed.
+  
 ### 3.10
 - **Automatic updates**
   - If it upsets you to ALWAYS have to manually update your ACPL, then this release might be the last you'll download.

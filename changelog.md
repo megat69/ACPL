@@ -32,3 +32,12 @@
   - This will pop up a dialog box that will let you customize your settings.
 - Bugfixes
   - Lists were buggy with functions. They still are, but less.
+  
+### 3.10.1
+- Bugfixes
+  - Corrected a shell from a past dev experience with command `ini-content`
+    - Using that command made the console crash
+    - Now fully fixed, with revamped version of the command
+  - Corrected a problem with the `settings` command
+    - When entering wrong values in input fields, and clicking save, the inputs weren't reset
+    - It was just a dev error, now fully fixed.
