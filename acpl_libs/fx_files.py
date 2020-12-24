@@ -6,12 +6,14 @@ def libs_to_import():
     return (tuple(), tuple())
 
 def requirements(file):
-    return tuple()
+    return ("line_numbers",)
 
 def main(line, variables_container, other_args):
     """
     This library adds file support to ACPL.
     """
+
+    line_numbers = other_args[0]
 
     if line.startswith("files"):
         line = line.replace("files ", "", 1)
@@ -23,12 +25,12 @@ def main(line, variables_container, other_args):
 
             # Too few arguments ?
             if len(line) < 2:
-                error("line_numbers", "ArgumentError", texts.errors['FunctionArgumentError'].format(args_required=2, args_nbr=len(line)))
+                error(line_numbers, "ArgumentError", texts.errors['FunctionArgumentError'].format(args_required=2, args_nbr=len(line)))
 
             try:
                 file = open(line[0], "r")
             except FileNotFoundError:
-                error("line_numbers", "FileNotFoundError", f"The file '{line[0]}' doesn't exist.")
+                error(line_numbers, "FileNotFoundError", f"The file '{line[0]}' doesn't exist.")
             file_contents = file.readlines()
             file.close()
 
@@ -45,7 +47,7 @@ def main(line, variables_container, other_args):
 
             # Too few arguments ?
             if len(line) < 2:
-                error("line_numbers", "ArgumentError", texts.errors['FunctionArgumentError'].format(args_required=2, args_nbr=len(line)))
+                error(line_numbers, "ArgumentError", texts.errors['FunctionArgumentError'].format(args_required=2, args_nbr=len(line)))
 
             text_to_paste = variables_container[line[1]]
             # If it is just a string, then a single line, we convert it to a 1 element list.
@@ -60,12 +62,15 @@ def main(line, variables_container, other_args):
             file_to_write.writelines(text_to_paste)
             file_to_write.close()
 
-    return line, variables_container
+    return line, variables_container, ("line_numbers", line_numbers)
 
 def pytranslation(line, other_args):
     """
     Translation to Python of the files ACPL lib.
     """
+
+    line_numbers = other_args[0]
+
     if line.startswith("files"):
         line = line.replace("files ", "", 1)
         line = remove_suffix(line, line.endswith("\n"))
@@ -75,7 +80,7 @@ def pytranslation(line, other_args):
 
             # Too few arguments ?
             if len(line) < 2:
-                error("line_numbers", "ArgumentError", texts.errors['FunctionArgumentError'].format(args_required=2, args_nbr=len(line)))
+                error(line_numbers, "ArgumentError", texts.errors['FunctionArgumentError'].format(args_required=2, args_nbr=len(line)))
 
             line[0] = f"'{line[0]}'"
 
@@ -99,7 +104,7 @@ def pytranslation(line, other_args):
 
             # Too few arguments ?
             if len(line) < 2:
-                error("line_numbers", "ArgumentError", texts.errors['FunctionArgumentError'].format(args_required=2, args_nbr=len(line)))
+                error(line_numbers, "ArgumentError", texts.errors['FunctionArgumentError'].format(args_required=2, args_nbr=len(line)))
 
             line[0] = f"'{line[0]}'"
 
