@@ -44,6 +44,11 @@ class Text():
         self.critic_errors = self.texts["critic-errors"]
         self.statement_errors = self.texts["statement-errors"]
         self.updates = self.texts["update-checker"]
+        self.errors = self.texts["errors"]
+        self.compiler = self.texts["compiler"]
+        self.ide = self.texts["ide"]
+        self.main = self.texts["main"]
+        self.acpl_debugger = self.main["acpl_debugger"]
 
     def get(self, key):
         return self.texts.get(key)
@@ -66,9 +71,9 @@ def error(line_number, error_type, message=None, *args, quit=True):
         for arg in args:
             message += arg
     if message != None:
-        print(f"{bcolors.FAIL}{error_type} {texts.statement_errors['on-line']} {line_number} : {message}{bcolors.ENDC}")
+        print(f"{bcolors.FAIL}{error_type} {texts.statement_errors['on-line']} {line_number+1} : {message}{bcolors.ENDC}")
     else:
-        print(f"{bcolors.FAIL}{error_type} {texts.statement_errors['has-been-raised']} {line_number}{bcolors.ENDC}")
+        print(f"{bcolors.FAIL}{error_type} {texts.statement_errors['has-been-raised']} {line_number+1}{bcolors.ENDC}")
 
     if quit is True:
         sys.exit()
@@ -337,6 +342,64 @@ def var_type_as_str(var):
     temp = temp.replace("<class '", "")
     temp = temp.replace("'>", "")
     return temp
+
+def print_dir(extensions:(str, list, tuple)="*"):
+    """
+    Prints a view of the whole directory.
+    :param extensions: A list of extensions that can be displayed. Default : All
+    """
+    import os
+    from rich.tree import Tree
+    from rich.console import Console
+    console = Console()
+
+    # If the extensions list is a string, turn it to list.
+    if isinstance(extensions, str):
+        extensions = [extensions]
+
+    # Initialize tree
+    tree = Tree(f":open_file_folder: [link file://{os.getcwd()}]{os.getcwd()}")
+
+    # Get directory contents and sort it
+    dir_contents = os.listdir()
+    directories = []
+    files = []
+    for element in dir_contents:
+        if os.path.isdir(element):
+            directories.append(element)
+        else:
+            # Checking authorized extensions, appending only if wanted
+            try:
+                if extensions == ["*"] or element.split(".")[1] in extensions:
+                    files.append(element)
+            except IndexError:
+                # Ignoring files without extensions
+                pass
+
+    dir_contents = []  # Reset 'dir_contents'
+
+    # Appending folders first, then files
+    for element in directories:
+        dir_contents.append(element)
+    for element in files:
+        dir_contents.append(element)
+
+    # Deletion of 'directories' and 'files'
+    del directories
+    del files
+
+    # Build tree
+    for element in dir_contents:
+        # Add little icons depending on extension
+        if os.path.isdir(element):
+            element = f":file_folder: {element}"
+        else:
+            element = f":page_facing_up: {element}"
+        # Add element to tree
+        tree.add(element)
+
+    # Print tree
+    console.print(tree)
 
 try:
     startup_file = open("startup.acpl-ini", "r+", encoding="utf-8")

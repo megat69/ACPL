@@ -35,7 +35,7 @@ if stop is False:
 
     # If version hasn't been found
     if local_version is None:
-        print(f"{bcolors.FAIL}Unable to find version number.\nUpdate cancelled.{bcolors.ENDC}")
+        print(bcolors.FAIL + texts.updates["WiFi_Off"] + bcolors.ENDC)
         stop = True
 
 if stop is False:
@@ -52,13 +52,16 @@ if stop is False:
 
 if stop is False:
     # Ask the user if he wants to update
-    print(f"{bcolors.OKGREEN}A new version has been found !\n"
-          f"Your version : {local_version}\n"
-          f"GitHub version : {github_version}{bcolors.ENDC}\n")
+    # TEXT : A new version has been found !
+    # Your version : {local_version}
+    # GitHub version {github_version}
+    print(bcolors.OKGREEN + texts.updates["NewVersionFound"].format(local_version=local_version,
+                                                                    github_version=github_version) + bcolors.ENDC)
 
     update = input(f"{bcolors.OKBLUE}Do you want to update ? (yes/no){bcolors.ENDC} ")
     if update[0].lower() != "y":
-        print(f"{bcolors.FAIL}Update cancelled.\n{bcolors.WARNING}If you want to update later, type 'update' in the console.{bcolors.ENDC}")
+        # Update cancelled.\n{bcolors.WARNING}If you want to update later, type 'update' in the console.
+        print(bcolors.FAIL + texts.updates["UpdateCancelled"].format(WARNING=bcolors.WARNING) + bcolors.ENDC)
         stop = True
 
 if stop is False:
@@ -66,23 +69,23 @@ if stop is False:
     r = requests.get(zip_link)
     existing = r.status_code == 200
     if not existing:
-        print(bcolors.FAIL + "Error : Unable to download the update !" + bcolors.ENDC)
+        print(bcolors.FAIL + texts.updates["ImpossibleDownloadError"] + bcolors.ENDC)
         stop = True
 if stop is False:
-    print(f"{bcolors.OKBLUE}Downloading update...{bcolors.ENDC}")
+    print(bcolors.OKBLUE + texts.updates["DownloadingUpdate"] + bcolors.ENDC)
     with open("update.zip", "wb") as code:
         code.write(r.content)
         code.close()
-    print(f"{bcolors.OKGREEN}Update successfully downloaded!{bcolors.ENDC}\n\n")
+    print(bcolors.OKGREEN + texts.updates["UpdateSuccessfullyDownloaded"] + bcolors.ENDC + "\n\n")
 
     # Creating a folder for the zip content
     if not os.path.exists("update"):
         os.mkdir("update")
     # Extracting the zip
-    print(f"{bcolors.OKBLUE}Extracting update...{bcolors.ENDC}")
+    print(bcolors.OKBLUE + texts.updates["ExtractingUpdate"] + bcolors.ENDC)
     with zipfile.ZipFile("update.zip","r") as zip_ref:
         zip_ref.extractall("update")
-    print(f"{bcolors.OKGREEN}Update successfully extracted!{bcolors.ENDC}")
+    print(bcolors.OKGREEN + texts.updates["UpdateSuccessfullyExtracted"] + bcolors.ENDC)
 
     # Getting the list of the new files
     updated_files = os.listdir("update")
@@ -90,7 +93,7 @@ if stop is False:
     # Rewriting the old files
     for element in updated_files:
         if element != "updater_main.py" and element != "startup.acpl-ini":
-            print(f"{bcolors.OKBLUE}Rewriting {element}...{bcolors.ENDC}")
+            print(bcolors.OKBLUE + texts.updates["RewritingElement"].format(element=element) + bcolors.ENDC)
             old_file = open(element, "w", encoding="utf-8")
             new_file = open("update/"+element, "r", encoding="utf-8")
             try:
@@ -101,6 +104,6 @@ if stop is False:
             new_file.close()
             # Random interval :P
             sleep(float(f"{randint(0, 1)}.{randint(0, 100)}"))
-            print(f"{bcolors.OKGREEN}{element} successfully rewritten !{bcolors.ENDC}")
+            print(bcolors.OKBLUE + texts.updates["ElementRewritten"].format(element=element) + bcolors.ENDC)
 
     launch_py_file("updater_others")

@@ -8,6 +8,7 @@ import platform
 import shlex
 import webbrowser
 import tkinter as tk
+import shutil
 
 running = True
 ini_file = "startup.acpl-ini"
@@ -71,15 +72,20 @@ for lines in startup:
         lines = lines.replace("startup-check-update: ", "", 1)
         check_update = lines.lower() != "false"
 startup_file.close()
+force_reload = False
 
 print(bcolors.BOLD + texts.console['bootup-message'].format(final_version, current_version) + bcolors.ENDC)
 startup_file.close()
 if check_update == "True" and console_reloaded is False:
     launch_py_file("updater_main")
 
+
 while running:
     output = None
-    user_input = input("\n>>> ")
+    if force_reload is False:
+        user_input = input("\n>>> ")
+    else:
+        user_input = "reload"
 
     debug("in", lineno(), 1, user_input)
 
@@ -99,7 +105,7 @@ while running:
             if user_input is not None:
                 replace_line('startup.acpl-ini', 0, 'filename: ' + user_input + "\n")
             else:
-                print(f"{bcolors.FAIL}Cannot run this file.{bcolors.ENDC}")
+                print(bcolors.FAIL + texts.console["CannotRunFile"] + bcolors.ENDC)
                 continue
         else:
             user_input = user_input.replace("run ", "")
@@ -109,13 +115,19 @@ while running:
 
         print(f"{bcolors.OKBLUE}{texts.console['launch-code-file'].format(user_input)}{bcolors.ENDC}")
         sleep(1.7)
-        launch_py_file("main")
+        try:
+            launch_py_file("main")
+        except SystemExit:
+            continue
 
 
     elif user_input.startswith("rerun"):
-        print(f"{bcolors.OKBLUE}Running last file again...{bcolors.ENDC}")
+        print(bcolors.OKBLUE + texts.console["Rerun"] + bcolors.ENDC)
         sleep(1.7)
-        launch_py_file("main.py")
+        try:
+            launch_py_file("main.py")
+        except SystemExit:
+            continue
 
     elif user_input.startswith("version"):
         output = f"{texts.console['last-stable-release']} : {final_version}\n{texts.console['current-dev-build']} : " + current_version
@@ -179,7 +191,7 @@ while running:
             # Saving language
             language = grid_elements[0][1].get()
             if language not in ("az", "de", "en", "fr", "it", "nl", "tr"):
-                print(f"{bcolors.FAIL}Unknow language. Language set back to 'en'.{bcolors.ENDC}")
+                print(bcolors.FAIL + texts.console["settings"]["UnknownLanguage"] + bcolors.ENDC)
                 grid_elements[0][1].delete(0, tk.END)
                 grid_elements[0][1].insert(0, "en")
                 language = "en"
@@ -187,15 +199,18 @@ while running:
             debug_state = grid_elements[1][1].get()
             try:
                 if int(debug_state) < 0:
-                    print(f"{bcolors.FAIL}Cannot set debug state under 0.{bcolors.ENDC}")
+                    # Cannot set debug state under 0.
+                    print(bcolors.FAIL + texts.console["settings"]["DebugState_Under0"] + bcolors.ENDC)
                     debug_state = 0
                 elif int(debug_state) > 3:
-                    print(f"{bcolors.FAIL}Cannot set debug state over 3.{bcolors.ENDC}")
+                    # Cannot set debug state over 3.
+                    print(bcolors.FAIL + texts.console["settings"]["DebugState_Over3"] + bcolors.ENDC)
                     debug_state = 3
                 else:
                     debug_state = int(debug_state)
             except ValueError:
-                print(f"{bcolors.FAIL}Debug state has to be an integer.{bcolors.ENDC}")
+                # Debug state has to be an integer.
+                print(bcolors.FAIL + texts.console["settings"]["DebugState_NotInt"] + bcolors.ENDC)
                 debug_state = 0
             grid_elements[1][1].delete(0, tk.END)
             grid_elements[1][1].insert(0, str(debug_state))
@@ -203,7 +218,8 @@ while running:
             try:
                 process_time_round_numbers = int(grid_elements[3][1].get())
             except ValueError:
-                print(f"{bcolors.FAIL}Process time round numbers has to be an integer.{bcolors.ENDC}")
+                # Process time round numbers has to be an integer.
+                print(bcolors.FAIL + texts.console["settings"]["ProcessTime_NotInt"] + bcolors.ENDC)
                 process_time_round_numbers = 6
             grid_elements[3][1].delete(0, tk.END)
             grid_elements[3][1].insert(0, str(process_time_round_numbers))
@@ -243,7 +259,8 @@ while running:
         grid_elements[9].grid(row=9, column=0, columnspan=2)
 
         window.mainloop()
-        print(f"{bcolors.FAIL}Settings closed and saved.{bcolors.ENDC}")
+        # Settings closed and saved.
+        print(bcolors.FAIL + texts.console["settings"]["ClosedAndSaved"] + bcolors.ENDC)
         replace_line("startup.acpl-ini", 1, f"lang: {language}\n")
         replace_line("startup.acpl-ini", 4, f"debug-state: {str(debug_state)}\n")
         replace_line("startup.acpl-ini", 6, f"use-colors: {str(use_colors)}\n")
@@ -252,6 +269,7 @@ while running:
         replace_line("startup.acpl-ini", 10, f"leave-comments-at-compiling: {str(leave_comments_at_compiling)}\n")
         replace_line("startup.acpl-ini", 11, f"startup-check-update: {str(startup_check_update)}\n")
         replace_line("startup.acpl-ini", 13, f"compile-ask-for-replace: {str(compile_ask_for_replace)}\n")
+        force_reload = True
         # OLD modify-ini
         """
         user_input = user_input.replace("modify-ini ", "")
@@ -315,16 +333,17 @@ while running:
               f"\t- 'run' : {texts.console_help['run']}\n"
               f"\t- 'about' : {texts.console_help['about']}\n"
               f"\t- 'version' : {texts.console_help['version']}\n"
-              f"\t- 'settings' : Opens up a dialog box which allows you to tweak your settings.\n"
-              f"\t- 'update' : Launches the update program.\n"
-              f"\t- 'pyrun' : Runs a specified python file\n"
-              f"\t- 'compile' : Compiles an ACPL file to a Python file\n"
-              f"\t- 'ini-content' : Displays the content of the ini file\n"
-              f"\t- 'open' : Opens a specific file in its default program\n"
-              f"\t- 'display' : Prints the content of a specified file.\n"
-              f"\t- 'change-line'/'modify-line' : Modifies a specific line in a plain text file.\n"
-              f"\t- 'redo' : Reuses the last command.\n"
-              f"\t- 'lib <install:delete:doc> <lib_name>' : Respectively installs, delete, or gives the documentation of the specified lib.\n")
+              f"\t- 'settings' : {texts.console_help['settings']}\n"
+              f"\t- 'update' : {texts.console_help['update']}\n"
+              f"\t- 'pyrun' : {texts.console_help['pyrun']}\n"
+              f"\t- 'compile' : {texts.console_help['compile']}\n"
+              f"\t- 'ini-content' : {texts.console_help['ini-content']}\n"
+              f"\t- 'open' : {texts.console_help['open']}\n"
+              f"\t- 'display' : {texts.console_help['display']}\n"
+              f"\t- 'change-line'/'modify-line' : {texts.console_help['change-line']}\n"
+              f"\t- 'redo' : {texts.console_help['redo']}\n"
+              f"\t- 'lib <install:delete:doc> <lib_name>' : {texts.console_help['lib']}\n"
+              f"\t- 'ls'/'dir' [dir_to_map='./'] [*extensions] : Returns a tree of the selected directory.\n")
 
     elif user_input.lower() == "about":
         about = open(f"about_{language}.txt", "r", encoding="iso8859_15")
@@ -344,9 +363,10 @@ while running:
             os.system("python updater_main.py")
             sys.exit()
         except:
-            print(f"{bcolors.FAIL}Your system does not support the invocation of new Python processes.\n"
+            """print(f"{bcolors.FAIL}Your system does not support the invocation of new Python processes.\n"
                   f"Please run the {bcolors.ITALICS}{bcolors.OKGREEN}updater_main.py{bcolors.ENDC}{bcolors.FAIL} "
-                  f"script manually.{bcolors.ENDC}")
+                  f"script manually.{bcolors.ENDC}")"""
+            print(texts.console["update_ProcessInvocationNotSupported"].format(FAIL=bcolors.FAIL, ITALICS=bcolors.ITALICS, OKGREEN=bcolors.OKGREEN, ENDC=bcolors.ENDC))
             sys.exit()
         #print(f"{bcolors.FAIL}Update checking has been temporarily disabled.\nThanks for your understanding.{bcolors.ENDC}")
 
@@ -358,18 +378,22 @@ while running:
             r = requests.get(url)
             existing = r.status_code == 200
             if not existing:
-                print("Error : Lib does not exist !")
+                # Error : Lib does not exist !
+                print(texts.console["LibDoesNotExistError"])
                 continue
             with open(f"acpl_libs/fx_{user_input}.py", "wb") as code:
                 code.write(r.content)
-            print(f"Library {user_input} installed !")
+            # Library {user_input} installed !
+            print(texts.console["LibInstalled"].format(user_input=user_input))
         elif user_input.startswith("delete"):
             user_input = user_input.replace("delete ", "", 1)
             try:
                 os.remove(f"acpl_libs/fx_{user_input}.py")
-                print(f"Deleted lib {user_input}.")
+                # Deleted lib {user_input}.
+                print(texts.console["LibDeleted"].format(user_input=user_input))
             except FileNotFoundError:
-                print("Lib not installed, unable to uninstall.")
+                # Lib not installed, unable to uninstall.
+                print(texts.console["LibNotInstalled"])
         elif user_input.startswith("doc"):
             user_input = user_input.replace("documentation", "", 1)
             user_input = user_input.replace("doc", "", 1)
@@ -379,7 +403,8 @@ while running:
                 r = requests.get(url)
                 existing = r.status_code == 200
                 if not existing:
-                    print("Error : Lib does not exist !")
+                    # Error : Lib does not exist !
+                    print(texts.console["LibDoesNotExistError"])
                     continue
                 with open(f"acpl_libs/doc_{user_input}.md", "wb") as code:
                     code.write(r.content)
@@ -392,53 +417,70 @@ while running:
         else:
             output = "Wrong amount of arguments."
 
-    elif user_input.startswith("compile"):
-        if user_input == "compile":
+    elif user_input.startswith("transpile"):
+        if user_input == "transpile":
             user_input = open_file_dialog(extensions="acpl")
             if user_input is not None:
                 user_input = [user_input, user_input]
             else:
                 continue
         else:
-            user_input = user_input.replace("compile ", "", 1)
+            user_input = user_input.replace("transpile ", "", 1)
             user_input = user_input.split(" ")
             if len(user_input) == 1:
                 user_input = [user_input[0], user_input[0]]
             if not user_input[0].endswith(".acpl"):
                 user_input[0] += ".acpl"
+            if user_input[1].endswith(".acpl"):
+                user_input[1] = user_input[1].replace(".acpl", "")
             if ("." in user_input[0] and not user_input[0].endswith(".acpl")) or (
                     "." in user_input[1] and not user_input[1].endswith(".acpl")):
-                print(
-                    f"{bcolors.FAIL}Unable to compile that kind of file (extension '.{user_input[0].split('.')[1]}').")
+                # Unable to compile that kind of file (extension '.{user_input[0].split('.')[1]}').
+                print(bcolors.FAIL + texts.console["UnableToCompile"].format(extension=user_input[0].split('.')[1]) + bcolors.ENDC)
                 continue
         replace_line('startup.acpl-ini', 0, 'filename: ' + user_input[0] + "\n")
         replace_line("startup.acpl-ini", 8, "compiled-file-filename: " + user_input[1] + "\n")
-        launch_py_file("compiler")
+        try:
+            launch_py_file("compiler")
+        except SystemExit:
+            continue
 
     elif user_input.startswith("pyrun"):
         user_input = user_input.replace("pyrun ", "", 1)
         user_input = remove_suffix(user_input, condition=user_input.endswith("\n"))
         if not user_input.endswith(".py"):
             user_input += ".py"
-        print(f"{bcolors.OKBLUE}Launching {user_input}.{bcolors.ENDC}")
-        launch_py_file(user_input)
-        print(f"{bcolors.OKBLUE}End of the file.{bcolors.ENDC}")
+        # Launching {user_input}.
+        print(bcolors.OKBLUE + texts.console["LaunchingPyFile"].format(file=user_input) + bcolors.ENDC)
+        try:
+            launch_py_file(user_input)
+        except SystemExit:
+            continue
+        # End of the file.
+        print(bcolors.OKBLUE + texts.console["EndOfFile"] + bcolors.ENDC)
 
     elif user_input.lower().startswith("ide"):
         # Opens IDE
-        print(f"{bcolors.OKBLUE}Opening ACPL IDE...{bcolors.ENDC}")
-        launch_py_file("ide")
-        print(f"{bcolors.OKBLUE}IDE closed.{bcolors.ENDC}")
+        # Opening ACPL IDE...
+        print(bcolors.OKBLUE + texts.console["OpeningIDE"] + bcolors.ENDC)
+        try:
+            launch_py_file("ide")
+        except SystemExit:
+            continue
+        # IDE closed.
+        print(bcolors.OKBLUE + texts.console["ClosedIDE"] + bcolors.ENDC)
 
     elif user_input.startswith("open"):
         user_input = user_input.replace("open ", "", 1)
         user_input = remove_suffix(user_input, condition=user_input.endswith("\n"))
-        print(f"{bcolors.OKBLUE}Opening {user_input}.{bcolors.ENDC}")
+        # Opening {user_input}.
+        print(bcolors.OKBLUE + texts.console["OpeningFile"].format(file=user_input) + bcolors.ENDC)
         if platform.system() == "Windows":
             os.system("start " + user_input)
         else:
             os.system("open " + shlex.quote(user_input))
-        print(f"{bcolors.OKGREEN}File opened successfully.{bcolors.ENDC}")
+        # File opened successfully.
+        print(bcolors.OKGREEN + texts.console["FileSuccessfullyOpened"] + bcolors.ENDC)
 
     elif user_input.startswith("ini-content"):
         startup_file = open(ini_file, "r")
@@ -457,9 +499,10 @@ while running:
             for file_line in file.readlines():
                 print(file_line, end="")
             file.close()
-            print(f"{bcolors.OKBLUE}File content ends here.{bcolors.ENDC}")
+            # File content ends here.
+            print(bcolors.OKBLUE + texts.console["EndOfFile"] + bcolors.ENDC)
         except FileNotFoundError:
-            print(f"{bcolors.FAIL}File not found.{bcolors.ENDC}")
+            print(bcolors.FAIL + texts.console["FileNotFound"] + bcolors.ENDC)
 
     elif user_input.startswith("creator"): # Easter egg ?
         ascii_art = open("ascii-art.txt", "r")
@@ -477,7 +520,8 @@ while running:
         while len(user_input) > 3:
             user_input.pop(3)
         replace_line(user_input[0], user_input[1], user_input[2])
-        print(f"Line {user_input[1]} modified in {user_input[0]} with value :\n{user_input[2]}")
+        # Line {user_input[1]} modified in {user_input[0]} with value :\n{user_input[2]}
+        print(texts.console["LineModified"].format(filename=user_input[0], line=user_input[1], value=user_input[2]))
 
     elif user_input.startswith("changelog"):
         changelog_file = open("changelog.md", "r")
@@ -490,10 +534,125 @@ while running:
         user_input = user_input.replace("debug ", "", 1)
         if not user_input.endswith(".acpl"):
             user_input += ".acpl"
-        print(f"{bcolors.FAIL}Beginning to debug {user_input}...{bcolors.ENDC}")
+        # Beginning to debug {user_input}...
+        print(bcolors.FAIL + texts.console["StartingDebug"].format(file=user_input) + bcolors.ENDC)
         replace_line("startup.acpl-ini", 0, f"filename: {user_input}\n")
         replace_line("startup.acpl-ini", 14, "debugger-enabled: True\n")
-        launch_py_file("main.py")
+        try:
+            launch_py_file("main.py")
+        except SystemExit:
+            continue
+
+    elif user_input.split(" ")[0] in ("ls", "dir"):
+        user_input = user_input.split(" ")
+        if len(user_input) > 1:
+            dir_to_map = user_input[1]
+        else:
+            dir_to_map = os.getcwd()
+        try:
+            os.chdir(dir_to_map)
+        except Exception:
+            print(f"{bcolors.FAIL}This directory is not existing.{bcolors.ENDC}")
+            continue
+        if len(user_input) > 2:
+            for i in range(2):
+                user_input.pop(0)
+        else:
+            user_input = ["*"]
+        print_dir(user_input)
+        os.chdir(os.path.dirname(os.path.realpath(__file__)))
+
+    elif user_input.startswith("mkdir"):
+        user_input = user_input.replace("mkdir ", "", 1)
+        os.mkdir(user_input)
+        print(f"{bcolors.OKGREEN}Folder '{user_input}' successfully created !{bcolors.ENDC}")
+
+    elif user_input.startswith("compile"):
+        # 'compile' removal
+        user_input = user_input.replace("compile ", "", 1)
+
+        # End message parameter
+        if "--end-message" in user_input:
+            end_message = user_input.split("--end-message:")[1]
+            user_input = user_input.replace(f" --end-message:{end_message}", "", 1)
+            end_message = end_message.lower() != "false"
+        else:
+            end_message = True
+
+        # Disable icon parameter
+        if "--disable-icon" in user_input:
+            disable_icon = user_input.split("--disable-icon:")[1]
+            user_input = user_input.replace(f" --disable-icon:{end_message}", "", 1)
+            disable_icon = disable_icon.lower() == "true"
+        else:
+            disable_icon = False
+
+        # Split of user input
+        user_input = user_input.split(" ")
+
+        # If only one argument, duplicate it
+        if len(user_input) == 1:
+            user_input = [user_input[0], user_input[0]]
+
+        # Adding '.acpl' at the end of the input if not already present
+        if not user_input[0].endswith(".acpl"):
+            user_input[0] += ".acpl"
+
+        # If cannot compile extension, exit system
+        if ("." in user_input[0] and not user_input[0].endswith(".acpl")) or (
+                "." in user_input[1] and not user_input[1].endswith(".acpl")):
+            # Unable to compile that kind of file (extension '.{user_input[0].split('.')[1]}').
+            print(bcolors.FAIL + texts.console["UnableToCompile"].format(
+                extension=user_input[0].split('.')[1]) + bcolors.ENDC)
+            sys.exit()
+
+        # Set ini variables
+        replace_line('startup.acpl-ini', 0, 'filename: ' + user_input[0] + "\n")
+        replace_line("startup.acpl-ini", 8, "compiled-file-filename: " + user_input[1] + "\n")
+        with open("startup.acpl-ini", "r") as ini:
+            open_file = ini.readlines()[9]
+            ini.close()
+        replace_line("startup.acpl-ini", 9, "open-compiled-file: False\n")
+
+        # Launch transpiling
+        try:
+            launch_py_file("compiler")
+        except SystemExit:
+            pass
+
+        replace_line("startup.acpl-ini", 9, open_file)
+        del open_file
+
+        final_filename = user_input[1].replace('.acpl', '').replace('.py', '')
+
+        # If end message is wanted, add an end message at the end of the file
+        if end_message is True:
+            file = open(f"{user_input[1].replace('.acpl', '')}.py", "r")
+            file_contents = file.readlines()
+            file_contents.append("input(\"Press enter to continue...\")\n")
+            file.close()
+            file = open(f"{final_filename}.py", "w")
+            file.writelines(file_contents)
+            file.close()
+            del file_contents
+
+        print(f"{bcolors.OKBLUE}Starting compilation...\n{bcolors.WARNING}This may take a while.{bcolors.ENDC}")
+        # Generate executable
+        # If Windows or Mac AND not disabled, generate executable with icon.
+        if platform.system() in ('Windows', 'Darwin') and disable_icon is False:
+            os.system(f"pyinstaller --onefile --log-level ERROR --icon ACPL_Icon.ico {final_filename}.py")
+        else:
+            os.system(f"pyinstaller --onefile --log-level ERROR {final_filename}.py")
+
+        # Move exe file to parent folder
+        shutil.move(f"dist/{final_filename}.exe", f"{final_filename}.exe")
+
+        # Delete 'build' and 'dist' folders and '<file>.spec'
+        shutil.rmtree("build")
+        shutil.rmtree("dist")
+        os.remove(f"{final_filename}.spec")
+
+        print(f"{bcolors.OKGREEN}File compiled successfully !{bcolors.ENDC}")
 
     else:
         output = texts.console["unknown-command"]

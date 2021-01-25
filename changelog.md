@@ -1,43 +1,55 @@
-### 3.10
-- **Automatic updates**
-  - If it upsets you to ALWAYS have to manually update your ACPL, then this release might be the last you'll download.
-  - This update brings back the automatic updates, in a revamped way.
-  - If a new release is available, it will ask you once you boot the console.
-  - If you skip the update, you can still download it by using the console command 'update', or by running `updater_main.py`.
-- Types in lists
-  - You can define the type of an element in the list when you create it.
-  - Syntax : `var:list my_list = list [int:1] [float:1.5] [bool:True] [str:Normal string] [Default is str]`
-- Command line arguments for `main.py`
-  - When invoking `main.py` from a command prompt, you can add the filename of an ACPL file at the end. It will automatically run it and override the one in the startup file.
-- Condtions inside each other
-  - **ELSE HAS BEEN REMOVED**
-  - By popular opinion, nested `if`s have been preferred to the `else` statement.
-  - You can now use multiple `if`s inside each other.
-- New libs function
-  - A new function is required for libs to get through the compiler : `libs_to_import()`
-  - This function returns all the required libs by the final python file this way :
-  - If the generated result does not require anything in order to work, just return a tuple containing to empty tuples, this way : `return (tuple(), tuple())`
-  - If it only requires to import a full lib, (*example : `sys`*), the first tuple contains that lib : `return (("sys",), tuple())`
-  - If you need more of those : `return (("sys", "math", "tkinter"), tuple())`
-  - The other tuple contains all the functions from libs. If you want `from json import load`, then : `return (tuple(), (("json", "load"),))`
-  - If you want `from json import load, dump`, then : `return (tuple(), (("json", "load, dump"),))`
-  - And if you want `from json import load` and `from math import *` : `return (tuple(), (("json", "load"), ("math", "*")))`
-- ACPL debugger
-  - New console command `debug <file>`
-  - This command will start a debugger that will tell you what happens in the ACPL program.
-  - The program will tell you what instruction is being expected, what variables are existing at the end of the line, and let you continue it step by step or stop it. This possibility is available at every single line.
-- Settings
-  - The old rusty `modify-ini` command was very complicated, with many things to remember. *As its creator, I didn't remember those myself !*
-  - This command has been changed to `settings`, and doesn't take any arguments.
-  - This will pop up a dialog box that will let you customize your settings.
-- Bugfixes
-  - Lists were buggy with functions. They still are, but less.
-  
-### 3.10.1
-- Bugfixes
-  - Corrected a shell from a past dev experience with command `ini-content`
-    - Using that command made the console crash
-    - Now fully fixed, with revamped version of the command
-  - Corrected a problem with the `settings` command
-    - When entering wrong values in input fields, and clicking save, the inputs weren't reset
-    - It was just a dev error, now fully fixed.
+### 3.11
+- Translation files are ready, just waiting for the translators.
+  - Language 98% translated in French.
+- Files library
+  - Can read files
+  - Can write in files
+- Lib access to variables
+  - You can now use libs as variables
+  - `var <name> = lib <lib_name> <lib_syntax>`
+  - Example : `var file_content = lib files my_file.txt`
+- Deletevar tweak
+  - You can now delete multiple vars at once
+  - Just separate the variables names by commas
+  - Syntax : `deletevar <var1>, [var2], etc...`
+- Var actions aliases
+  - You can now use the var actions inline, by specifying it after the equal sign
+  - Syntax : `var[:type] <name> = var_action <var_action_name> [var_action_parameters] <value>`
+  - Some var actions used this way might require a different syntax, see the documentation for more info.
+- Variable length
+  - You can now use the variable 'length'
+  - Syntax : `{length[<var_name>]}`
+- New `ls`/`dir` command
+  - Will build a file tree of the specified folder
+  - Syntax : `dir [folder=./] **[extension=*]`
+  - Example : `dir ./ py acpl` will diplay all acpl and Pytho files in the current folder
+- Command aliases
+  - Define aliases using the `$alias` instruction
+  - Allows to use other names for functions
+  - Example :
+    - You want to call `print` bu using the C++ like `std::cout` function
+    - You have to type `$alias print std::cout`.
+- Equations have been disabled for `if` and `while` statements.
+  - Who cares ? They are not needed there.
+  - Might return in 3.11.1 or in 3.12
+- **Full boolean implementation**
+  - New *bool* type
+  - Defined with new var type `:bool`
+  - Value : either `True` or `False`.
+  - New built-in variables : `true` and `false`, with the respective boolean values.
+- **Var modifications, without re-assigment**
+  - You can now just type a variable's name to redifine it once it has been defined, instead of typing the old-fashion `var[:type] <name> = <value>` again !
+  - Now, you just need to type that once, and then a single `<name>[:type] = <value>` will be understood !
+    + If the parameter `type` is not given, the type will be the type of the last variable's value.
+    + E.g., if you had a variable named `test` which was an integer, if you don't specify a new type, the variable will remain an integer.
+- **Compiler/Transpiler**
+  - Command `compile` has been renamed to `transpile`, which corresponds more to what it actually does.
+  - **A NEW COMPILER HAS BEEN INTRODUCED !**
+  - Your code can now be compiled into an auto-executable file !
+    + If your program does not use any library, then the compiler function is supported.
+    + If not, it might work, but is untested, and not supported either.
+  - Syntax : `compile <ACPL file> [Exe file filename=ACPL file filename] [--end-message:<bool> = True] [--disable-icon:<bool> = False]`
+    + `ACPL file` is the file you want to compile. **THIS FILE HAS TO BE PLACED AT THE ACPL ROOT FOLDER !**
+    + `Exe file filename` is the filename of the compiled exe file. If not specified, the default name will be the name of the original script.
+    + `[--end-message:<bool> = True]` is a boolean that will define whether or not the file will have an end message (litterally : *`Press enter to continue..`* at the end of the script). Default : True.
+    + `[--disable-icon:<bool> = False]` is a boolean that will define if you want to disable the ACPL icon as the exe file icon. Default : False. **ICONS CANNOT BE CREATED ON LINUX DEVICES !**

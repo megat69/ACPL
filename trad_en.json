@@ -1,60 +1,148 @@
 {
-  "console": {
-    "bootup-message": "ACPL Console - last stable release {} - {} - CC-BY-SA",
-    "process-ended": "Process ended.",
-    "launch-code-file": "Launching {}...",
-    "last-stable-release": "Last stable release",
-    "current-dev-build": "Current dev build",
-    "modify-ini": {
-      "debug-state-modified": "Option debug-state modified correctly in startup.acpl-ini with value {}.",
-      "lang-modified": "Option lang modified correctly in startup.acpl-ini with value {}.",
-      "use-colors-modified": "Option \"use-colors\" modified correctly in startup.acpl-ini with value {}",
-      "debug-state-help": "HELP : the \"debug-state\" statement asks if you want to enable or disable devlopper debug.\nType : boolean.\nDefault : False.\nActual : {}.",
-      "lang-help": "HELP : the \"lang\" statement is used to know in which language the system is displayed.\nType : string.\nPossible options : \"en\", \"fr\", or \"nl\".\nDefault : en.\nActual : {}.",
-      "use-colors-help": "HELP : the \"use-colors\" statement is used to know if you prefer to use colors or not. Some OS or softwares does not allow it.\nType : booléen.\nPossible options : \"True\" or \"False\".\nDefaut : True.\nActual : {}.",
-      "process-time-round-numbers": "HELP : the \"process-time-round-numbers\" statement is used to know how many numbers will be behind the dot for the processing time.\nType : integer.\nDefault : 6.\nActual : {}.",
-      "startup-check-update": "HELP : the \"startup-check-update\" statement is used to know if the console has to check update at startup or not.\nType : Bool.\nDefault : True.\nActual : {}.",
-      "open-compiled-file": "HELP : the \"open-compiled-file\" statement is used to know if the file just compiled has to be opened at the end or not.\nType : Bool.\nDefault : False.\nActual : {}.",
-      "leave-comments-at-compiling": "HELP : the \"leave-comments-at-compiling\" statement is used to know if you want to keep the comments in the compiled python file (readability), or not (processing time).\nType : Bool.\nDefault : False.\nActual : {}.",
-      "else-help": "Available values :\n\t- \"debug-state\"\n\t- \"lang\"\n\t- \"process-time-round-numbers\"\n\t- \"open-compiled-file\"\n\t- \"leave-comments-at-compiling\"\n\t- \"startup-check-update\"\n\nType \"modify-ini help <statement>\" for better help.",
-      "unable-to-modify-option": "Unable to modify this option.",
-      "compile-code-file": "Compiling {}..."
+    "compiler": {
+        "CompilingConfirmation": "This file, located at \"{compiled_file_filename}\" already exists.\nDo you want to replace it ?",
+        "CompilingTime": "Compiling time",
+        "FileCompiledWithStyle": "File compiled using style",
+        "FileOpened": "File opened successfully",
+        "OpeningFile": "File is being opened",
+        "StartingCompilation": "Starting compilation.",
+        "Stop_TooManyErrors": "Debug has chosen to stop this program due to too many errors. Sorry for the inconvenicence.",
+        "WrongAnswer": "Wrong answer"
     },
-    "help": {
-      "available-commands": "Available commands",
-      "end": "Ends the console process.",
-      "run": "runs a specific file. Syntax : 'run <file>'.",
-      "about": "Gives a special message from the author concerning the language ;)",
-      "version": "Gives the last stable version and the actual dev build.",
-      "modify-ini": "Modifies a specific statement in the ini file. Better help with 'modify-ini help all'."
+    "console": {
+        "bootup-message": "ACPL Console - last stable release {} - {} - CC-BY-SA",
+        "CannotRunFile": "Cannot run this file.",
+        "ClosedIDE": "IDE closed.",
+        "console-correctly-reloaded": "Console correctly reloaded.",
+        "current-dev-build": "Current dev build",
+        "EndOfFile": "End of the file.",
+        "FileNotFound": "File not found.",
+        "FileSuccessfullyOpened": "File opened successfully.",
+        "help": {
+            "about": "Gives a special message from the author concerning the language ;)",
+            "available-commands": "Available commands",
+            "change-line": "Modifies a specific line in a plain text file.",
+            "compile": "Compiles an ACPL file to a Python file",
+            "display": "Prints the content of a specified file.",
+            "end": "Ends the console process.",
+            "ini-content": "Displays the content of the ini file.",
+            "lib": "Respectively installs, delete, or gives the documentation of the specified lib.",
+            "modify-ini": "Modifies a specific statement in the ini file. Better help with 'modify-ini help all'.",
+            "open": "Opens a specific file in its default program.",
+            "pyrun": "Runs a specified python file",
+            "redo": "Reuses the last command.",
+            "run": "runs a specific file. Syntax : 'run <file>'.",
+            "settings": "Opens up a dialog box which allows you to tweak your settings",
+            "update": "Launches the update program.",
+            "version": "Gives the last stable version and the actual dev build."
+        },
+        "last-stable-release": "Last stable release",
+        "launch-code-file": "Launching {}...",
+        "LaunchingPyFile": "Launching {file}.",
+        "LibDeleted": "Deleted lib {user_input}.",
+        "LibDoesNotExistError": "Error : Lib does not exist !",
+        "LibInstalled": "Library {user_input} installed !",
+        "LibNotInstalled": "Lib not installed, unable to uninstall.",
+        "LineModified": "Line {line} modified in {user_input[0]} with value :\n{value}",
+        "modify-ini": {
+            "compile-code-file": "Compiling {}...",
+            "debug-state-help": "HELP : the \"debug-state\" statement asks if you want to enable or disable devlopper debug.\nType : boolean.\nDefault : False.\nActual : {}.",
+            "debug-state-modified": "Option debug-state modified correctly in startup.acpl-ini with value {}.",
+            "else-help": "Available values :\n\t- \"debug-state\"\n\t- \"lang\"\n\t- \"process-time-round-numbers\"\n\t- \"open-compiled-file\"\n\t- \"leave-comments-at-compiling\"\n\t- \"startup-check-update\"\n\nType \"modify-ini help <statement>\" for better help.",
+            "lang-help": "HELP : the \"lang\" statement is used to know in which language the system is displayed.\nType : string.\nPossible options : \"en\", \"fr\", or \"nl\".\nDefault : en.\nActual : {}.",
+            "lang-modified": "Option lang modified correctly in startup.acpl-ini with value {}.",
+            "leave-comments-at-compiling": "HELP : the \"leave-comments-at-compiling\" statement is used to know if you want to keep the comments in the compiled python file (readability), or not (processing time).\nType : Bool.\nDefault : False.\nActual : {}.",
+            "open-compiled-file": "HELP : the \"open-compiled-file\" statement is used to know if the file just compiled has to be opened at the end or not.\nType : Bool.\nDefault : False.\nActual : {}.",
+            "process-time-round-numbers": "HELP : the \"process-time-round-numbers\" statement is used to know how many numbers will be behind the dot for the processing time.\nType : integer.\nDefault : 6.\nActual : {}.",
+            "startup-check-update": "HELP : the \"startup-check-update\" statement is used to know if the console has to check update at startup or not.\nType : Bool.\nDefault : True.\nActual : {}.",
+            "unable-to-modify-option": "Unable to modify this option.",
+            "use-colors-help": "HELP : the \"use-colors\" statement is used to know if you prefer to use colors or not. Some OS or softwares does not allow it.\nType : booléen.\nPossible options : \"True\" or \"False\".\nDefaut : True.\nActual : {}.",
+            "use-colors-modified": "Option \"use-colors\" modified correctly in startup.acpl-ini with value {}"
+        },
+        "OpeningFile": "Opening {file}.",
+        "OpeningIDE": "Opening ACPL IDE...",
+        "output": "Output",
+        "process-ended": "Process ended.",
+        "reloading": "Reloading console...",
+        "Rerun": "Running last file again...",
+        "settings": {
+            "ClosedAndSaved": "Settings closed and saved.",
+            "DebugState_NotInt": "Debug state has to be an integer.",
+            "DebugState_Over3": "Cannot set debug state over 3.",
+            "DebugState_Under0": "Cannot set debug state under 0.",
+            "ProcessTime_NotInt": "Process time round numbers has to be an integer.",
+            "UnknownLanguage": "Unknown language. Language set back to 'en'."
+        },
+        "StartingDebug": "Starting to debug {file}...",
+        "unable-load-startup": "Unable to load startup.acpl-ini !",
+        "UnableToInstall": "Unable to compile that kind of file (extension '.{extension}').",
+        "unknown-command": "Unknown command.",
+        "update_ProcessInvocationNotSupported": "{FAIL}Your system does not support the invocation of new Python processes.\nPlease run the {ITALICS}{OKGREEN}updater_main.py{ENDC}{FAIL} script manually.{ENDC}"
     },
-    "output": "Output",
-    "reloading": "Reloading console...",
-    "unknown-command": "Unknown command.",
-    "unable-load-startup": "Unable to load startup.acpl-ini !",
-    "console-correctly-reloaded": "Console correctly reloaded."
-  },
-  "critic-errors": {
-    "NameError_LanguageFile": "Unable to load the language file !",
-    "ImpossibleLoad_StartupIni": "Unable to load startup.acpl-ini !"
-  },
-  "statement-errors": {
-    "on-line": "on line",
-    "has-been-raised": "has been raised for line"
-  },
-  "update-checker": {
-    "update-disponible-message": "A new update ({}) is available !",
-    "ask-install": "Do you want to install it ?",
-    "old-files-deletion": "Deleting old files...",
-    "old-files-deletion-complete": "Successfully deleted {}.",
-    "extracting-all-files": "Extracting all the files...",
-    "files-successfully-extracted": "Files successfully extracted.",
-    "removing-temp-files": "Removing temp files...",
-    "temp-files-removed": "Temp files removed !",
-    "update-applied": "Update applied !",
-    "console-restart": "Restarting console...",
-    "unable-to-install": "This version makes changes to the update_checker file. Because of that, we are unable to install it automatically (unless you want everything to be deleted).\nWhat we can do is downloading and extracting the new version in the folder where ACPL is installed.\nSo :\n\t- Go check the \"ACPL-master\" folder in the folder where ACPL is installed.\n\t- Type \"end\" in the console.\n\t- Copy-paste the content of \"ACPL-master\" AFTER CLOSING THIS WINDOW and replace all old files.",
-    "no-internet-connection": "Keine Internet Verbindung da."
-  },
-  "program-ended": "Program successfully stopped."
+    "critic-errors": {
+        "ImpossibleLoad_StartupIni": "Unable to load startup.acpl-ini !",
+        "NameError_LanguageFile": "Unable to load the language file !"
+    },
+    "errors": {
+        "ArgumentMissing": "Arguments missing !",
+        "ArgumentNotInt": "Argument should be integer !",
+        "FunctionArgumentError": "{args_required} arguments required, got {args_nbr}.",
+        "ImpossibleCast_Float": "Variable {var} cannot be casted as float.",
+        "ImpossibleCast_Int": "Variable {var} cannot be casted as integer.",
+        "IndexError": "The index is not existing.",
+        "ListParsingError": "An error occurred while trying to parse the list \"{}\".",
+        "TypeErrorBool": "List element no{i} '{list_element}' cannot be casted as boolan.",
+        "TypeErrorFloat": "List element no{i} '{list_element}' cannot be casted as float.",
+        "TypeErrorInt": "List element no{i} '{list_element}' cannot be casted as integer.",
+        "UnexistingIndexError": "The index '{}' seems not to exist.",
+        "VariableNotFound": "The variable \"{variable}\" is not existing or has been declared later in the code.",
+        "VarNotFoundError": "The variable \"{variable}\" seems not to exist."
+    },
+    "ide": {
+        "ACPL_SystemFile": "This file is an ACPL system file, which means you cannot modify it.",
+        "DisplayedLines": "{line1} lines displayed out of {line2}.",
+        "IDE_SuccessfullyOpened": "ACPL IDE successfully opened",
+        "UnableRunFile": "Unable to run that type of file (Extension : '{extension}').",
+        "UnableRunFile_NoExtension": "Unable to run that type of file (No extension).",
+        "UnableToDeleteCharacter": "Sorry, an unknown error occured.\nWe are unable to delete this character.\nPlease try again."
+    },
+    "main": {
+        "acpl_debugger": {
+            "break": "Breaking loop.",
+            "ConditionFalse": "Condition '{ENDC}{line}{OKBLUE}' on line {line_numbers} marked as {FAIL}False",
+            "ConditionTrue": "Condition '{ENDC}{line}{OKBLUE}' on line {line_numbers} marked as {OKGREEN}True",
+            "continue": "Going to next loop.",
+            "CreatedFunction": "Created function '{WARNING}{function_name}{OKBLUE}' with arguments : {OKGREEN}{recreate_string}{OKBLUE} on line {line_numbers}.",
+            "DeletedVariable": "Deleted variable '{OKGREEN}{var}{OKBLUE}' on line {line_numbers}.",
+            "ExecutionStopped": "Execution stopped.",
+            "ForLoop": "Looping {times} times using variable {OKGREEN}{line}",
+            "StopOrContinue": "Press Enter to continue or type 'stop'/'end' to quit.",
+            "variable": "Created variable '{OKGREEN}{line0}{OKBLUE}' with content {OKGREEN}{line2}{OKBLUE} on line {line_numbers}",
+            "VariablesAtLineNO": "Variables for line {line_numbers} :",
+            "WhileFalse": "Condition for while loop '{ENDC}{line}{OKBLUE}' on line {line_numbers} marked as {FAIL}False{OKBLUE}\nSkipping loop.",
+            "WhileTrue": "Condition for while loop '{ENDC}{line}{OKBLUE}' on line {line_numbers} marked as {OKGREEN}True"
+        },
+        "ProcessTime": "Process time",
+        "ProgramStopped_Errors": "Debug has chosen to stop this program due to too many errors. Sorry for the inconvenience."
+    },
+    "program-ended": "Program successfully stopped.",
+    "statement-errors": {
+        "has-been-raised": "has been raised for line",
+        "on-line": "on line"
+    },
+    "update-checker": {
+        "CouldNotRewriteElement": "Couldn't rewrite {element} !",
+        "DownloadingUpdate": "Downloading update...",
+        "ElementRewritten": "{element} successfully rewritten !",
+        "ExtractingUpdate": "Extracting update...",
+        "ImpossibleDownloadError": "Error : Unable to download the update !",
+        "NewVersionFound": "A new version has been found !\nYour version : {local_version}\nGitHub version : {github_version}\n",
+        "RewritingElement": "Rewriting {element}...",
+        "SeeChangelog": "Do you want to see the changelog ?",
+        "UpdateApplied": "Update successfully applied !",
+        "UpdateCancelled": "Update cancelled.\n{WARNING}If you want to update later, type 'update' in the console.",
+        "UpdateSuccessfullyDownloaded": "Update successfully downloaded !",
+        "UpdateSuccessfullyExtracted": "Update successfully extracted !",
+        "WiFi_Off": "Unable to find version number.\nUpdate cancelled."
+    }
 }

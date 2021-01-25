@@ -8,7 +8,7 @@ from recurrent_classes import *
 from time import sleep
 
 # Updating the main updater
-print(f"{bcolors.OKBLUE}Rewriting updater_main.py...{bcolors.ENDC}")
+print(bcolors.OKBLUE + texts.updates["RewritingElement"].format(element="updater_main.py") + bcolors.ENDC)
 old_file = open("updater_main.py", "r", encoding="utf-8")
 old_lines = old_file.readlines()
 try:
@@ -17,11 +17,11 @@ try:
     old_file.writelines(new_file.readlines())
     old_file.close()
     new_file.close()
-    print(f"{bcolors.OKGREEN}updater_main.py successfully rewritten !{bcolors.ENDC}")
+    print(bcolors.OKBLUE + texts.updates["ElementRewritten"].format(element="updater_main.py") + bcolors.ENDC)
 except:
     old_file.writelines(old_lines)
     old_file.close()
-    print(f"{bcolors.FAIL}Couldn't rewrite updater_main.py{bcolors.ENDC}")
+    print(bcolors.FAIL + texts.updates["CouldNotRewritElement"].format(element="updater_main") + bcolors.ENDC)
 del old_lines
 
 startup_file = open("startup.acpl-ini", "r")
@@ -67,9 +67,15 @@ startup_file.close()
 os.remove("update.zip")
 shutil.rmtree(os.getcwd()+"/update", ignore_errors=True)
 
-print(f"\n\n{bcolors.BOLD}{bcolors.OKGREEN}Update successfully applied !{bcolors.ENDC}")
+# Updating dependencies
+print(f"{bcolors.OKBLUE}Updating dependencies...{bcolors.ENDC}")
+os.system("pip install -r --upgrade requirements.txt")
+print(f"{bcolors.OKGREEN}Dependencies updated successfully !{bcolors.ENDC}")
+
+# Changelog
+print(f"\n\n{bcolors.BOLD}{bcolors.OKGREEN}{texts.updates['UpdateApplied']}{bcolors.ENDC}")
 sleep(2)
-user_input = input("Do you want to see the changelog ? (yes/no)\n")
+user_input = input(f"{texts.updates['SeeChangelog']} (yes/no)\n")
 if user_input[0].lower() == "y":
     changelog_file = open("changelog.md", "r")
     changelog = changelog_file.readlines()

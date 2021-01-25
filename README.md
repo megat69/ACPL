@@ -12,8 +12,7 @@ If you want to use it, please credit me xD !
 Big thanks to all the translators, and if you want to meet them, just join our [Discord](https://discord.gg/MBuKcUn) !
 
 ### REQUIRED LIBRARIES ###
-`psutil` and `requests` libraries needs to be installed separately.
-You can also run `setup.py`.
+Run `setup.py` to install all the required libraries.
 
 ### THINGS TO KNOW ###
 Run the script `console.py` to have access to the ACPL console.
@@ -23,12 +22,20 @@ A list of the commands is available by typing `help`.
 You can tweak your settings using the `settings` command.
 
 ### COMPILING ###
-The language can be compiled in Python using the following process.
+The language can be transpiled in Python using the following process.
 
-The most interesting thing about this update is the compiler, obviously.
 It works very simply :
-After setting the corresponding `ini` options with the `settings` console command, just type the following command : `compile <ACPL_file> <final_python_file_filename>`
+After setting the corresponding `ini` options with the `settings` console command, just type the following command : `transpile <ACPL_file> <final_python_file_filename>`
 It will generate the corresponding python file with the name you inputted.
+
+Your code can also be compiled into an auto-executable file as well !
+- If your program does not use any library, then the compiler function is supported.
+- If not, it might work, but is untested, and not supported either.
+- Syntax : `compile <ACPL file> [Exe file filename=ACPL file filename] [--end-message:<bool> = True] [--disable-icon:<bool> = False]`
+  + `ACPL file` is the file you want to compile. **THIS FILE HAS TO BE PLACED AT THE ACPL ROOT FOLDER !**
+  + `Exe file filename` is the filename of the compiled exe file. If not specified, the default name will be the name of the original script.
+  + `[--end-message:<bool> = True]` is a boolean that will define whether or not the file will have an end message (litterally : *`Press enter to continue..`* at the end of the script). Default : True.
+  + `[--disable-icon:<bool> = False]` is a boolean that will define if you want to disable the ACPL icon as the exe file icon. Default : False. **ICONS CANNOT BE CREATED ON LINUX DEVICES !**
 
 ### DOCUMENTATION ###
 Things to know :
@@ -81,10 +88,10 @@ With a variable `number` equals to ten, that we want to multiply by two :
 Variables have to be defined clearly.
 It follows the form `var[:var_type][--var_action] <var_name> <var_operator> <value>`.
 
-<var_name>
+`<var_name>`
 The variable name. Note that two variables with different types can have the same name, even if not recommended.
 
-<var_operator>
+`<var_operator>`
 Can be :
 - `=`
   - Default operator, assigns a brand new value to the variable.
@@ -121,6 +128,7 @@ It depends :
  The current variable types are :
  - `int`
  - `float`
+ - `bool`
  - `list` **(see down there)**
  - and `str`
  
@@ -148,38 +156,64 @@ They can be :
   - Example 1 : `var:str--split:" " Test = This is a test string.` will result in `['This', 'is', 'a', 'test', 'string.']`
   - Example 2 : `var:str--split:"ng " Test = Testing string :D` will result in `['Testi', 'stri', ':D']`
 
+*3.11 feature*
+Var actions have their equivalents in values.
+Instead of typing a direct value, you can use `var_action <var_action_name> [var_action_parameters] <value>` instead.
+For special syntaxes, ask me on the [ACPL Discord](https://discord.gg/MBuKcUn).
+
 **SPECIAL VALUES :**
  - It can also be special values :  you can meet the `input` method.
    It asks the user to type something in the console.
    Syntax : `input <text>`
-   <text> is the text that will be asked to the user.
+   `<text>` is the text that will be asked to the user.
    You can also put `\n` to create a newline.
 
  - You can also do mathematical equations to affect variables.
    They can also contain variables.
    Syntax : `<equation>`
+
  - You can also define them as random.
    Therefore, type `random <first_number> [second_number]`.
    If both numbers are given, the result will be a random number between them.
    Else, it will be a random number between 0 and <first_number>.
    You can also replace numbers by variables.
 
+ - You can use libraries as well.
+   Type `lib <lib_name> <lib_syntax>` for that purpose.
+   *This is assuming that the library you are using purposes functions for variables.*
+
+**BUILT-IN VARIABLES :**        *Introduced in 3.11*
+- `length`
+  + Returns the length of the variable passed in parameter.
+  + Syntax : `{length[<var name>]}`
+- `true`
+  + The boolean value `True`
+- `false`
+  + The boolean value `False`
+
+**VARIABLE MODIFICATIONS :**          *Introduced in 3.11*
+You can just type a variable's name to redifine it once it has been defined, instead of typing the old-fashion `var[:type] <name> = <value>` again !
+
+Now, you just need to type that once, and then a single `<name>[:type] = <value>` will be understood !
+- If the parameter `type` is not given, the type will be the type of the last variable's value.
+- E.g., if you had a variable named `test` which was an integer, if you don't specify a new type, the variable will remain an integer.
+
 **EXAMPLE 1 :**
 We want to create a variable "pseudo" containing "TheAssassin".
 *Input :*
-`var pseudo = TheAssassin`
+`var:str pseudo = TheAssassin`
 *To use it :*
 `{pseudo}`
 
 **EXAMPLE 2 :**
 We want to ask the user for his pseudo :
 *Input :*
-`var pseudo = input(What is your pseudo ? )`
+`var:str pseudo = input(What is your pseudo ? )`
 
 **EXAMPLE 3 :**
 We want to calculate `3*(6**2)` and store it into a variable "operation".
 *Input :*
-`var operation = <3*(6**2)>`
+`var:int operation = <3*(6**2)>`
 
 **EXAMPLE 4 :**
 We have a variable "age" containing the value `18`. We want to multiply it by 2 *(don't ask why xD)*
@@ -190,16 +224,18 @@ And then store it into "double"
 **EXAMPLE 5 :**
 We ask the user for his age and we multiply it by 5.
 *Input :*
-`int age = input What is your age ? 
-int new_age = <2*{age}>
-print Your new age is now {age} xD !`
+```
+var:int age = input What is your age ? 
+var:int new_age = <2*{age}>
+print Your new age is now {age} xD !
+```
 *Output (for this example, age equals 18) :*
 `Your new age is now 90 xD !`
 
 **EXAMPLE 6 :**
 You want a random number between 1 and 50 for the Lotto.
 *Input :*
-`var Lotto = random 1 50`
+`var:int Lotto = random 1 50`
 
 #### lists ####
 Lists are a special type of variable introduced in version 3.8, allowing to store multiple variables in a single one.
@@ -349,6 +385,11 @@ Simply type `deletevar <variable_name>` to do so.
 *Example :*
 `deletevar Test` will delete var `Test`.
 
+*3.11 feature*
+Delete multiple variables at once by separating the names of the variables you want to delete with commas.
+*Example :*
+`deletevar var1, var2, var3, another_var, etc`
+
 #### functions ####
 Functions allow to write some code once and reuse it as much as you want.
 
@@ -381,7 +422,72 @@ You can also do a `lib doc <lib>` to get a library documentation.
 Every library can be seen at this link : [https://github.com/megat69/ACPL/tree/master/acpl_libs](https://github.com/megat69/ACPL/tree/master/acpl_libs)
 
 To use one, declare at the beginning of your program `$use: <lib>`.
-  
+
+#### aliases ####
+Define aliases using the `$alias` instruction.
+
+This allows to use other names for functions.
+*Example :*
+- You want to call `print` bu using the C++ like `std::cout` function.
+- You have to type `$alias print std::cout`.
+- Typing `std::cout` in any line of the program will call the function `print`.
+
+### 3.11
+- Translation files are ready, just waiting for the translators.
+  - Language 98% translatorsted in French.
+- Files library
+  - Can read files
+  - Can write in files
+- Lib access to variables
+  - You can now use libs as variables
+  - `var <name> = lib <lib_name> <lib_syntax>`
+  - Example : `var file_content = lib files my_file.txt`
+- Deletevar tweak
+  - You can now delete multiple vars at once
+  - Just separate the variables names by commas
+  - Syntax : `deletevar <var1>, [var2], etc...`
+- Var actions aliases
+  - You can now use the var actions inline, by specifying it after the equal sign
+  - Syntax : `var[:type] <name> = var_action <var_action_name> [var_action_parameters] <value>`
+  - Some var actions used this way might require a different syntax, see the documentation for more info.
+- Variable length
+  - You can now use the variable 'length'
+  - Syntax : `{length[<var_name>]}`
+- New `ls`/`dir` command
+  - Will build a file tree of the specified folder
+  - Syntax : `dir [folder=./] **[extension=*]`
+  - Example : `dir ./ py acpl` will diplay all acpl and Pytho files in the current folder
+- Command aliases
+  - Define aliases using the `$alias` instruction
+  - Allows to use other names for functions
+  - Example :
+    - You want to call `print` bu using the C++ like `std::cout` function
+    - You have to type `$alias print std::cout`.
+- Equations have been disabled for `if` and `while` statements.
+  - Who cares ? They are not needed there.
+  - Might return in 3.11.1 or in 3.12
+- **Full boolean implementation**
+  - New *bool* type
+  - Defined with new var type `:bool`
+  - Value : either `True` or `False`.
+  - New built-in variables : `true` and `false`, with the respective boolean values.
+- **Var modifications, without re-assigment**
+  - You can now just type a variable's name to redifine it once it has been defined, instead of typing the old-fashion `var[:type] <name> = <value>` again !
+  - Now, you just need to type that once, and then a single `<name>[:type] = <value>` will be understood !
+    + If the parameter `type` is not given, the type will be the type of the last variable's value.
+    + E.g., if you had a variable named `test` which was an integer, if you don't specify a new type, the variable will remain an integer.
+- **Compiler/Transpiler**
+  - Command `compile` has been renamed to `transpile`, which corresponds more to what it actually does.
+  - **A NEW COMPILER HAS BEEN INTRODUCED !**
+  - Your code can now be compiled into an auto-executable file !
+    + If your program does not use any library, then the compiler function is supported.
+    + If not, it might work, but is untested, and not supported either.
+  - Syntax : `compile <ACPL file> [Exe file filename=ACPL file filename] [--end-message:<bool> = True] [--disable-icon:<bool> = False]`
+    + `ACPL file` is the file you want to compile. **THIS FILE HAS TO BE PLACED AT THE ACPL ROOT FOLDER !**
+    + `Exe file filename` is the filename of the compiled exe file. If not specified, the default name will be the name of the original script.
+    + `[--end-message:<bool> = True]` is a boolean that will define whether or not the file will have an end message (litterally : *`Press enter to continue..`* at the end of the script). Default : True.
+    + `[--disable-icon:<bool> = False]` is a boolean that will define if you want to disable the ACPL icon as the exe file icon. Default : False. **ICONS CANNOT BE CREATED ON LINUX DEVICES !**
+
 ### 3.10.1
 - Bugfixes
   - Corrected a shell from a past dev experience with command `ini-content`

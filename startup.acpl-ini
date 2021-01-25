@@ -1,7 +1,7 @@
-filename: code.acpl
+filename: code
 lang: fr
-version: 3.10.0
-current-version: 3.10.0au
+version: 3.11.0
+current-version: 3.11.0et
 debug-state: 0
 console-reloaded: False
 use-colors: True
@@ -11,5 +11,5 @@ open-compiled-file: True
 leave-comments-at-compiling: False
 startup-check-update: True
 compiling-style: compacted
-compile-ask-for-replace: True
+compile-ask-for-replace: False
 debugger-enabled: False

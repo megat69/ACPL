@@ -12,8 +12,10 @@ import platform
 import shlex
 import importlib
 import acpl_libs
+import sys
 
-print(f"{bcolors.OKBLUE}Starting compilation.{bcolors.ENDC}")
+
+print(bcolors.OKBLUE + texts.compiler["StartingCompilation"] + bcolors.ENDC)
 
 try:
     config_file = open("startup.acpl-ini", "r")
@@ -60,11 +62,31 @@ for config_line in config_file.readlines():
         lines = lines.replace("process-time-round-numbers: ", "")
         process_time_round_numbers = int(lines)"""
 process_time_round_numbers = 6
+config_file.close()
+
+# If opened with command line arguments (python compiler.py <file_to_compile> [compiled_file_filename])
+if len(sys.argv) > 1:
+    file_to_compile = sys.argv[1]
+    if not file_to_compile.endswith(".acpl"):
+        file_to_compile += ".acpl"
+    if ":" not in file_to_compile:
+        file_to_compile = os.getcwd()+"/"+file_to_compile
+
+    if len(sys.argv) > 2:
+        compiled_file_filename = sys.argv[2]
+    else:
+        compiled_file_filename = sys.argv[1]
+
+    if not compiled_file_filename.endswith(".py"):
+        compiled_file_filename += ".py"
+    if ":" not in compiled_file_filename:
+        compiled_file_filename = os.getcwd()+"/"+compiled_file_filename
 
 if os.path.exists(compiled_file_filename) and compile_ask_for_replace == "True":
-    confirm = input(f"{bcolors.FAIL}This file, located at \"{compiled_file_filename}\" already exists.\nDo you want to replace it ? (Yes/No) {bcolors.ENDC}")
+    # This file, located at \"{compiled_file_filename}\" already exists.\nDo you want to replace it ?
+    confirm = input(f"{bcolors.FAIL}{texts.compiler['CompilingConfirmation'].format(compiled_file_filename=compiled_file_filename)} (Yes/No) {bcolors.ENDC}")
     while confirm.lower() != "yes" and confirm.lower() != "no":
-        print("Wrong answer.")
+        print(texts.compiler["WrongAnswer"])
         confirm = input(
             f"{bcolors.FAIL}This file, located at \"{compiled_file_filename}\" already exists.\nDo you want to replace it ? (Yes/No) {bcolors.ENDC}")
     if confirm.lower() == "no":
@@ -88,7 +110,11 @@ for i in range(0, len(code_lines)):
 debug("other", lineno(), 1, "code_lines = ", code_lines)
 
 # Var container
-variables_container = {}
+variables = {
+    "length": {},
+    "true": True,
+    "false": False
+}
 used_libs = []
 
 # Use variables
@@ -96,6 +122,21 @@ is_in_comment = False
 line_numbers = 0
 execute_until_endif = False
 indentation_required = 0
+aliases = {
+    "print": [],
+    "var": [],
+    "pause": [],
+    "deletevar": [],
+    "$use": [],
+    "function": [],
+    "use_function": [],
+    "if": [],
+    "while": [],
+    "for": [],
+    "break": [],
+    "continue": []
+}
+variables = {}
 
 compiled_file = open(compiled_file_filename, "w", encoding="utf-8")
 compiled_file.write("# Compiled from ACPL programming language\n# Download from github : https://www.github.com/megat69/ACPL\n\nfrom time import sleep\nfrom random import randint\nfrom math import *\n\n")
@@ -136,7 +177,12 @@ while line_numbers < len(code_lines):
 
         line = re.sub('\"', '\'', line)
 
-        while "<" in line and ">" in line:
+        # Built-in var "length"
+        while "{length[" in line:
+            temp = line[line.find("{length[") + 1:line.find("]}")].replace("length[", "", 1)
+            line = line.replace("{length[" + temp + "]}", "{''.join(str(len("+temp+")) if isinstance("+temp+", list) else str(len(str("+temp+"))))}")
+
+        while "<" in line and ">" in line and not line.startswith("if") and not line.startswith("while"):
             equation = line[line.find("<") + 1:line.find(">")]
             """new_equation = line[line.find("<") + 1:line.find(">")]
             while "{" in new_equation and "}" in new_equation:
@@ -161,13 +207,34 @@ while line_numbers < len(code_lines):
             else:
                 line = line.replace("[{"+variable+"}]", "["+variable+"]", 1)
 
-        if line.startswith("$use: "):
-            line = line.replace("$use: ", "", 1)
+        if line.startswith("$alias "):
+            line = line.replace("$alias ", "", 1)
+            line = line.split(" ")
+            # line[0] : Function to which alias is given ; line[1] : alias
+            if len(line) != 2:
+                error(line_numbers, "ArgumentError",
+                      texts.errors["FunctionArgumentError"].format(args_required=2, args_nbr=len(line)))
+
+            line[1] = remove_suffix(line[1], line[1].endswith("\n"))
+
+            # Setting alias
+            try:
+                aliases[line[0]].append(line[1])
+            except KeyError:
+                error(line_numbers, "ArgumentError", f"Unknown function '{line[0]}'.")
+
+            line_numbers += 1
+            continue
+
+        if line.startswith("$use: ") or line.split(" ")[0] in aliases["$use"]:
+            if line.split(" ")[0] in aliases["$use"]:
+                line = line.replace(aliases["$use"][aliases["$use"].index(line.split(" ")[0])]+": ", "")
+            else:
+                line = line.replace("$use: ", "", 1)
             line = remove_suffix(line, line.endswith("\n"))
             while line.endswith(" "):
                 line = remove_suffix(line)
             used_libs.append("fx_"+line+".py")
-            # TODO : Do the imports trick
             importlib.import_module("acpl_libs.fx_"+line)
             item = getattr(acpl_libs, "fx_"+line)
             requirements = item.libs_to_import()
@@ -176,7 +243,7 @@ while line_numbers < len(code_lines):
                 line += "import " + element + "\n"
             for element in requirements[1]:
                 line += "from " + element[0] + " import " + element[1] + "\n"
-            compiling_style = "FORCED ATM. DUH"
+            compiling_style = "standard"
             if compiling_style.lower() == "compacted" or compiling_style.lower() == "collapsed":
                 if line.replace("\t", "") != "":
                     compiled_file.write(line + "\n")
@@ -185,7 +252,7 @@ while line_numbers < len(code_lines):
             line_numbers += 1
             continue
 
-        if line.startswith("function"):
+        if line.startswith("function") or line.split(" ")[0] in aliases["function"]:
             for i in range(0, indentation_required):
                 line = "\t" + line
             indentation_required += 1
@@ -208,7 +275,7 @@ while line_numbers < len(code_lines):
             indentation_required -= 1
             line = ""
 
-        if line.startswith("for"):
+        if line.startswith("for") or line.split(" ")[0] in aliases["for"]:
             indentation_required += 1
             line = remove_from_string(line, ["{", "}"])
             line = line.split(" ")
@@ -222,7 +289,7 @@ while line_numbers < len(code_lines):
             indentation_required -= 1
             line = ""
 
-        if line.startswith("while"):
+        if line.startswith("while") or line.split(" ")[0] in aliases["while"]:
             for i in range(0, indentation_required):
                 line = "\t" + line
             indentation_required += 1
@@ -234,7 +301,8 @@ while line_numbers < len(code_lines):
                 try:
                     line = line.replace("{" + variable + "}", variable)
                 except KeyError:
-                    error(line_numbers, "ArgumentError", f"The variable \"{variable}\" is not existing or has been declared later in the code.")
+                    # The variable "{variable}" is not existing or has been declared later in the code.
+                    error(line_numbers, "VariableNotFound", texts.errors["VariableNotFound"].format(variable=variable))
             compiled_file.write(line + "\n")
             line_numbers += 1
             continue
@@ -242,7 +310,7 @@ while line_numbers < len(code_lines):
             indentation_required -= 1
             line = ""
 
-        if line.startswith("if"):
+        if line.startswith("if") or line.split(" ")[0] in aliases["if"]:
             for i in range(0, indentation_required-1):
                 line = "\t" + line
             while "<" in line and ">" in line:
@@ -253,14 +321,14 @@ while line_numbers < len(code_lines):
                     try:
                         line = line.replace("{" + variable + "}", variable)
                     except KeyError:
-                        error(line_numbers, "ArgumentError",
-                              f"The variable \"{variable}\" is not existing or has been declared later in the code.")
+                        # The variable "{variable}" is not existing or has been declared later in the code.
+                        error(line_numbers, "VariableNotFound", texts.errors["VariableNotFound"].format(variable=variable))
                 debug("other", lineno(), 2, f"Equation {equation} found.")
                 try:
                     line = line.replace(f"<{str(equation)}>", "{" + equation + "}")
                 except KeyError:
-                    error(line_numbers, "ArgumentError",
-                          f"The equation \"{equation}\" is not existing or has been declared later in the code.")
+                    # The variable "{variable}" is not existing or has been declared later in the code.
+                    error(line_numbers, "VariableNotFound", texts.errors["VariableNotFound"].format(variable=variable))
 
             while "{" in line and "}" in line:
                 variable = line[line.find("{") + 1:line.find("}")]
@@ -268,7 +336,8 @@ while line_numbers < len(code_lines):
                 try:
                     line = line.replace("{" + variable + "}", variable)
                 except KeyError:
-                    error(line_numbers, "ArgumentError", f"The variable \"{variable}\" is not existing")
+                    # The variable "{variable}" is not existing or has been declared later in the code.
+                    error(line_numbers, "VariableNotFound", texts.errors["VariableNotFound"].format(variable=variable))
 
             line = remove_suffix(line) + ":"
             indentation_required += 1
@@ -285,16 +354,42 @@ while line_numbers < len(code_lines):
             indentation_required -= 1
             line = ""
 
-        if line.startswith("print "):
-            line = line.replace("print ", "", 1)
+        if line.startswith("print ") or line.split(" ")[0] in aliases["print"]:
+            if line.split(" ")[0] in aliases["print"]:
+                line = line.replace(aliases["print"][aliases["print"].index(line.split(" ")[0])]+" ", "")
+            else:
+                line = line.replace("print ", "", 1)
             line = remove_suffix(line, condition=line.endswith("\n"))
             line = "print(f\""+line+"\")"
 
-        elif line.startswith("var"):
-            line = line.replace("var", "", 1)
-            var_type = None
+        elif line.startswith("var") or line.split(" ")[0] in aliases["var"]\
+                or line.split(" ")[0] in variables.keys() or line.split(":")[0] in variables.keys():
+            if line.split(" ")[0] in aliases["var"]:
+                line = line.replace(aliases["var"][aliases["var"].index(line.split(" ")[0])], "")
+                var_type = None
+            elif line.split(":")[0] in aliases["var"]:
+                line = line.replace(aliases["var"][aliases["var"].index(line.split(":")[0])], "")
+                var_type = None
+            elif line.split(" ")[0] in variables.keys():
+                temp_name = line.split(" ")[0]
+                if isinstance(variables[temp_name], int):
+                    var_type = "int"
+                elif isinstance(variables[temp_name], float):
+                    var_type = "float"
+                elif isinstance(variables[temp_name], list):
+                    var_type = None
+                elif isinstance(variables[temp_name], bool):
+                    var_type = "bool"
+                else:
+                    var_type = "str"
+                del temp_name
+            else:
+                line = line.replace("var", "", 1)
+                var_type = None
+
             var_action = None
             var_parameters = None
+            no_string = False
 
             do_regroup = True
 
@@ -305,8 +400,12 @@ while line_numbers < len(code_lines):
                     var_type = 'float'
                 elif line.startswith(":list"):
                     var_type = 'list'
+                elif line.startswith(":bool"):
+                    var_type = "bool"
+                elif line.startswith(":str"):
+                    var_type = "str"
                 else:
-                    var_type = 'str'
+                    error(line_numbers, "VarTypeError", f"Var type '{line.split(' ')[0].replace(':', '')}' does not exist.")
                 line = line.replace(":"+var_type, "", 1)
             if line.startswith(" "):
                 line = line.replace(" ", "", 1)
@@ -347,10 +446,32 @@ while line_numbers < len(code_lines):
 
             line = line.split(" ")  # Result : [name, var_operator, content]
 
+            # For var redefining, see if the user wants to change the types
+            if ":" in line[0]:
+                temp_name = line[0].split(":")[0]
+                if line[0].startswith(f"{temp_name}:int"):
+                    var_type = "int"
+                elif line[0].startswith(f"{temp_name}:float"):
+                    var_type = "float"
+                elif line[0].startswith(f"{temp_name}:list"):
+                    var_type = "list"
+                elif line[0].startswith(f"{temp_name}:bool"):
+                    var_type = "bool"
+                elif line[0].startswith(f"{temp_name}:str"):
+                    var_type = "str"
+                else:
+                    error(line_numbers, "VarTypeError",
+                          f"Var type '{line[0].split(':')[1].split(' ')[0]}' does not exist.")
+                line[0] = line[0].replace(":" + var_type, "", 1)
+                line[0] = remove_prefix(line[0], line[0].startswith(" "))
+                del temp_name
+
             if var_parameters is not None:
                 if var_action != "split":
                     line.pop(0)
                 line[2] = remove_suffix(line[2], line[2].endswith("\n"))
+
+            is_lib = False
 
             if str(line[2]).startswith("input"):
                 line[2] = line[2].replace("input", "", 1)
@@ -380,8 +501,8 @@ while line_numbers < len(code_lines):
                     try:
                         line[2] = line[2].replace("{" + variable + "}", variable)
                     except KeyError:
-                        error(line_numbers, "ArgumentError",
-                              f"The variable \"{variable}\" is not existing or has been declared later in the code.")
+                        # The variable "{variable}" is not existing or has been declared later in the code.
+                        error(line_numbers, "VariableNotFound", texts.errors["VariableNotFound"].format(variable=variable))
                 do_regroup = False
 
             elif var_type == "list":
@@ -399,12 +520,11 @@ while line_numbers < len(code_lines):
                         try:
                             line[2] = line[2].replace("[" + variable + "]", "")
                         except KeyError:
-                            error(line_numbers, "ArgumentError",
-                                  f"An error occured while trying to parse the list \"{line[0]}\".")
+                            # An error occurred while trying to parse the list \"{line[0]}\".
+                            error(line_numbers, "ListParsingError", texts.errors["ListParsingError"].format(line[0]))
                             errors_count += 1
                         if errors_count >= 10:
-                            print(
-                                f"\n\n{bcolors.FAIL}Debug has chosen to stop this program due to too many errors. Sorry for the inconvenicence.{bcolors.ENDC}")
+                            print("\n\n" + bcolors.FAIL + texts.compiler["Stop_TooManyErrors"] + bcolors.ENDC)
                             line_numbers = len(code_lines)
                             break
                         list_elements.append(variable)
@@ -446,6 +566,99 @@ while line_numbers < len(code_lines):
                     line = line[0]+".pop("+index+")"
                     do_regroup = False
 
+            elif str(line[2]).startswith("lib"):
+                line[2] = recreate_string(line[2:len(line)], " ")
+                line[2] = remove_suffix(line[2], line[2].endswith("\n"))
+                do_regroup = False
+                line[2] = line[2].replace("lib ", "", 1)
+                files = os.listdir('acpl_libs')
+                import acpl_libs
+
+                for file in files:
+                    if ".py" in file and file in used_libs:
+                        file = file.replace(".py", "")
+                        importlib.import_module("acpl_libs." + file)
+                result = (None, None)
+                for i in dir(acpl_libs):
+                    item = getattr(acpl_libs, i)
+                    if i.startswith("fx_"):
+                        requirements = item.requirements("compiler_var_methods")
+                        requirements_list = list()
+                        for element in requirements:
+                            requirements_list.append(locals()[element])
+                        del requirements
+                        requirements_list = tuple(requirements_list)
+                        result = item.compiler_var_methods(line, requirements_list)
+                        line = result[0]
+                        if len(result) > 1:
+                            for k in range(0, len(result[1]), 2):
+                                locals()[result[1][k]] = result[1][k + 1]
+
+            elif recreate_string(line[2:len(line)], " ").startswith("var_action"):
+                line[2] = recreate_string(line[2:len(line)], " ").replace("var_action ", "", 1)
+                do_regroup = False
+                if line[2].startswith("lowercase"):
+                    var_action = "lowercase"
+                    line[2] = line[2].replace("lowercase ", "", 1)
+                elif line[2].startswith("uppercase"):
+                    var_action = "uppercase"
+                    line[2] = line[2].replace("uppercase ", "", 1)
+                elif line[2].startswith("round"):
+                    var_action = "round"
+                    line[2] = line[2].replace("round ", "", 1)
+                    try:
+                        var_parameters = [int(line[2].split(" ")[0])]
+                    except ValueError:
+                        error(line_numbers, "ArgumentError", texts.errors["ArgumentNotInt"])
+                    line[2] = line[2].replace(f"{var_parameters[0]} ", "", 1)
+                elif line[2].startswith("ceil"):
+                    var_action = "ceil"
+                    line[2] = line[2].replace("ceil ", "", 1)
+                elif line[2].startswith("replace"):
+                    # Syntax :
+                    # var_action replace <str_to_search> with <str_to_use> for [times=INFINITE] in <str>
+                    var_action = "replace2"
+                    line[2] = line[2].replace("replace ", "", 1)
+                    temp_params = line[2].split(" in ")[0]
+                    temp_params = temp_params.strip()
+                    if not "for" in temp_params:
+                        var_parameters = [
+                            remove_suffix(temp_params.split("with")[0], temp_params.split("with")[0].endswith(" ")),
+                            temp_params.split("with")[1].strip()
+                        ]
+                    else:
+                        try:
+                            var_parameters = [
+                                remove_suffix(temp_params.split("with")[0], temp_params.split("with")[0].endswith(" ")),
+                                temp_params.split("with")[1].split("for")[0].strip(),
+                                int(temp_params.split("for")[1].strip())
+                            ]
+                        except ValueError:
+                            error(line_numbers, "ArgumentError", texts.errors["ArgumentNotInt"])
+                        line[2] = line[2].replace("for ", "", 1)
+
+                    line[2] = line[2].replace("with ", "", 1)
+
+                    # Error :
+                    if len(var_parameters) < 2:
+                        error(line_numbers, "ArgumentError",
+                              texts.console["FunctionArgumentError"].format(args_required="2/3",
+                                                                            args_nbr=len(var_parameters)))
+
+                    for element in var_parameters:
+                        line[2] = line[2].replace(str(element), "", 1)
+                    line[2] = line[2].replace("in", "", 1)
+                    line[2] = line[2].strip()
+                elif line[2].startswith("split"):
+                    var_action = "split"
+                    line[2] = line[2].replace("split ", "", 1)
+                    var_parameters = [remove_suffix(line[2].split("in")[0], line[2].split("in")[0].endswith(" "))]
+                    line[2] = line[2].replace(var_parameters[0], "", 1)
+                    line[2] = line[2].replace("in", "", 1)
+                    line[2] = line[2].strip()
+                else:
+                    error(line_numbers, "ArgumentError", f"Var action '{line[2].split(' ')[0]}' does not exist !")
+
             else:
                 try:
                     if "." not in str(line[2]):
@@ -458,6 +671,12 @@ while line_numbers < len(code_lines):
                     except ValueError:
                         line[2] = str(line[2])
 
+            if var_type == "bool":
+                if str(line[2]).lower() == "true":
+                    line[2] = "True"
+                elif str(line[2]).lower() == "false":
+                    line[2] = "False"
+                do_regroup = False
 
             if do_regroup:
                 for i in range(3, len(line)):
@@ -474,14 +693,10 @@ while line_numbers < len(code_lines):
                         pass
 
 
-            if isinstance(line[2], str) and not line[2].startswith("input") and not line[2].startswith("randint") and not isinstance(line, str):
+            if isinstance(line[2], str) and not line[2].startswith("input") and not line[2].startswith("randint")\
+                    and not isinstance(line, str) and is_lib is False and no_string is False:
                 line[2] = remove_suffix(line[2], line[2].endswith("\n"))
                 line[2] = "f\""+line[2]+"\""
-
-            if str(line[2]).lower() == "f\"true\"":
-                line[2] = True
-            elif str(line[2]).lower() == "f\"false\"":
-                line[2] = False
 
             if var_action == "lowercase":
                 line[2] = str(line[2]) + ".lower()"
@@ -500,11 +715,24 @@ while line_numbers < len(code_lines):
                     line[2] = f"{line[2]})\n{line[0]} = {line[0]}.replace(\"{var_parameters[0]}\", \"{var_parameters[1]}\", {var_parameters[2]}"
                 else:
                     line[2] = f"{line[2]})\n{line[0]} = {line[0]}.replace(\"{var_parameters[0]}\", \"{var_parameters[1]}\""
+            elif var_action == "replace2":
+                if len(var_parameters) == 1:
+                    var_parameters.append("")
+                if len(var_parameters) == 3:
+                    var_parameters[2] = int(var_parameters[2])
+                    # Replaces from line : <search> <replace with> <count>
+                    line[2] = f"{line[2]}\n{line[0]} = {line[0]}.replace(\"{var_parameters[0]}\", \"{var_parameters[1]}\", {var_parameters[2]})"
+                else:
+                    line[2] = f"{line[2]}\n{line[0]} = {line[0]}.replace(\"{var_parameters[0]}\", \"{var_parameters[1]}\")"
             elif var_action == "split":
                 line[2] = f"{line[0]}.split(f{var_parameters[0]})"
 
-            if ("append" in line or "insert" in line or "pop" in line) and var_type == "list":
-                line = line
+            # Adding var name for redefintions
+            if is_lib is False:
+                variables[line[0]] = True
+
+            if (("append" in line or "insert" in line or "pop" in line) and var_type == "list") or is_lib is True:
+                pass
             elif var_type == "list":
                 line = line[0] + " " + line[1] + " " + str(line[2])
             elif var_type is not None:
@@ -512,21 +740,47 @@ while line_numbers < len(code_lines):
             else:
                 line = line[0] + " " + line[1] + " " + str(line[2])
 
-        elif line.startswith("pause"):
-            line = line.replace("pause ", "", 1)
+        elif line.startswith("pause") or line.split(" ")[0] in aliases["pause"]:
+            if line.split(" ")[0] in aliases["pause"]:
+                line = line.replace(aliases["pause"][aliases["pause"].index(line.split(" ")[0])]+" ", "")
+            else:
+                line = line.replace("pause ", "", 1)
             while "{" in line and "}" in line:
                 variable = line[line.find("{") + 1:line.find("}")]
                 debug("in", lineno(), 2, f"Variable {variable} found in print.")
                 try:
                     line = line.replace("{" + variable + "}", str(variable))
                 except KeyError:
-                    error(line_numbers, "ArgumentError",
-                          f"The variable \"{variable}\" is not existing or has been declared later in the code.")
+                    # The variable "{variable}" is not existing or has been declared later in the code.
+                    error(line_numbers, "VariableNotFound", texts.errors["VariableNotFound"].format(variable=variable))
             line = "sleep("+line.replace("\n", "")+")"
 
-        elif line.startswith("deletevar "):
-            line = line.replace("deletevar ", "", 1)
-            line = "del " + remove_suffix(line)
+        elif line.startswith("deletevar ") or line.split(" ")[0] in aliases["deletevar"]:
+            if line.split(" ")[0] in aliases["deletevar"]:
+                line = line.replace(aliases["deletevar"][aliases["deletevar"].index(line.split(" ")[0])]+" ", "")
+            else:
+                line = line.replace("deletevar ", "", 1)
+
+            # If the user want to delete a single var (if) or multiple variables (else)
+            if not "," in line:
+                line = "del " + remove_suffix(line)
+                print(line)
+            else:
+                # Removing all spaces (we don't need them)
+                line = line.replace(" ", "")
+
+                # Creating a list of all the vars to delete
+                line = line.split(",")
+
+                # Initializing line :
+                temp_line = ""
+
+                # Deleting all of them, one by one
+                for i in range(len(line)):
+                    line[i] = remove_suffix(line[i], line[i].endswith('\n'))
+                    temp_line += f"del {line[i]}\n"
+                line = temp_line
+                del temp_line
 
         elif line.startswith("break"):
             line = "break"
@@ -534,8 +788,11 @@ while line_numbers < len(code_lines):
         elif line.startswith("continue"):
             line = "continue"
 
-        elif line.startswith("use_function"):
-            line = line.replace("use_function ", "", 1)
+        elif line.startswith("use_function") or line.split(" ")[0] in aliases["use_function"]:
+            if line.split(" ")[0] in aliases["use_function"]:
+                line = line.replace(aliases["use_function"][aliases["use_function"].index(line.split(" ")[0])]+" ", "")
+            else:
+                line = line.replace("$use: ", "", 1)
             line = remove_suffix(line, line.endswith("\n"))
             line = remove_from_string(line, ["{", "}"])
             line = line.split(" ")
@@ -565,14 +822,14 @@ while line_numbers < len(code_lines):
                     requirements = item.requirements("compiler")
                     requirements_list = list()
                     for element in requirements:
-                        requirements_list.append(globals()[element])
+                        requirements_list.append(locals()[element])
                     del requirements
                     requirements_list = tuple(requirements_list)
                     result = item.pytranslation(line, requirements_list)
                     line = result[0]
                     if len(result) > 1:
                         for i in range(0, len(result[1]), 2):
-                            globals()[result[1][i]] = result[1][i + 1]
+                            locals()[result[1][i]] = result[1][i + 1]
 
         else:
             line = ""
@@ -580,7 +837,7 @@ while line_numbers < len(code_lines):
         for i in range(0, indentation_required):
             line = "\t"+line
 
-    compiling_style = "FORCED ATM. DUH"
+    compiling_style = "standard"
     if compiling_style.lower() == "compacted" or compiling_style.lower() == "collapsed":
         if line.replace("\t", "") != "":
             compiled_file.write(line + "\n")
@@ -588,8 +845,8 @@ while line_numbers < len(code_lines):
         compiled_file.write(line + "\n")
     line_numbers += 1
 
-print(f"{bcolors.OKBLUE}Compiling time : {round((timeit.default_timer()-time_launch), process_time_round_numbers)}s{bcolors.ENDC}")
-print(f"{bcolors.OKBLUE}File compiled using style \"{compiling_style}\".{bcolors.ENDC}")
+print(f"{bcolors.OKBLUE}{texts.compiler['CompilingTime']} : {round((timeit.default_timer()-time_launch), process_time_round_numbers)}s{bcolors.ENDC}")
+print(f"{bcolors.OKBLUE}{texts.compiler['FileCompiledWithStyle']} \"{compiling_style}\".{bcolors.ENDC}")
 
 # Disabled part, removes \n when too much
 """compiled_lines = compiled_file.readlines()
@@ -610,9 +867,9 @@ compiled_file.close()
 config_file.close()
 
 if open_compiled_file == "True":
-    print(f"{bcolors.OKGREEN}File is being opened.{bcolors.ENDC}")
+    print(bcolors.OKGREEN + texts.compiler['OpeningFile'] + bcolors.ENDC)
     if platform.system() == "Windows":
         os.system("start "+compiled_file_filename)
     else:
         os.system("open "+shlex.quote(compiled_file_filename))
-    print(f"{bcolors.OKGREEN}File opened successfully.{bcolors.ENDC}")
+    print(bcolors.OKGREEN + texts.compiler['FileOpened'] + bcolors.ENDC)

@@ -1,7 +1,7 @@
 import os
 from time import sleep
 from recurrent_classes import launch_py_file
-os.system("pip install -r requirements.txt")
+os.system("pip install -r --upgrade requirements.txt")
 
 startup_file = open("startup.acpl-ini", "r", encoding="utf-8")
 startup_options = startup_file.readlines()
@@ -42,7 +42,7 @@ leave_comments_at_compiling = f"{leave_comments_at_compiling.lower() == 'yes'}"
 
 sleep(1)
 
-print("Okay, you completed the setup :)\n\nKeep in mind that you can modify any of them using the 'modify-ini' console command.")
+print("Okay, you completed the setup :)\n\nKeep in mind that you can modify any of them using the 'settings' console command.")
 
 for i in range(len(startup_options)):
     if startup_options[i].startswith("lang"):
@@ -58,7 +58,10 @@ startup_file = open("startup.acpl-ini", "w", encoding="utf-8")
 startup_file.writelines(startup_options)
 startup_file.close()
 
-os.mkdir("acpl_libs")
+try:
+    os.mkdir("acpl_libs")
+except FileExistsError:
+    pass
 
 sleep(2)
 

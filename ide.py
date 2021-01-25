@@ -81,8 +81,8 @@ def trigger_autocomplete():
     else:
         return False
 
-
-print(f"{bcolors.OKBLUE}ACPL IDE successfully opened.{bcolors.ENDC}")
+# ACPL IDE successfully opened.
+print(bcolors.OKBLUE + texts.ide["IDE_SuccessfullyOpened"] + bcolors.ENDC)
 
 # Part removed on 29/11/2020
 # Action : File opening in command line.
@@ -252,7 +252,8 @@ while running is True:
 
     if loop_times[1] > 10:
         loop_times[1] = 10
-    print(f"{bcolors.OKBLUE}{loop_times[1]} lines displayed out of {len(lines)}.{bcolors.ENDC}")
+    # {loop_times[1]} lines displayed out of {len(lines)}.
+    print(bcolors.OKBLUE + texts.ide["DisplayedLines"].format(line1=loop_times[1], line2=len(lines)) + bcolors.ENDC)
 
     # Collect events until released
     with Listener(on_press=on_press, on_release=on_release) as listener:
@@ -305,7 +306,7 @@ while running is True:
                 with open(current_folder + "/.acpl_ide", "w") as f:
                     json.dump(acpl_ide_metadata, f)
                     f.close()
-                sys.exit()
+                break
             elif user_input.startswith("new_file"):
                 user_input = user_input.replace("new_file ", "", 1)
                 if user_input not in ide_forbidden_files:
@@ -325,13 +326,14 @@ while running is True:
                         new_file.close()
                         code_file_filename = user_input
                 else:
-                    print(f"{bcolors.FAIL}This file is an ACPL system file, which means you cannot modify it.{bcolors.ENDC}")
+                    # This file is an ACPL system file, which means you cannot modify it.
+                    print(bcolors.FAIL + texts.ide["ACPL_SystemFile"] + bcolors.ENDC)
                 user_input = None
                 continue
             elif user_input == "open_file":
                 launch_py_file("ide")
                 sys.exit()
-                elif user_input == "run":
+            elif user_input == "run":
                 if code_file_filename.endswith(".acpl"):
                     replace_line("startup.acpl-ini", 0, f"filename: {code_file_filename}\n")
                     launch_py_file("main")
@@ -341,10 +343,11 @@ while running is True:
                     sleep(1)
                 elif "." in code_file_filename:
                     extension = code_file_filename.split(".")[len(code_file_filename.split(".")) - 1]
-                    print(f"{bcolors.FAIL}Unable to run that type of file (Extension : '{extension}').{bcolors.ENDC}")
+                    # Unable to run that type of file (Extension : '{extension}').
+                    print(bcolors.FAIL + texts.ide["UnableRunFile"].format(extension=extension) + bcolors.ENDC)
                     extension = None
                 else:
-                    print(f"{bcolors.FAIL}Unable to run that type of file (No extension).{bcolors.ENDC}")
+                    print(bcolors.FAIL + texts.ide["UnableRunFile_NoExtension"] + bcolors.ENDC)
 
                 print("\n\n")
             elif user_input == "compile":
@@ -360,10 +363,11 @@ while running is True:
                     sleep(2)
                 elif "." in code_file_filename:
                     extension = code_file_filename.split(".")[len(code_file_filename.split(".")) - 1]
-                    print(f"{bcolors.FAIL}Unable to run that type of file (Extension : '{extension}').{bcolors.ENDC}")
+                    # Unable to run that type of file (Extension : '{extension}').
+                    print(bcolors.FAIL + texts.ide["UnableRunFile"].format(extension=extension) + bcolors.ENDC)
                     extension = None
                 else:
-                    print(f"{bcolors.FAIL}Unable to run that type of file (No extension).{bcolors.ENDC}")
+                    print(bcolors.FAIL + texts.ide["UnableRunFile_NoExtension"] + bcolors.ENDC)
         elif pressed_key == Key.backspace:
             # Detecting if the cursor is a the beginning of the line or not
             if current_cursor_position == 0:
@@ -387,7 +391,8 @@ while running is True:
                 try:
                     lines[current_line].pop(current_cursor_position-1)
                 except IndexError:
-                    print(f"{bcolors.FAIL}Sorry, an unknown error occured.\nWe are unable to delete this character.\nPlease try again.{bcolors.ENDC}")
+                    # Sorry, an unknown error occured.\nWe are unable to delete this character.\nPlease try again.
+                    print(bcolors.FAIL + texts.ide["UnableToDeleteCharacter"] + bcolors.ENDC)
                     sleep(2)
                     pass
                 lines[current_line] = recreate_string(lines[current_line])
