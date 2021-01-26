@@ -46,6 +46,10 @@ for lines in startup:
         lines = lines.replace("startup-check-update: ", "")
         check_update = lines
 
+    if lines.startswith("optimize-transpiled-file"):
+        lines = lines.replace("optimize-transpiled-file: ", "", 1).replace("\n", "")
+        optimize_transpiled_file = lines.lower() != "false"
+
     if lines.startswith("lang: "):
         lines = lines.replace("lang: ", "")
         lines = lines.replace("\n", "")
@@ -73,6 +77,7 @@ for lines in startup:
         check_update = lines.lower() != "false"
 startup_file.close()
 force_reload = False
+force_commands = None
 
 print(bcolors.BOLD + texts.console['bootup-message'].format(final_version, current_version) + bcolors.ENDC)
 startup_file.close()
@@ -82,10 +87,16 @@ if check_update == "True" and console_reloaded is False:
 
 while running:
     output = None
-    if force_reload is False:
-        user_input = input("\n>>> ")
-    else:
+    if force_reload is True:
         user_input = "reload"
+    elif force_commands is not None and isinstance(force_commands, list):
+        user_input = force_commands[0]
+        if len(force_commands) > 1:
+            force_commands.pop(0)
+        elif len(force_commands) == 1:
+            force_commands = 0
+    else:
+        user_input = input("\n>>> ")
 
     debug("in", lineno(), 1, user_input)
 
@@ -147,7 +158,7 @@ while running:
 
     elif user_input.startswith("setting"):
         window = tk.Tk()
-        window.geometry("500x250")
+        window.geometry("500x300")
         window.title("ACPL Settings")
         window.iconbitmap("ACPL_Icon.ico")
 
@@ -185,6 +196,13 @@ while running:
             global tk, window
             compile_ask_for_replace = compile_ask_for_replace == False
             grid_elements[8][1]["text"] = str(compile_ask_for_replace)
+
+        def toggle_optimize_transpiled_file():
+            global optimize_transpiled_file
+            global grid_elements
+            global tk, window
+            optimize_transpiled_file = optimize_transpiled_file == False
+            grid_elements[9][1]["text"] = str(optimize_transpiled_file)
 
         def save_settings():
             global grid_elements, language, debug_state, process_time_round_numbers, compiling_style
@@ -227,7 +245,7 @@ while running:
             compiling_style = grid_elements[7][1].get()
 
         # Setting up all the elements for the grid
-        grid_elements = [[0, 0] for k in range(9)]
+        grid_elements = [[0, 0] for k in range(10)]
         grid_elements[0][0] = tk.Label(window, text="Language : ")
         grid_elements[0][1] = tk.Entry(window)
         grid_elements[0][1].insert(tk.END, language)
@@ -250,13 +268,15 @@ while running:
         grid_elements[7][1].insert(tk.END, str(compiling_style))
         grid_elements[8][0] = tk.Label(window, text="Ask for replace before compiling : ")
         grid_elements[8][1] = tk.Button(window, text=str(compile_ask_for_replace), command=toggle_compile_ask_for_replace)
+        grid_elements[9][0] = tk.Label(window, text="Optimize transpiled files (takes longer but\nruns faster and is clearer) : ")
+        grid_elements[9][1] = tk.Button(window, text=str(optimize_transpiled_file), command=toggle_optimize_transpiled_file)
         grid_elements.append(tk.Button(window, text="SAVE", command=save_settings, bd=4, bg="gray1", fg="orange red"))
 
         for i in range(len(grid_elements)-1):
             grid_elements[i][0].grid(row=i, column=0)
             grid_elements[i][1].grid(row=i, column=1)
 
-        grid_elements[9].grid(row=9, column=0, columnspan=2)
+        grid_elements[10].grid(row=10, column=0, columnspan=2)
 
         window.mainloop()
         # Settings closed and saved.
@@ -269,6 +289,7 @@ while running:
         replace_line("startup.acpl-ini", 10, f"leave-comments-at-compiling: {str(leave_comments_at_compiling)}\n")
         replace_line("startup.acpl-ini", 11, f"startup-check-update: {str(startup_check_update)}\n")
         replace_line("startup.acpl-ini", 13, f"compile-ask-for-replace: {str(compile_ask_for_replace)}\n")
+        replace_line("startup.acpl-ini", 15, f"optimize-transpiled-file: {str(optimize_transpiled_file)}\n")
         force_reload = True
         # OLD modify-ini
         """
@@ -342,7 +363,8 @@ while running:
               f"\t- 'display' : {texts.console_help['display']}\n"
               f"\t- 'change-line'/'modify-line' : {texts.console_help['change-line']}\n"
               f"\t- 'redo' : {texts.console_help['redo']}\n"
-              f"\t- 'lib <install:delete:doc> <lib_name>' : {texts.console_help['lib']}\n"
+              f"\t- 'lib <install:delete:doc:update> <lib_name>' : {texts.console_help['lib']}\n"
+              f"\t- 'lib list <available|installed>' : Lists all installed libs or available libs, depending on which one you choose.\n"
               f"\t- 'ls'/'dir' [dir_to_map='./'] [*extensions] : Returns a tree of the selected directory.\n")
 
     elif user_input.lower() == "about":
@@ -414,6 +436,45 @@ while running:
             documentation.close()
             print(documentation_content)
             del documentation_content
+        elif user_input.startswith("list"):
+            user_input = user_input.replace("list ", "", 1)
+            if user_input.startswith("installed"):
+                # Getting all files in libs dir
+                libs = os.listdir("acpl_libs")
+
+                # Removing junk from this list (documentation files)
+                i = 0
+                index_to_pop = 0
+                while libs[i].startswith("doc"):
+                    index_to_pop += 1
+                    i += 1
+                del i
+                libs = libs[index_to_pop:]
+                # Removing '__pycache__' from this list
+                libs.pop(len(libs)-1)
+
+                # Removing the 'fx_' and the extension of every elements
+                for i in range(len(libs)):
+                    libs[i] = libs[i].replace("fx_", "", 1).replace(".py", "")
+
+                # Printing the installed libs list
+                print(bcolors.WARNING + "You have installed : ")
+                for element in libs:
+                    print(f"- {element}")
+                print(bcolors.ENDC)
+
+            elif user_input.startswith("available"):
+                print(requests.get("https://raw.githubusercontent.com/megat69/ACPL/master/acpl_libs/lib_list.md").text[:-1])
+
+            else:
+                print(f"{bcolors.FAIL}Last argument should be 'installed' or 'available'.{bcolors.ENDC}")
+        elif user_input.startswith("update"):
+            user_input = user_input.replace("update ", "", 1)
+            if user_input != "END":
+                print(f"{bcolors.OKBLUE}Starting lib '{user_input}' update...{bcolors.ENDC}")
+                force_commands = [f"lib delete {user_input}", f"lib install {user_input}", "lib update END"]
+            else:
+                print(f"{bcolors.OKGREEN}Lib successfully updated !{bcolors.ENDC}")
         else:
             output = "Wrong amount of arguments."
 
@@ -568,6 +629,8 @@ while running:
         print(f"{bcolors.OKGREEN}Folder '{user_input}' successfully created !{bcolors.ENDC}")
 
     elif user_input.startswith("compile"):
+        # compile <ACPL file> [Exe file filename=ACPL file filename]
+        # [--end-message:<bool> = True] [--disable-icon:<bool> = False]
         # 'compile' removal
         user_input = user_input.replace("compile ", "", 1)
 

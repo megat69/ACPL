@@ -1,5 +1,5 @@
-filename: code
-lang: fr
+filename: code.acpl
+lang: en
 version: 3.11.0
 current-version: 3.11.0et
 debug-state: 0
@@ -13,3 +13,4 @@ startup-check-update: True
 compiling-style: compacted
 compile-ask-for-replace: False
 debugger-enabled: False
+optimize-transpiled-file: True

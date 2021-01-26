@@ -58,6 +58,10 @@ for config_line in config_file.readlines():
         config_line = config_line.replace("compile-ask-for-replace: ", "", 1).replace("\n", "")
         compile_ask_for_replace = config_line
 
+    elif config_line.startswith("optimize-transpiled-file"):
+        config_line = config_line.replace("optimize-transpiled-file: ", "", 1).replace("\n", "")
+        optimize_transpiled_file = config_line.lower() != "false"
+
     """elif lines.startswith("process-time-round-numbers: "):
         lines = lines.replace("process-time-round-numbers: ", "")
         process_time_round_numbers = int(lines)"""
@@ -372,16 +376,7 @@ while line_numbers < len(code_lines):
                 var_type = None
             elif line.split(" ")[0] in variables.keys():
                 temp_name = line.split(" ")[0]
-                if isinstance(variables[temp_name], int):
-                    var_type = "int"
-                elif isinstance(variables[temp_name], float):
-                    var_type = "float"
-                elif isinstance(variables[temp_name], list):
-                    var_type = None
-                elif isinstance(variables[temp_name], bool):
-                    var_type = "bool"
-                else:
-                    var_type = "str"
+                var_type = variables[temp_name]
                 del temp_name
             else:
                 line = line.replace("var", "", 1)
@@ -729,7 +724,7 @@ while line_numbers < len(code_lines):
 
             # Adding var name for redefintions
             if is_lib is False:
-                variables[line[0]] = True
+                variables[line[0]] = var_type if var_type is not None else "str"
 
             if (("append" in line or "insert" in line or "pop" in line) and var_type == "list") or is_lib is True:
                 pass
@@ -865,6 +860,36 @@ compiled_file.writelines(compiled_lines)"""
 
 compiled_file.close()
 config_file.close()
+
+if optimize_transpiled_file is True:
+    print(f"{bcolors.OKBLUE}Starting optimization...{bcolors.ENDC}")
+    compiled_file = open(compiled_file_filename, "r", encoding="utf-8")
+    code_lines = compiled_file.readlines()
+    compiled_file.close()
+    compiled_file = open(compiled_file_filename, "w", encoding="utf-8")
+    #print(code_lines)
+    # Fetching all code lines
+    for i in range(len(code_lines)):
+        line = code_lines[i]
+
+        # Regex party
+        for element in re.findall("int\([0-9]*\)", line):
+            line = line.replace(element, remove_suffix(element.replace("int(", "")))
+
+        for element in re.findall("float\([0-9.]*\)", line):
+            line = line.replace(element, remove_suffix(element.replace("float(", "")))
+
+        for element in re.findall("bool\(f\"(True|False)\"\)", line):
+            line = line.replace(f"bool(f\"{element}\")", element)
+        
+        for element in re.findall("str\(f\".*\"\)", line):
+            line = line.replace(element, remove_suffix(element.replace("str(", "")))
+
+        code_lines[i] = line
+
+    compiled_file.writelines(code_lines)
+    compiled_file.close()
+    print(f"{bcolors.OKGREEN}File successfully optimized.{bcolors.ENDC}")
 
 if open_compiled_file == "True":
     print(bcolors.OKGREEN + texts.compiler['OpeningFile'] + bcolors.ENDC)

@@ -134,28 +134,18 @@ function_name = None
 
 # TODO :
 # DONE :
-# Translations
-# Files lib
-# Lib access to variables (input-like methods)
-# GUI Lib
-# Deletevar : Delete multiple variables at once
-# Var actions alias
-# Built-in variable of type 'dict' containing every variable's length
-# ls/dir command
-# Aliases
-# Full booleans implementation, with new type ':bool'
-# Var modifications, without re-assignment (simple var name typing)
-# Compiler + Transpiler
+# Optimized compiler vars
+# Console 'lib' command -> lib update <lib> - lib list <installed|available>
 
 # Order :
 # Video changelogs
 
 # 3.12
+# Re-do functions
+# GUI Lib
 # Re-do equations in 'if' and 'while'
 # ifs and whiles variables -> add quotes if string.
-# Better compiler
 # Lambdas
-# Clipboard lib -> pyperclip lib
 
 # DELAYED :
 # Line numbers in functions

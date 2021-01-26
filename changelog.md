@@ -1,3 +1,17 @@
+### 3.11.1
+- New console commands
+  - Added two new subcommands to `lib` command
+  - `lib list <available|installed>`
+    - Will, depending on whether you chose as parameter `available` or `installed`, show all the libs installed on your computer, or the ones available online.
+  - `lib update <lib>`
+    - As the name suggests, this command will update the lib of your choice.
+    - With the recent 3.11 update, this command will come in handy.
+- **COMPILER OPTIMIZATION**
+  - New setting : `optimize-compiled-file`, as a boolean.
+    - Default : True
+  - Decides whether or not the transpiled Python file should be optimized.
+  - Optimiaztion takes longer to build the Python file, but the final code runs faster and is simpler to read.
+
 ### 3.11
 - Translation files are ready, just waiting for the translators.
   - Language 98% translated in French.
