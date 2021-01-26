@@ -17,7 +17,23 @@ Run `setup.py` to install all the required libraries.
 ### THINGS TO KNOW ###
 Run the script `console.py` to have access to the ACPL console.
 
-A list of the commands is available by typing `help`.
+Available commands :
+- `end` : Ends the console process.
+- `run` : runs a specific file. Syntax : `run <file>`.
+- `about` : Gives a special message from the author concerning the language ;)
+- `version` : Gives the last stable version and the actual dev build.
+- `settings` : Opens up a dialog box which allows you to tweak your settings
+- `update` : Launches the update program.
+- `pyrun` : Runs a specified python file
+- `compile` : Compiles an ACPL file to a Python file
+- `ini-content` : Displays the content of the ini file.
+- `open` : Opens a specific file in its default program.
+- `display` : Prints the content of a specified file.
+- `change-line`/`modify-line` : Modifies a specific line in a plain text file.
+- `redo` : Reuses the last command.
+- `lib <install:delete:doc:update> <lib_name>` : Respectively installs, delete, or gives the documentation of the specified lib.
+- `lib list <available|installed>` : Lists all installed libs or available libs, depending on which one you choose.
+- `ls/dir [dir_to_map='./'] [*extensions]` : Returns a tree of the selected directory.
 
 You can tweak your settings using the `settings` command.
 
@@ -41,13 +57,13 @@ Your code can also be compiled into an auto-executable file as well !
 Things to know :
 This program works line per line, which means that it is **ONE INSTRUCTION PER LINE**.
 You can also use a comma (`;`) to mark the end of the line, but it is not required.
-This can be modified through the `startup.ini` file or the console.
 This language also does not use quotes (`"`).
 
 ~~Plugin for [Sublime Text 3](https://www.sublimetext.com/3) (Syntax highlighting) disponible in the [wiki](https://github.com/megat69/ACPL/wiki/Sublime-Text---Color-Highlighting).~~ *Not remade for current version*
 Plugin for ini file also disponible in the [wiki](https://github.com/megat69/ACPL/wiki/Sublime-Text---Color-Highlighting).
 
 Before everything, open the console (file `console.py`). Type `help` inside if required.
+
 Help for the console is not provided in the documentation.
 
 #### comments #####
@@ -89,7 +105,7 @@ Variables have to be defined clearly.
 It follows the form `var[:var_type][--var_action] <var_name> <var_operator> <value>`.
 
 `<var_name>`
-The variable name. Note that two variables with different types can have the same name, even if not recommended.
+The variable name.
 
 `<var_operator>`
 Can be :
@@ -121,9 +137,12 @@ It depends :
  - If float, as written earlier, the whole part and the decimal part are seprated by a dot (`.`).
  - If string, it is as many characters, symbols, and digits as you want.
  - If boolean, it is `true` or `false`. Every type of lower and upper case is accepted.
+ - If list, see below, at **Lists** section
  
  `[:var_type]`
  This one is special ; you can force a variable type by typing `var:type` instead of `var`.
+
+ The use of this parameter is strictly recommended.
  
  The current variable types are :
  - `int`
@@ -208,7 +227,7 @@ We want to create a variable "pseudo" containing "TheAssassin".
 **EXAMPLE 2 :**
 We want to ask the user for his pseudo :
 *Input :*
-`var:str pseudo = input(What is your pseudo ? )`
+`var:str pseudo = input What is your pseudo ? `
 
 **EXAMPLE 3 :**
 We want to calculate `3*(6**2)` and store it into a variable "operation".
@@ -256,7 +275,7 @@ Type like the following :
 ```
 var:list <name> = list.add <content>
 ```
-The <content> will be appended at the end of the list.
+The `<content>` will be appended at the end of the list.
 
 **How to insert an element at a specific index of the list :**
 Type like the following : 
@@ -279,6 +298,9 @@ You can also use a variable in place of the index, but **equations won't work**.
 
 **How can I get the length of the list ?**
 Simply by typing `{my_list[len]}` or `{my_list[length]}`.
+
+*3.11 feature*
+You can also use `{length[my_list]}`
 
 
 #### if ####
@@ -303,11 +325,13 @@ The condition can contain as many variables as you want, and is with these opera
 - `>` : compares if superior
 - `<=` : compares if inferior or equal
 - `>=` : compares if superior or equal
-- `in` : compares if a string is inside another
+- `in` : compares if a string is inside another, or an element is iside a list.
 
 You can join more by typing :
 - `and`, if so, it will be true only if all conditions are true.
 - `or`, if so, it will be true if at least one of the conditions is true.
+
+Parenthesis are used for priority.
 
 The `<instructions>` can be whatever.
 
@@ -323,7 +347,7 @@ endfor
 
 Both `end for` and `endfor` are possible.
 
-<variable_name> should be a name for a variable.
+`<variable_name>` should be a name for a variable.
 This variable is going to be created for the loop, usable inside, and destroyed after.
 
 It will be incremented every looping.
@@ -349,9 +373,9 @@ Hey ! It's the 5 looping !
 And now I'm out...
 ```
 
-*Notice you can place an `if` statement inside, but no other loop.*
+*Notice you can place an `if` or `while` statement inside, but no other for loop.*
 
-You can break the loop at any moment by using the `break` instruction, or go to the next loop by typing `continue`.
+You can break the loop at any moment by using the `break` instruction, or go to the next loop iteration by typing `continue`.
 
 #### while ####
 The while loop will execute a bloc of instructions as long as a condition is true.
@@ -372,10 +396,10 @@ For this loop too, you can break the loop at any moment by using the `break` ins
 
 #### pause ####
 You can pause for a certain amount of time using `pause` method.
-Syntax : pause <seconds>
-<seconds>
+Syntax : pause `<seconds>`
+`<seconds>`
 Can be an integer value, a float value, or a variable.
-If you use a variable, the syntax is `pause {<variable_name>}.
+If you use a variable, the syntax is `pause {<variable_name>}`.
  
 #### deletevar ####
 You can delete an unnecessary variable and free memory with this instruction.
