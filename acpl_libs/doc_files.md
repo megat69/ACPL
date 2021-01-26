@@ -19,6 +19,10 @@ Syntax : `lib files read <file> <return_var> [optional parameters]`
   - The returned value is a list of strings.
 - The optional parameters :
   - `--remove_newlines` : If used, all the `\n` at the end of each list element will be removed.
+  
+This method can also be used as var method, and in that case, the `return_var` parameter does not exist.
+
+Syntax : `var <name> = lib files read <file> [optional parameters]`
     
 #### Writing in a file
 To write in a file, you need to use the `write` instruction.

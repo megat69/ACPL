@@ -1,5 +1,10 @@
 ## Math ACPL lib 
 
+### Overview
+The math lib gives you access to a few math functions.
+
+See them all in the *Usage* section.
+
 ### Install 
 Go on your ACPL console and type `lib install math`.
 

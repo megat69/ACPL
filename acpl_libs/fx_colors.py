@@ -6,7 +6,10 @@ def libs_to_import():
     return (tuple(), tuple())
 
 def requirements(file):
-    return tuple()
+    if "var_methods" in file:
+        return ("line_numbers",)
+    else:
+        return tuple()
 
 def main(line, variables_container, *args):
     """
@@ -33,4 +36,66 @@ def pytranslation(line, *args):
             line = f"colors_BLUE = '{bcolors.OKBLUE}'\ncolors_PINK = '{bcolors.HEADER}'\ncolors_GREEN = '{bcolors.OKGREEN}'\n"
             line += f"colors_YELLOW = '{bcolors.WARNING}'\ncolors_RED = '{bcolors.FAIL}'\ncolors_UNDERLINE = '{bcolors.UNDERLINE}'\n"
             line += f"colors_BOLD = '{bcolors.BOLD}'\ncolors_ITALICS = '{bcolors.ITALICS}'\ncolors_END = '{bcolors.ENDC}'"
+    return (line,)
+
+def var_methods(line:list, variables_container, other_args):
+    """
+    Var method transformation of the ACPL colors lib.
+    """
+    line_numbers = other_args[0]
+
+    if line[2].startswith("colors"):
+        line[2] = line[2].replace("colors ", "", 1)
+        if line[2].lower().startswith("blue"):
+            line[2] = bcolors.OKBLUE
+        elif line[2].lower().startswith("pink"):
+            line[2] = bcolors.HEADER
+        elif line[2].lower().startswith("green"):
+            line[2] = bcolors.OKGREEN
+        elif line[2].lower().startswith("yellow"):
+            line[2] = bcolors.WARNING
+        elif line[2].lower().startswith("red"):
+            line[2] = bcolors.FAIL
+        elif line[2].lower().startswith("underline"):
+            line[2] = bcolors.UNDERLINE
+        elif line[2].lower().startswith("bold"):
+            line[2] = bcolors.BOLD
+        elif line[2].lower().startswith("italics"):
+            line[2] = bcolors.ITALICS
+        elif line[2].lower().startswith("end"):
+            line[2] = bcolors.ENDC
+        else:
+            error(line_numbers, "UnknownColorError", f"Unknown color '{line[2]}'.")
+
+    return line, variables_container
+
+def compiler_var_methods(line, other_args):
+    """
+    Var method transformation of the ACPL colors lib for compiler.
+    """
+    line_numbers = other_args[0]
+
+    if line[2].startswith("colors"):
+        line[2] = line[2].replace("colors ", "", 1)
+        if line[2].lower().startswith("blue"):
+            line[2] = bcolors.OKBLUE
+        elif line[2].lower().startswith("pink"):
+            line[2] = bcolors.HEADER
+        elif line[2].lower().startswith("green"):
+            line[2] = bcolors.OKGREEN
+        elif line[2].lower().startswith("yellow"):
+            line[2] = bcolors.WARNING
+        elif line[2].lower().startswith("red"):
+            line[2] = bcolors.FAIL
+        elif line[2].lower().startswith("underline"):
+            line[2] = bcolors.UNDERLINE
+        elif line[2].lower().startswith("bold"):
+            line[2] = bcolors.BOLD
+        elif line[2].lower().startswith("italics"):
+            line[2] = bcolors.ITALICS
+        elif line[2].lower().startswith("end"):
+            line[2] = bcolors.ENDC
+        else:
+            error(line_numbers, "UnknownColorError", f"Unknown color '{line[2]}'.")
+
     return (line,)

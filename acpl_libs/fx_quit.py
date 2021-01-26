@@ -29,3 +29,9 @@ def pytranslation(line, *args):
     if line.startswith("quit"):
         line = "sys.exit()"
     return (line,)
+
+def var_methods(line, variables_container, other_args):
+    return line, variables_container
+
+def compiler_var_methods(line, other_args):
+    return (line,)

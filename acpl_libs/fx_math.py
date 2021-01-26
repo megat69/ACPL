@@ -4,7 +4,7 @@ import math
 def libs_to_import():
     # Returning all the basic imports (import <lib>) and the from imports (from <lib> import <element>)
     # as tuple of strings
-    return (tuple(), tuple())
+    return (("math",), tuple())
 
 def requirements(file):
     return ("line_numbers",)
@@ -22,8 +22,8 @@ def main(line, variables_container, *args):
             line = line.replace("sqrt ", "", 1)
             line = line.split(" ")
             if len(line) != 2:
-                error(line_numbers, "ArgumentError", "Arguments missing.")
-                sys.exit()
+                # Arguments missing !
+                error(line_numbers, "ArgumentError", texts.errors["ArgumentMissing"])
             if float(line[1]) < 0:
                 error(line_numbers, "NegativeNumberError", "Cannot do the square root of a negative number.")
                 sys.exit()
@@ -34,7 +34,6 @@ def main(line, variables_container, *args):
                     variables_container[line[0]] = math.sqrt(float(line[1]))
                 except ValueError:
                     error(line_numbers, "ArgumentError", "Argument 'value' has to be 'int' or 'float' !\nCurrent type : "+type(line[1]))
-                    sys.exit()
         elif line.startswith("fabs"):  # math fabs variable value
             line = line.replace("fabs ", "", 1)
             line = line.split(" ")
@@ -45,7 +44,6 @@ def main(line, variables_container, *args):
                     line[1] = float(line[1])
                 except ValueError:
                     error(line_numbers, "ArgumentError", "Argument 'value' has to be 'int' or 'float' !\nCurrent type : " + str(type(line[1])))
-                    sys.exit()
             variables_container[line[0]] = math.fabs(line[1])
         elif line.startswith("factorial"): # math factorial variable value
             line = line.replace("factorial ", "", 1)
@@ -72,7 +70,6 @@ def main(line, variables_container, *args):
                 line[1] = float(line[1])
             except ValueError:
                 error(line_numbers, "ArgumentError", "Argument 'value' has to be 'int' or 'float' !\nCurrent type : " + str(type(line[1])))
-                sys.exit()
             variables_container[line[0]] = math.floor(line[1])
 
     return (line, variables_container)
@@ -108,3 +105,75 @@ def pytranslation(line, *args):
             line = line.split(" ")
             line = f"{line[0]} = floor({line[1]})"
     return (line,)
+
+def var_methods(line, variables_container, other_args):
+    """
+    Var methods for ACPL math library.
+    """
+    line_numbers = other_args[0]
+    if line[2].startswith("math"):
+        line[2] = line[2].replace("math ", "", 1)
+        if line[2].startswith("sqrt"):  # Syntax : math sqrt value
+            line[2] = line[2].replace("sqrt ", "", 1)
+            if float(line[2]) < 0:
+                error(line_numbers, "NegativeNumberError", "Cannot do the square root of a negative number.")
+            try:
+                line[2] = math.sqrt(int(line[2]))
+            except ValueError:
+                try:
+                    line[2] = math.sqrt(float(line[2]))
+                except ValueError:
+                    error(line_numbers, "ArgumentError", "Argument 'value' has to be 'int' or 'float' !\nCurrent type : "+type(line[1]))
+
+        elif line[2].startswith("fabs"):
+            line[2] = line[2].replace("fabs ", "", 1)
+            try:
+                line[2] = math.fabs(int(line[2]))
+            except ValueError:
+                try:
+                    line[2] = math.fabs(float(line[2]))
+                except ValueError:
+                    error(line_numbers, "ArgumentError", "Argument 'value' has to be 'int' or 'float' !\nCurrent type : " + str(type(line[2])))
+
+        elif line[2].startswith("factorial"):
+            line[2] = line[2].replace("factorial ", "", 1)
+            try:
+                line[2] = int(line[2])
+            except ValueError:
+                try:
+                    line[2] = float(line[2])
+                except ValueError:
+                    error(line_numbers, "ArgumentError", "Argument 'value' has to be 'int' or 'float' !\nCurrent type : " + str(type(line[1])))
+
+            if line[2] < 0:
+                error(line_numbers, "NegativeNumberError", "The value to factorial should not be negative.")
+            elif line[2] == 0:
+                line[2] = 0
+            else:
+                line[2] = math.factorial(line[2])
+
+        elif line[2].startswith("floor"):
+            line[2] = line[2].replace("floor ", "", 1)
+            try:
+                line[2] = float(line[2])
+            except ValueError:
+                error(line_numbers, "ArgumentError", "Argument 'value' has to be 'int' or 'float' !\nCurrent type : " + str(type(line[1])))
+            line[2] = math.floor(line[2])
+
+    return line, variables_container
+
+def compiler_var_methods(line, other_args):
+    """
+    Var methods for ACPL math library. Designed for compiler.
+    """
+    line_numbers = other_args[0]
+    if line[2].startswith("math"):
+        line[2] = line[2].replace("math ", "", 1)
+        line[2] = line[2][:-2]
+        line[2] = line[2].split(" ")
+        try:
+            line[2] = f"math.{line[2][0]}({line[2][1]})"
+        except IndexError:
+            error(line_numbers, "ArgumentError", texts.errors["FunctionArgumentError"].format(args_required=1, args_nbr=0))
+
+    return line, ("no_string", True)

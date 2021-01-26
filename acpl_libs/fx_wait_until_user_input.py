@@ -12,7 +12,7 @@ def main(line, variables_container, other_args):
     """
     Allows the user to wait.
     """
-    if line.startswith("wait_until_user_input"):
+    if str(line).startswith("wait_until_user_input"):
         line = line.replace("wait_until_user_input ", "", 1)
         line = remove_suffix(line, line.endswith("\n"))
         if line != "":
@@ -39,4 +39,10 @@ def pytranslation(line, *args):
                 line = f"input(\"{line}\")"
         else:
             line = "input(\"\")"
+    return (line,)
+
+def var_methods(line, variables_container, other_args):
+    return line, variables_container
+
+def compiler_var_methods(line, other_args):
     return (line,)
