@@ -202,7 +202,7 @@ def remove_suffix(variable:str, condition:bool=True, chars_amount:int=1):
     Parameter 'condition' (bool) : Default : True. Will only remove if the condition is True.
     """
     if condition is True:  # If the condition is respected
-        variable = variable[:-chars_amount]  # Suffix gets removed
+        return variable[:-chars_amount]  # Suffix gets removed
     return variable
 
 def remove_prefix(variable:str, condition:bool=True, chars_amount:int=1):
@@ -213,7 +213,7 @@ def remove_prefix(variable:str, condition:bool=True, chars_amount:int=1):
         Parameter 'condition' (bool) : Default : True. Will only remove if the condition is True.
         """
     if condition is True:  # If the condition is respected
-        variable = variable[chars_amount:len(variable)]  # Prefix gets removed
+        return variable[chars_amount:len(variable)]  # Prefix gets removed
     return variable
 
 def add_suffix(variable:str, suffix:str, condition:bool=True):
